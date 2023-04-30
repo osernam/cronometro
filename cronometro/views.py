@@ -4,3 +4,6 @@ from django.shortcuts import render
 
 def homeView(request):
     return render(request,'cronometro\index.html')
+
+def cronometroView(request):
+    return render(request,'cronometro\cronometro.html')
