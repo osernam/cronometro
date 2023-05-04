@@ -487,10 +487,19 @@
                                         </div>
                                     </div>
                                 </div>
-                                <!-- Card Body -->
+                                <!-- Cronometro Body -->
                                 <div class="card-body">
                                     <div class="chart-area">
-                                        hola
+                                        <h3 >Hora 24</h3>
+                                        <h1 id="tiempo">00:00:00</h1>
+                                        <h3 >Hora decimal (10)</h3>
+                                        <h1 id="tiempoDecimal">00:00:00</h1>                
+                                        <button id="iniciarBoton">Iniciar</button>
+                                        <button id="pararBoton">Parar</button>
+                                        
+                                    
+                                        <script src="{% static 'cronometro/cronometro.js' %}">
+                                        </script>
                                         <canvas id="myAreaChart"></canvas>
                                     </div>
                                 </div>
