@@ -12,9 +12,41 @@ function parcialCronometro() {
     tiempoParcial.push (Date.now() - tiempoInicial);
 }
 function pararCronometro() {
+    
     clearInterval(tiempoActual);
 }
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+}
 
+function enviarVariables() {
+    
+    $.ajax({
+        type: 'POST',
+        url: 'cronometro/tiempo-parcial/',
+        data: {'tiempoParcial':tiempoParcial},
+        beforeSend: function(xhr) {
+            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
+        },
+        success: function(response) {
+            console.log('Enviado correcto!');
+        },
+        error: function(response) {
+            console.log('Error enviando datos!');
+        }
+    });
+}
 function actualizarTiempo() {
     var tiempoTranscurrido = Date.now() - tiempoInicial;
     var horas = Math.floor(tiempoTranscurrido / 3600000);
@@ -64,3 +96,4 @@ function actualizarTiempo() {
 
 document.getElementById('iniciarBoton').addEventListener('click', iniciarCronometro);
 document.getElementById('pararBoton').addEventListener('click', pararCronometro);
+document.getElementById('enviarBoton').addEventListener('click', enviarVariables);
