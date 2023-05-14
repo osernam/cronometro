@@ -16,3 +16,7 @@ def tiempo_parcial(request):
     
     return JsonResponse({'status': 'success'})
     ...
+
+
+def baseView(request):
+    return render(request,'base\base.html')
