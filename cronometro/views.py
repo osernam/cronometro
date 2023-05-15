@@ -18,5 +18,5 @@ def tiempo_parcial(request):
     ...
 
 
-def baseView(request):
-    return render(request,'base\base.html')
+def base(request):
+    return render(request,'cronometro/base/base.html')
