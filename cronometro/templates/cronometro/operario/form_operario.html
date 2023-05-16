@@ -1,0 +1,63 @@
+
+
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+<br>
+<div class="contact-from-section mb-150">
+    <div class="container">
+        <div class="formulario">
+            <form action="{% url 'cronometro:guardarOperario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+            
+                <p>Nombres del empleado
+                    <input name="nombre" type="text" placeholder="Nombres" required>
+                </p>
+                <p>Email del operario
+                    <input name="email" type="email" placeholder="Email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                </p>
+                <p>Entidad
+                    <input name="entidad" type="text" placeholder="Entidad" required>
+                </p>
+                <div class="col">
+                    <label for="habilitadoJuego">Habilitado</label>
+                    <br>
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" value="True">Sí
+                        </label>
+                      </div>
+                      <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" value="False" checked>No
+                        </label>
+                    </div>
+                </div>
+                
+                
+                <br/>
+                <!-- Botón del enviar formulario-->
+                <div class="form-btns">
+                    <button type="submit">Enviar formulario</button>
+                    <button type="reset">Limpiar formulario</button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+</div>
+
+
+
+{% endblock contenedor %}  

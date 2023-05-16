@@ -8,4 +8,6 @@ urlpatterns = [
     path('cronometro/', cronometroView, name= 'cronometro'),
     path('cronometro/tiempo-parcial/', tiempo_parcial, name='tiempo-parcial'),
     path('cronometro/base/', base, name='base'),
+    path('operario/', crearOperario, name='crearOperario'),
+    path('save_operario/', guardarOperario, name='guardarOperario'),
 ]
