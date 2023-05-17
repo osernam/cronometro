@@ -6,7 +6,10 @@ from django.db.models import Q
 from django.contrib import messages
 
 # Gestión de errores de base de datos
-from django.db import IntegrityError    
+from django.db import IntegrityError  
+# Paginador
+from django.core.paginator import Paginator 
+import json 
 
 
 
@@ -16,12 +19,19 @@ def homeView(request):
     return render(request,'cronometro\index.html')
 
 def cronometroView(request):
-    return render(request,'cronometro\cronometro.html')
+    operarios = Operario.objects.all()
+    return render(request,'cronometro\cronometro.html', {'operarios' : operarios})
 
 def tiempo_parcial(request):
-    tiempoParcial = request.POST.get('tiempoParcial')
-    print(tiempoParcial) # Output: 'tiempoParcial'
-    
+    if request.method == "POST":
+        tiempoParcial = request.POST.get('tiempoParcial')
+        if tiempoParcial is not None:
+            tiempoParcial = json.loads(tiempoParcial)
+            # Do something with the tiempoParcial object here
+        else:
+            print("tiempoParcial is None")
+    else:
+        print("Request method is not POST")
     return JsonResponse({'status': 'success'})
     ...
 
