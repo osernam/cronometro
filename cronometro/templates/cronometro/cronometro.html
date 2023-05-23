@@ -56,19 +56,19 @@
                                     </div>
                                 </div>
                                 <!-- Cronometro Body -->
-                                <div class="card-body">
-                                    <div class="chart-area">
-                                        <h3 >Hora 24</h3>
-                                        <h1 id="tiempo">00:00:00</h1>
+                                <div class="card-body" height: "200px;">
+                                    <div class="chart-area" height: "200px;">
+                                        <h3 ></h3>
+                                        <h2 id="tiempo" >00:00:00</h2>
                                                         
-                                        <button id="iniciarBoton">Iniciar</button>
-                                        <button id="pararBoton">Parar</button>
-                                        <button id="tiemposParciales">parcial</button>
-                                        <button id="enviarBoton">Enviar</button>
-                                    
-                                        <script src="{% static 'cronometro/cronometro.js' %}">
-                                        </script>
-                                        <canvas id="myAreaChart"></canvas>
+                                        <a id="iniciarBoton" class="btn btn-primary" type="button">Iniciar</a>
+                                        <a id="pararBoton" class="btn btn-primary" type="button">Parar</a>
+                                        <a id="tiemposParciales" class="btn btn-primary" type="button">parcial</a>
+                                        <a id="enviarBoton" class="btn btn-primary" type="button">Enviar</a>
+                                        
+
+                                        
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -91,7 +91,7 @@
                                 </div>
                                 <!-- Card Body -->
                                 <div class="card-body">
-                                    <div style="display: flex; justify-content: center; align-items: center;" id= "tiemposCronometro">
+                                    <div style="height: 200px; overflow: auto;" id= "tiemposCronometro">
                                         <!-- Aqui apareceran los tiempos -->
                                     </div>
                                     <div class="mt-4 text-center small">
@@ -110,90 +110,16 @@
                         </div>
                     </div>
                     <!-- Contenedor resultado de tiempos -->
-                    <div class="row">
+                    <div class="row" id= "tiemposCronometro">
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-primary shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                                Earnings (Monthly)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$40,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-calendar fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-success shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                                Earnings (Annual)</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">$215,000</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
 
-                        <!-- Earnings (Monthly) Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-info shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Tasks
-                                            </div>
-                                            <div class="row no-gutters align-items-center">
-                                                <div class="col-auto">
-                                                    <div class="h5 mb-0 mr-3 font-weight-bold text-gray-800">50%</div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="progress progress-sm mr-2">
-                                                        <div class="progress-bar bg-info" role="progressbar"
-                                                            style="width: 50%" aria-valuenow="50" aria-valuemin="0"
-                                                            aria-valuemax="100"></div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-clipboard-list fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
+                        
 
-                        <!-- Pending Requests Card Example -->
-                        <div class="col-xl-3 col-md-6 mb-4">
-                            <div class="card border-left-warning shadow h-100 py-2">
-                                <div class="card-body">
-                                    <div class="row no-gutters align-items-center">
-                                        <div class="col mr-2">
-                                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
-                                                Pending Requests</div>
-                                            <div class="h5 mb-0 font-weight-bold text-gray-800">18</div>
-                                        </div>
-                                        <div class="col-auto">
-                                            <i class="fas fa-comments fa-2x text-gray-300"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        
                     </div>
 
                     <!-- Content Row -->
@@ -218,10 +144,9 @@
 
                             <div class="form-row"><!--Operarios-->
                                 <div class="col">
-                                    <a>
+                                    <a>  Cantidad de intervalos
                                         <select name="canIntervalos" class="form-control" id="canIntervalos" required>
-                                            <option disabled selected value>- Cantidad de intervalos -</option>
-                                            <option value="10">10</option>
+                                            <option value="10" selected>10</option>
                                             <option value="11">11</option>
                                             <option value="12">12</option>
                                             <option value="13">13</option>
@@ -288,6 +213,9 @@
             
 
             </div>
+
+            <script src="{% static 'cronometro/cronometro.js' %}">
+            </script>
             <!-- End of Main Content -->
 
             {% endblock contenedor %}     

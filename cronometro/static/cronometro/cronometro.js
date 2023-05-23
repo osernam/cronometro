@@ -4,10 +4,24 @@ var tiempoInicial;
 var tiempoParcial = [];
 var tiempos = [];
 
-
-
+var restantes = 0;
+var canInterval = 10;
+canInterval= parseInt(document.getElementById("canIntervalos").value);
 function parcialCronometro() {
-    canInterval = document.getElementById("canIntervalos").value;
+    
+    
+    if (restantes== 0) {
+        restantes = canInterval;
+        
+    }else {
+        restantes = restantes - 1;
+
+        
+    }
+
+    if ( restantes == 0) {
+        pararCronometro();
+    }  
 
     if (tiempoParcial.length != 0) {
         tiempoParcial.push(Date.now() - tiempoInicial);
@@ -16,37 +30,30 @@ function parcialCronometro() {
         tiempoParcial.push(Date.now() - tiempoParcial[tiempoParcial.length-1]);
     }
 
-    if (tiempoParcial.length === canInterval) {
-        pararCronometro();
-    }      
+        
     var divTiempos = document.getElementById('tiemposCronometro');
-    for (let i = 0; i < tiempoParcial.length; i++) {
+    
+    divTiempos.innerHTML = '';
+
+    for (let i = 0; i < tiempoParcial.length-1; i++) {
         
 
         divTiempos.innerHTML +=( 
 
-            '<div class="col-xl-3 col-md-6 mb-4">'+
-                            '<div class="card border-left-primary shadow h-100 py-2">'+
-                                '<div class="card-body">'+
-                                    '<div class="row no-gutters align-items-center">'+
-                                        '<div class="col mr-2">'+
-                                            '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
-                                                'Tiempo '+i+
-                                            '</div>'+
-                                            '<div class="h5 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i]+'</div>'+
-                                        '</div>'+
-                                        '<div class="col-auto">'+
-                                            '<i class="fas fa-calendar fa-2x text-gray-300"></i>'+
-                                        '</div>'+
-                                    '</div>'+
-                                '</div>'+
-                            '</div>'+
+            '<div class="col-xl-3 col-md-6 mb-4" style="display: flex; >'+
+                            
+                '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
+                    'Tiempo '+i+
+                '</div>'+
+                '<div class="h6 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i]+'</div>'+
+                '<br>'+            
             '</div>'
 
         );
 
        
     }
+    
 }
 
 
@@ -65,10 +72,6 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-
-
-
 
 
 
@@ -92,66 +95,6 @@ function enviarVariables() {
     });
 }
 
-// Cronometro experimental
-function actualizarTiempo() {
-    var tiempoTranscurrido = Date.now() - tiempoInicial;
-    var horas = Math.floor(tiempoTranscurrido / 3600000);
-    var minutos = Math.floor((tiempoTranscurrido % 3600000) / 60000);
-    var segundos = Math.floor((tiempoTranscurrido % 60000) / 1000);
-    var centesimas = Math.floor((tiempoTranscurrido %60000)/1000)
-    
-    var centecimasMinuto = Math.floor(tiempoTranscurrido/ 10000);
-    // 24 horas = 10 horas decimales, 1 hora decimal = 100 minutos decimales, 1 minuto decimal = 100 segundos decimales
-
-    var horasDecimales = Math.floor(((tiempoTranscurrido / 3600000)*24)/10);
-    var minutosDecimales = Math.floor((((tiempoTranscurrido / 3600000)*24)/10)*100);
-    var segundosDecimales = Math.floor((((tiempoTranscurrido / 60000)*24)/10)*1000);
-
-    // add leading zeros if necessary
-    if (horas < 10) {
-    horas = '0' + horas;
-    }
-    if (minutos < 10) {
-    minutos = '0' + minutos;
-    }
-    if (segundos < 10) {
-    segundos = '0' + segundos;
-    }
-    if( centecimasMinuto < 10) {
-    centecimasMinuto = '0' + centecimasMinuto;
-    }
-
-    if (horasDecimales < 10) {
-    horasDecimales = '0' + horasDecimales;
-    }
-    if (minutosDecimales < 10) {
-    minutosDecimales = '0' + minutosDecimales;
-    }
-    if (segundosDecimales < 10) {
-    segundosDecimales = '0' + segundosDecimales;
-    }
-
-    var tiempoString =  minutos +  ':' + segundos  + ':' + centesimas;
-    document.getElementById('tiempo').innerHTML = tiempoString;
-
-    var tiempoDecimal = horasDecimales + ':' + minutosDecimales + ':' + segundosDecimales;
-    document.getElementById('tiempoDecimal').innerHTML = tiempoDecimal;
-    //var timeString = hours + ':' + minutes + ':' + seconds;
-    //document.getElementById('timer').innerHTML = timeString;
-}
-
-function iniciarCronometro() {
-
-    
-
-    tiempoInicial = Date.now();
-    tiempoActual = setInterval(actualizarTiempo, 100);
-}
-
-function pararCronometro() {
-    
-    clearInterval(tiempoActual);
-}
 
 
 //cronometro centesimas
@@ -174,7 +117,7 @@ function cronometroDeci() {
     }
     if (minutos == 60) {
         minutos = 0;
-        horas++;
+        
     }
     var tiempo = (minutos < 10 ? "0" + minutos : minutos) + ":" +
                  (segundos < 10 ? "0" + segundos : segundos) + ":" +
@@ -186,17 +129,27 @@ function cronometroDeci() {
 
 function iniciar() {
 
-    var divTiempos = document.getElementById("tiemposCronometro");
-    divTiempos.innerHTML = '';
+    /**
+ * Inicializa el cronómetro y lo pone en marcha. Establece el elemento HTML `divTiempos` a una cadena vacía,
+ * inicializa la matriz `tiempoParcial`, establece el `tiempoInicial` a la hora actual e inicia el
+ * Intervalo `tiempoActual`, que llama a la función `cronometroDeci()` cada 10 milisegundos.
+ *
+ * @param {HTMLDivElement} divTiempos -El elemento HTML que mostrará los tiempos en el cronómetro.
+ * @return {void} Esta función no devuelve nada
+ */
 
+    var divTiempos = document.getElementById('tiemposCronometro');
+    divTiempos.innerHTML = '';
+    tiempoParcial = []
     tiempoInicial = Date.now();
     tiempoActual = setInterval(cronometroDeci, 10);
 }
 
 function detener() {
     tiempos=tiempoParcial;
-    tiempoParcial = []
+    
     clearInterval(tiempoActual);
+    
 }
 
 
