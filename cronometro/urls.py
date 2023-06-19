@@ -10,4 +10,5 @@ urlpatterns = [
     path('cronometro/base/', base, name='base'),
     path('operario/', crearOperario, name='crearOperario'),
     path('save_operario/', guardarOperario, name='guardarOperario'),
+    path('mod_operario/', guardarTiempoParcial, name='guardarTiempoParcial'),
 ]

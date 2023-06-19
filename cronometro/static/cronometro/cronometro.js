@@ -7,6 +7,53 @@ var tiempos = [];
 var restantes = 0;
 var canInterval = 10;
 canInterval= parseInt(document.getElementById("canIntervalos").value);
+var factorRitmo = parseInt(document.getElementById("factorRitmo").value);
+var escalaSuplementos = parseInt(document.getElementById("escalaSuplementos").value);
+var tPromEstandar = 0
+var sumatoriaT= 0
+var tiempoNormal = 0
+
+//Crear la cookie para guardar los tiempos
+
+function setCookie(name,value,days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "")  + expires + "; path=/";
+}
+function getCookie(name) {
+    //Obtener el valor de la cookie
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for(var i=0;i < ca.length;i++) {
+        var c = ca[i];
+        while (c.charAt(0)==' ') 
+            c = c.substring(1,c.length);
+
+        if (c.indexOf(nameEQ) == 0) 
+            return c.substring(nameEQ.length,c.length);
+    }
+    return null;
+}
+
+/*
+Para consultarla:
+
+if( getCookie('mi_variable') != null ){
+        console.log( getCookie('mi_variable') ); // devolverá valor en este caso
+}
+*/
+
+function eraseCookie(name) {
+    //eliminar la cookie
+    document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+}
+//fin cookies
+  
+
 function parcialCronometro() {
     
     
@@ -14,36 +61,53 @@ function parcialCronometro() {
         restantes = canInterval;
         
     }else {
-        restantes = restantes - 1;
-
-        
+        restantes = restantes - 1;        
     }
 
     if ( restantes == 0) {
         pararCronometro();
     }  
-
-    if (tiempoParcial.length != 0) {
-        tiempoParcial.push(Date.now() - tiempoInicial);
-    } 
-    else {
-        tiempoParcial.push(Date.now() - tiempoParcial[tiempoParcial.length-1]);
+    var minA = 0;
+    var segA = 0;
+    var centA = 0;
+    
+    
+    var tiem = ((minutos*60)+segundos)/60+centesimas;
+    var tiemAnt = ((minA*60)+segA)/60+centA;
+    if (factorRitmo == 0) {
+        tiempoNormal= tiem ;
+    }else{
+        tiempoNormal = (tiem-tiemAnt)*factorRitmo;
     }
+    //Tiempos anteriores
+    minA = minutos;
+    segA = segundos;
+    centA = centesimas;
+    
+    tiempoParcial.push(tiempoNormal +tiempoNormal*escalaSuplementos);
+    
+    /*if (tiempoParcial.length != 0) {
+        var tiem = ((minutos*60)+segundos)/60+centesimas;
+        tiempoParcial.push(1);
+    } */
+    //else {
+      //  divTiempos.innerHTML = '';
+    //}
 
         
     var divTiempos = document.getElementById('tiemposCronometro');
-    
     divTiempos.innerHTML = '';
+    
 
     for (let i = 0; i < tiempoParcial.length-1; i++) {
-        
-
+        sumatoriaT += tiempoParcial[i];
+        console.log(Math.round( tiempoParcial[i]));
         divTiempos.innerHTML +=( 
 
             '<div class="col-xl-3 col-md-6 mb-4" style="display: flex; >'+
                             
                 '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
-                    'Tiempo '+i+
+                    'Tiempo '+(i+1)+
                 '</div>'+
                 '<div class="h6 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i]+'</div>'+
                 '<br>'+            
@@ -53,25 +117,13 @@ function parcialCronometro() {
 
        
     }
-    
+    tPromEstandar = sumatoriaT/tiempoParcial.length;
+
+    setCookie('tiempos_estandar',tPromEstandar,30);
+    setCookie('tiempos_cookie',tiempoParcial,30);
 }
 
 
-
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-}
 
 
 
@@ -141,11 +193,15 @@ function iniciar() {
     var divTiempos = document.getElementById('tiemposCronometro');
     divTiempos.innerHTML = '';
     tiempoParcial = []
+    setCookie('tiempos_cookie',tiempoParcial,30); // nombre, valor, tiempo de expiracion
     tiempoInicial = Date.now();
     tiempoActual = setInterval(cronometroDeci, 10);
+
+    
 }
 
 function detener() {
+    restantes = 0;
     tiempos=tiempoParcial;
     
     clearInterval(tiempoActual);

@@ -40,9 +40,24 @@ def base(request):
     return render(request,'cronometro/base/base.html')
 
 def crearOperario(request):
+    """
+    Crea un operario utilizando el objeto de solicitud y presenta la plantilla form_operario.html.
+
+    :param request: el objeto de solicitud HTTP que contiene información sobre la solicitud del usuario
+    :tipo de solicitud: HttpRequest
+    :return: un objeto de respuesta HTML que representa la plantilla form_operario.html
+    :rtype: HttpRespuesta
+    """
     return render((request), 'cronometro/operario/form_operario.html')
 
 def guardarOperario (request):
+    """
+    Guarda un operario en la base de datos.
+    Parameters:
+    request (HttpRequest): La solicitud HTTP recibida.
+    Returns:
+    HttpResponseRedirect: Redirige al usuario hacia la página home si el operario se guarda correctamente.
+    """
     
     try: 
         if request.method == "POST":
@@ -69,3 +84,26 @@ def guardarOperario (request):
         return redirect('cronometro:crearOperario')
         
     return redirect('cronometro:home')  
+
+def guardarTiempoParcial(request):
+    if request.method == "POST":
+        tiempoParcial = request.POST.get('tiempos_cookie')
+        if tiempoParcial is not None:
+            tiempoParcial = json.loads(tiempoParcial)
+
+            if request.method == "POST":
+                #tiempoEstandar = request.session.get('tiempos_estandar')
+                idOperario = request.POST['operario']
+                operario = Operario.objects.get(id = idOperario)
+                
+                operario.factorRitmo= request.POST['factorRitmo']
+                operario.escalaSuplementos= request.POST['escalaSuplementos']
+                #operario.tiempoEstandar = tiempoEstandar
+                operario.save()
+                
+        else:
+            print("tiempos cookie es None")
+    else:
+        print("El metodo de solisitud no esPOST")
+    return JsonResponse({'status': 'success'})
+    ...
