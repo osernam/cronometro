@@ -13,7 +13,7 @@
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-0 text-gray-800">Cronometro</h1>
+                        
                         <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                     </div>
@@ -24,7 +24,7 @@
                                 <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
                             {% endfor %}
                         {% endif %}
-                        
+
                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modalOperarios">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Parametros
@@ -37,9 +37,9 @@
 
                     <div class="row">
 
-                        <!-- Area Chart -->
+                        <!-- Area cronometro -->
                         <div class="col-xl-8 col-lg-7">
-                            <div class="card shadow mb-4">
+                            <div class="card shadow mb-2">
                                 <!-- Card Header - Dropdown -->
                                 <div
                                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
@@ -64,25 +64,41 @@
                                     </div>
                                 </div>
                                 <!-- Cronometro Body -->
-                                <div class="card-body" height: "200px;">
-                                    <div class="chart-area" height: "200px;">
+                                <div class="card-body" height: "100px;">
+                                    <div class="chart-area" height: "100px;">
                                         <h3 ></h3>
                                         <h2 id="tiempo" >00:00:00</h2>
                                                         
                                         <a id="iniciarBoton" class="btn btn-primary" type="button">Iniciar</a>
                                         <a id="pararBoton" class="btn btn-primary" type="button">Parar</a>
                                         <a id="tiemposParciales" class="btn btn-primary" type="button">parcial</a>
-                                        <a id="enviarBoton" class="btn btn-primary" type="button">Enviar</a>
+                                        <a id="enviarBoton" href="{% url 'cronometro:guardarTiempoEstandar' operario.id %}" class="btn btn-primary" type="button">Guardar</a>
                                         
 
                                         
                                         
                                     </div>
                                 </div>
-                            </div>
-                        </div>
 
-                        <!-- Pie Chart -->
+                            </div>
+
+
+                            
+
+                        </div>
+                        <!--fin de Area cronometro -->
+                        <!-- Area graficos -->
+
+                        <div class="col-xl-4 col-lg-5">
+                            <div class="card shadow mb-4">
+                                <a id="graficar" class="btn btn-primary" type="button">graficar</a>
+                                <canvas id="graficoTiempos"  width="600" height="400">
+
+
+                                </canvas>
+                            </div>    
+                        </div>
+                        <!--  Chart tiempos-->
                         <div class="col-xl-4 col-lg-5">
                             <div class="card shadow mb-4">
                                 <!-- Card Header - Dropdown -->
@@ -116,6 +132,8 @@
                                 </div>
                             </div>
                         </div>
+
+                        
                     </div>
                     <!-- Contenedor resultado de tiempos -->
                     <div class="row" id= "tiemposCronometro">
@@ -152,63 +170,43 @@
                             <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">
                                 {% csrf_token %}    
                                 <div class="form-row"><!--Operarios-->
-                                    <div class="col">
-                                        <a>  Cantidad de intervalos
-                                            <select name="canIntervalos" class="form-control" id="canIntervalos" required>
-                                                <option value="10" selected>10</option>
-                                                <option value="11">11</option>
-                                                <option value="12">12</option>
-                                                <option value="13">13</option>
-                                                <option value="14">14</option>
-                                                <option value="15">15</option>
-                                            </select>
-                                        </a>
-                                    </div>
+                                    
+                                    <label for="canIntervalos">Cantidad de intervalos</label> 
+                                        <select name="canIntervalos" class="form-control" id="canIntervalos" required>
+                                            <option value="10" selected>10</option>
+                                            <option value="11">11</option>
+                                            <option value="12">12</option>
+                                            <option value="13">13</option>
+                                            <option value="14">14</option>
+                                            <option value="15">15</option>
+                                        </select>
+                                    
                         
-                                    <div class="col">
+                                   
+                                    <label for="operario">Operario</label>
+                                        <select name="operario" class="form-control" id="operario" required>
+                                            <option value="1" selected>{{operario.nombre }}</option>
+                                        </select>
+
+                                    <label for="factorRitmo">Factor de ritmo (BSI)</label> 
+                                        <select name="factorRitmo" class="form-control" id="factorRitmo" required>
+                                            
+                                            <option  value= {{operario.factorRitmo}}  selected>{{operario.factorRitmo}}</option> 
+                                            
+                                        </select>
                                         
-                                        <a>
-                                            <select name="operarios" class="form-control" id="operario" required>
-                                                <option disabled selected value>- Operario -</option>
-                                            {% for operario in operarios %}
-                                                <option value={{operario.id}}>{{operario.nombre}}</option>
-                                                                                
-                                            {% endfor %}
-                                            </select>
-                                        </a>
-                                    </div>
-
-                                    <div class="col">
-                                        <a>- Factor de ritmo (BSI) -
-                                            <select name="factorRitmo" class="form-control" id="factorRitmo" required>
                                                 
-                                                <option  value= 0  selected>0</option> 
-                                                <option  value= 0,5  >50</option> 
-                                                <option  value= 0,75 >75</option>
-                                                <option  value= 1>100</option>
-                                                <option  value= 1,25 >125</option>
-                                                <option  value= 1,50 >150</option>
-                                            </select>
-                                        </a>
-                                                
-                                    </div>
+                                    
 
-                                    <div class="col">
-                                        <a>- Escala de suplementos -
+                                    <label for="escalaSuplementos"> Escala de suplementos</label>
                                             <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" required>
                                                 
-                                                <option value="0,02" selected>2%</option>
-                                                <option value="0,04">4%</option>
-                                                <option value="0,06">6%</option>
-                                                <option value="0,08">8%</option>
-                                                <option value="0,10">10%</option>
-                                                <option value="0,12">12%</option>
-                                                <option value="0,14">14%</option>
-                                                <option value="0,16">16%</option>
+                                                <option value="{{operario.escalaSuplementos}}" selected>{{operario.escalaSuplementos}}</option>
+                                               
                                             </select>
-                                        </a>                                       
+                                                                             
                                                 
-                                    </div>
+                                    
 
                                 </div>
                         

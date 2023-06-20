@@ -116,5 +116,22 @@ def guardarTiempoParcial(request):
     except Exception as e:
         messages.warning(request, f"Error: {e}")
         
-    return render(request,'cronometro\cronometro.html',{'idOperarios' : idOperario})
-    ...
+    return render(request,'cronometro\cronometro.html',{'operario' : operario})
+
+def guardarTiempoEstandar(request, id):
+    try:
+        tiempoEstandar = 'sin datos'
+        operario = Operario.objects.get(id = id)
+        #print(json.dumps(request.session.get('tiempos_cookie')))
+        
+        if 'tiempos_estandar' in request.COOKIES: #de esta forma ya que esta cookie esta en el navegador al ser creada con js
+            tiempoEstandar = request.COOKIES['tiempos_estandar']
+            operario.tiempoEstandar= float(tiempoEstandar)
+            operario.save()
+        messages.success(request, f"Datos guardados ({tiempoEstandar}) seleccionado con éxito")
+        return render(request,'cronometro/cronometro.html',{'operario' : operario})
+    
+    except Exception as e:
+        messages.warning(request, f"Error: {e}")
+    return render(request,'cronometro/cronometro.html',{'operario' : operario})
+    #return redirect('cronometro:cronometro')

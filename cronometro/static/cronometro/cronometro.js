@@ -100,7 +100,7 @@ function parcialCronometro() {
     
 
     for (let i = 0; i < tiempoParcial.length-1; i++) {
-        sumatoriaT += tiempoParcial[i];
+        sumatoriaT = sumatoriaT + tiempoParcial[i];
         console.log(Math.round( tiempoParcial[i]));
         divTiempos.innerHTML +=( 
 
@@ -114,11 +114,12 @@ function parcialCronometro() {
             '</div>'
 
         );
-
-       
+        console.log("tPromEstandar: ");
+        console.log(tPromEstandar);
+        console.log(sumatoriaT);
     }
     tPromEstandar = sumatoriaT/tiempoParcial.length;
-
+   
     setCookie('tiempos_estandar',tPromEstandar,30);
     setCookie('tiempos_cookie',tiempoParcial,30);
 }
@@ -203,7 +204,7 @@ function iniciar() {
 function detener() {
     restantes = 0;
     tiempos=tiempoParcial;
-    
+    console.log(( tPromEstandar));
     clearInterval(tiempoActual);
     
 }
@@ -216,3 +217,39 @@ document.getElementById('iniciarBoton').addEventListener('click', iniciar);
 document.getElementById('pararBoton').addEventListener('click', detener);
 document.getElementById('enviarBoton').addEventListener('click', enviarVariables);
 document.getElementById('tiemposParciales').addEventListener('click', parcialCronometro);
+
+
+//grafico canvas chart para tiempos
+
+var graficoTiempos = document.getElementById("graficoTiempos");
+function graficoTiempos() {
+    Chart.defaults.global.defaultFontFamily = "Lato";
+    Chart.defaults.global.defaultFontSize = 18;
+
+    var speedData = {
+    labels: ["0s", "10s", "20s", "30s", "40s", "50s", "60s"],
+    datasets: [{
+        label: "Car Speed (mph)",
+        data: [0, 59, 75, 20, 20, 55, 40],
+    }]
+    };
+
+    var chartOptions = {
+    legend: {
+        display: true,
+        position: 'top',
+        labels: {
+        boxWidth: 80,
+        fontColor: 'black'
+        }
+    }
+    };
+
+    var lineChart = new Chart(graficoTiempos, {
+    type: 'line',
+    data: speedData,
+    options: chartOptions
+    });
+}
+
+document.getElementById('graficar').addEventListener('click', graficoTiempos);
