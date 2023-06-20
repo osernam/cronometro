@@ -19,7 +19,12 @@
                     </div>
 
                    <div> 
-
+                        {% if messages %}
+                            {% for message in messages %}
+                                <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+                            {% endfor %}
+                        {% endif %}
+                        
                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modalOperarios">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Parametros
@@ -44,6 +49,9 @@
                                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
                                         </a>
+
+                                        
+
                                         <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                                             aria-labelledby="dropdownMenuLink">
                                            
@@ -141,7 +149,8 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}    
+                            <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">
+                                {% csrf_token %}    
                                 <div class="form-row"><!--Operarios-->
                                     <div class="col">
                                         <a>  Cantidad de intervalos

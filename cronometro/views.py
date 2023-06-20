@@ -4,7 +4,7 @@ from .models import *
 from django.db.models import Q
 # Mensajes tipo cookies temporales
 from django.contrib import messages
-
+from django import forms
 # Gestión de errores de base de datos
 from django.db import IntegrityError  
 # Paginador
@@ -18,6 +18,9 @@ import json
 def homeView(request):
     return render(request,'cronometro\index.html')
 
+def selecOperario (request):
+    operarios = Operario.objects.all()
+    return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios})
 def cronometroView(request):
     operarios = Operario.objects.all()
     return render(request,'cronometro\cronometro.html', {'operarios' : operarios})
@@ -86,24 +89,32 @@ def guardarOperario (request):
     return redirect('cronometro:home')  
 
 def guardarTiempoParcial(request):
-    if request.method == "POST":
-        tiempoParcial = request.POST.get('tiempos_cookie')
-        if tiempoParcial is not None:
-            tiempoParcial = json.loads(tiempoParcial)
+    
+    try:
+        #if request.method == "POST":
+           # tiempoParcial = request.POST.get('tiempos_cookie')
+           # if tiempoParcial is not None:
+               # tiempoParcial = json.loads(tiempoParcial)
 
-            if request.method == "POST":
-                #tiempoEstandar = request.session.get('tiempos_estandar')
-                idOperario = request.POST['operario']
-                operario = Operario.objects.get(id = idOperario)
-                
-                operario.factorRitmo= request.POST['factorRitmo']
-                operario.escalaSuplementos= request.POST['escalaSuplementos']
-                #operario.tiempoEstandar = tiempoEstandar
-                operario.save()
-                
+        if request.method == "POST":
+            #tiempoEstandar = request.session.get('tiempos_estandar')
+            idOperario = request.POST['idOperario']
+            operario = Operario.objects.get(id = idOperario)
+            
+            operario.factorRitmo= request.POST['factorRitmo']
+            operario.escalaSuplementos= request.POST['escalaSuplementos']
+            #operario.tiempoEstandar = tiempoEstandar
+            operario.save()
+                    
+            messages.success(request, f"Operario ({operario.nombre}) seleccionado con éxito")
+           # else:
+                #print("tiempos cookie es None")
         else:
-            print("tiempos cookie es None")
-    else:
-        print("El metodo de solisitud no esPOST")
-    return JsonResponse({'status': 'success'})
+            print("El metodo de solisitud no es POST")
+        #return JsonResponse({'status': 'success'})
+            
+    except Exception as e:
+        messages.warning(request, f"Error: {e}")
+        
+    return render(request,'cronometro\cronometro.html',{'idOperarios' : idOperario})
     ...

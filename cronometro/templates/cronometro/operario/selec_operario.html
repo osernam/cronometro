@@ -1,0 +1,100 @@
+
+
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Seleccion de operario{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+{% endif %}
+
+<div class="contact-from-section mb-150">
+    <div class="container"> 
+        <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">
+             {% csrf_token %}  
+     
+            
+                    <a>  
+                        <label for="canIntervalos">Seleccione un operario:</label>
+                        <select name="canIntervalos" class="form-control" id="canIntervalos" required>
+                            <option value="10" selected>10</option>
+                            <option value="11">11</option>
+                            <option value="12">12</option>
+                            <option value="13">13</option>
+                            <option value="14">14</option>
+                            <option value="15">15</option>
+                        </select>
+                    </a>
+
+                
+                    
+                    <a>
+                        <label for="idOperario">Seleccione un operario:</label>
+                        <select id="idOperario" name="idOperario" class="form-control"  required>
+                            <option disabled selected value>- Operario -</option>
+                            {% for operario in operarios %}
+                                <option value="{{operario.id}}">{{operario.nombre}}</option>
+                                                                
+                            {% endfor %}
+                        </select>
+                    </a>
+                
+
+                
+                    <a>
+                        <label for="factorRitmo">Factor de ritmo (BSI)</label>
+                        <select name="factorRitmo" class="form-control" id="factorRitmo" required>
+                            
+                            <option  value= 0  selected>0</option> 
+                            <option  value= 0,5  >50</option> 
+                            <option  value= 0.75 >75</option>
+                            <option  value= 1>100</option>
+                            <option  value= 1.25 >125</option>
+                            <option  value= 1.50 >150</option>
+                        </select>
+                    </a>
+                            
+                
+
+                
+                    <a>
+                        <label for="escalaSuplementos">Escala de suplementos</label>
+                        <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" required>
+                            
+                            <option value="0.02" selected>2%</option>
+                            <option value="0.04">4%</option>
+                            <option value="0.06">6%</option>
+                            <option value="0.08">8%</option>
+                            <option value="0.10">10%</option>
+                            <option value="0.12">12%</option>
+                            <option value="0.14">14%</option>
+                            <option value="0.16">16%</option>
+                        </select>
+                    </a>                                       
+                            
+                
+
+            
+
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                <a class="btn btn-primary" href="#">Aceptar</a>
+                <button type="submit">Enviar formulario</button>
+            </div>
+        </form>    
+    </div>
+</div>
+
+
+
+
+{% endblock contenedor %}  

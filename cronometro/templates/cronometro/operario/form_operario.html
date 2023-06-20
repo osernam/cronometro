@@ -14,7 +14,7 @@
         {% for message in messages %}
             <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
         {% endfor %}
-    {% endif %}
+{% endif %}
 <br>
 <div class="contact-from-section mb-150">
     <div class="container">
