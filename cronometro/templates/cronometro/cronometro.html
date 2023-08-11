@@ -96,6 +96,59 @@
 
 
                                 </canvas>
+
+                                
+                                    <!-- Incluye la librería Chart.js y el código de JavaScript para crear el gráfico -->
+                                
+                                <script>
+                                    var ctx = document.getElementById('graficoTiempos').getContext('2d');
+                                    var datos = JSON.parse('{{ datos_json|escapejs }}');
+                                    console.log(datos);
+                                    var myChart = new Chart(ctx, {
+                                        type: 'line',
+                                        data: {
+                                            labels: [],
+                                            datasets: [{
+                                                label: 'Mi gráfico',
+                                                data: datos,
+                                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                                borderColor: 'rgba(255, 99, 132, 1)',
+                                                borderWidth: 1
+                                            }]
+                                        },
+                                        options: {
+                                            scales: {
+                                                yAxes: [{
+                                                    ticks: {
+                                                        beginAtZero: true
+                                                    }
+                                                }]
+                                            }
+                                        }
+                                    });
+                            
+                                    function actualizarGrafico(valor) {
+                                        // Envía una solicitud AJAX al servidor para obtener los nuevos datos del gráfico
+                                        $.ajax({
+                                            
+                                            data: {
+                                                valor: valor
+                                            },
+                                            success: function(data) {
+                                                // Agrega los nuevos datos al gráfico
+                                                myChart.data.labels.push(new Date().toLocaleTimeString());
+                                                myChart.data.datasets[0].data.push(data);
+                                                myChart.update();
+                                            }
+                                        });
+                                    }
+                            
+                                    // Actualiza el gráfico cada 5 segundos con el valor de la cookie
+                                    var valor = '{{ request.COOKIES.tiempos_miliseg }}';
+                                    var temporizador = setInterval(function() {
+                                        actualizarGrafico(valor);
+                                    }, 5000);
+                                </script>
                             </div>    
                         </div>
                         <!--  Chart tiempos-->

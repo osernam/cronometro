@@ -70,10 +70,12 @@ function parcialCronometro() {
     var minA = 0;
     var segA = 0;
     var centA = 0;
+    var tiemposMiliseg= [];
     
-    
-    var tiem = ((minutos*60)+segundos)/60+centesimas;
-    var tiemAnt = ((minA*60)+segA)/60+centA;
+    var tiem = ((minutos*6000)+segundos*100)+centesimas;
+    var tiemAnt = ((minA*6000)+segA*100)+centA;
+
+    tiemposMiliseg.push(tiem); 
     if (factorRitmo == 0) {
         tiempoNormal= tiem ;
     }else{
@@ -109,11 +111,12 @@ function parcialCronometro() {
                 '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
                     'Tiempo '+(i+1)+
                 '</div>'+
-                '<div class="h6 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i]+'</div>'+
+                '<div class="h6 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i]+'  tiempo observado '+tiemposMiliseg+'</div>'+
                 '<br>'+            
             '</div>'
 
         );
+        
         console.log("tPromEstandar: ");
         console.log(tPromEstandar);
         console.log(sumatoriaT);
@@ -122,6 +125,7 @@ function parcialCronometro() {
    
     setCookie('tiempos_estandar',tPromEstandar,30);
     setCookie('tiempos_cookie',tiempoParcial,30);
+    setCookie('tiempos_miliseg',tiemposMiliseg,30);
 }
 
 
