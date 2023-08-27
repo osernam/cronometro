@@ -18,18 +18,27 @@
 <br>
 <div class="contact-from-section mb-150">
     <div class="container">
-        <div class="formulario">
+        <div class="formulario" style="display: flex; flex-direction: column; gap: 10px;">
             <form action="{% url 'cronometro:guardarOperario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+            <div>
+                <p>Nombres del empleado</p>
+                    
+                <p><input name="nombre" type="text" placeholder="Nombres" required>
+                </p>
+            </div>
+            <div>
+                <p>Email del operario</p>
+                    
+                <p><input name="email" type="email" placeholder="Email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                </p>
+            </div>
+            <div>
+                <p>Entidad</p>
+                    
+                <p><input name="entidad" type="text" placeholder="Entidad" required>
+                </p>
+            </div>
             
-                <p>Nombres del empleado
-                    <input name="nombre" type="text" placeholder="Nombres" required>
-                </p>
-                <p>Email del operario
-                    <input name="email" type="email" placeholder="Email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
-                </p>
-                <p>Entidad
-                    <input name="entidad" type="text" placeholder="Entidad" required>
-                </p>
                 <div class="col">
                     <label for="habilitadoJuego">Habilitado</label>
                     <br>
