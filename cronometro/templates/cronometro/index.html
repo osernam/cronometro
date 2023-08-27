@@ -14,6 +14,58 @@
     {% endfor %}
 {% endif %}
 
+{% if request.session.logueoUsuario %}
+{% if request.session.logueoUsuario.4 == 'Usuario' %}
+
+{% else %}
+{% endif %}
+{% endif %}
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicadores -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src=" {% static 'cronometro/img\Estudio_tiempos.png' %}" alt="Imagen 1">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'cronometro/img/fase_1.png' %}" alt="Imagen 2">
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'cronometro/img/fase_2.png' %}" alt="Imagen 3">
+      </div>
+	  <div class="carousel-item">
+        <img src="{% static 'cronometro/img/fase_3.png' %}" alt="Imagen 4">
+      </div>
+	  <div class="carousel-item">
+        <img src="{% static 'cronometro/img/fase_4.png' %}" alt="Imagen 5">
+      </div>
+	  <div class="carousel-item">
+        <img src="{% static 'cronometro/img/fase_5.png' %}" alt="Imagen 6">
+      </div>
+	  <div class="carousel-item">
+        <img src="{% static 'cronometro/img/fase_5.1.png' %}" alt="Imagen 7">
+      </div>
+    </div>
+	
+    <!-- Controles -->
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Anterior</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Siguiente</span>
+    </a>
+  </div>
+
+  
 
 
 
