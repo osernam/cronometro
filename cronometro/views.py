@@ -11,6 +11,9 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator 
 import json 
 from django.core.serializers.json import DjangoJSONEncoder
+#informe operario
+from django.http import HttpResponse
+from openpyxl import Workbook
 
 #Libreria para encripación
 from passlib.context import CryptContext
@@ -188,6 +191,78 @@ def guardarOperario (request):
         
     return redirect('cronometro:home')  
 
+def listarOperarios(request):
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        operarios = Operario.objects.order_by('-estado')
+        paginator = Paginator(operarios, 10)
+        page_number = request.GET.get('page')
+        operarios = paginator.get_page(page_number)
+        return render(request, 'cronometro/operario/listado_operarios.html', {'operarios' : operarios})
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def actualizarOperario(request, id):
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        if login:
+            operario = Operario.objects.get(id = id)
+            return render(request, 'cronometro/operario/edicion_operario.html', {'operario': operario})
+        else:
+            messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+            return redirect('cronometro:listarOperarios')
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def edicionOperario(request):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            if login:
+                if request.method == "POST":
+                    operario = Operario.objects.get(id = request.POST['id'])
+                    
+                    operario.nombre = request.POST['nombre']
+                    operario.entidad = request.POST['entidad']
+                    operario.estado = request.POST['estado']
+                    
+                    operario.save()
+                    messages.success(request, f"operario ({operario.nombre})  editado exitosamente")
+                else:
+                    messages.warning(request, "Usted no ha enviado datos")
+            else:
+                messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+                return redirect('cronometro:listarOperarios')
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarOperarios')
+
+
+
+def deshabilitarOperario(request, id):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            operario = Operario.objects.get(id = id)
+            if operario.estado == True:
+                operario.estado = False
+            else:
+                operario.estado = True
+            
+            operario.save()
+            messages.success(request, f"Proveedor ({operario.nombre}) deshabilitado exitosamente")
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarOperarios')
+
 def guardarTiempoParcial(request):
     
     try:
@@ -257,3 +332,46 @@ def actualizarDatos(request):
 
     # Devuelve los nuevos datos en formato JSON
     return JsonResponse(nuevos_datos, safe=False)
+
+
+
+def generar_informe(request, id):
+    operario = Operario.objects.get(id = id)
+    # Crear un libro de Excel
+    libro = Workbook()
+    hoja = libro.active
+
+    # Agregar encabezados
+    hoja['A1'] = 'Fecha'
+    hoja['B1'] = 'Nombre'
+    hoja['C1'] = 'Entidad'
+    hoja['D1'] = 'Email'
+    hoja['E1'] = 'Tiempo estandar' 
+    hoja['F1'] = 'Factor de ritmo'
+    hoja['G1'] = 'Escala suplementos'
+    
+   
+
+    # Agregar datos
+    hoja['A2'] = operario.fecha
+    hoja['B2'] = operario.nombre
+    hoja['C2'] = operario.entidad
+    hoja['D2'] = operario.email
+    hoja['E2'] = operario.tiempoEstandar
+    hoja['F2'] = operario.factorRitmo
+    hoja['G2'] = operario.escalaSuplementos
+    
+
+    
+
+    # Definir nombre del archivo
+    nombre_archivo = 'informeOperario.xlsx'
+
+    # Crear la respuesta HTTP con el archivo adjunto
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+
+    # Guardar el libro de Excel en la respuesta HTTP
+    libro.save(response)
+
+    return response

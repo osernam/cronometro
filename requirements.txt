@@ -1,0 +1,11 @@
+virtualenv
+
+#> virtualenv env
+
+django
+
+#> pip Install django
+
+#> pip install renku-sphinx-theme
+openpyxl
+

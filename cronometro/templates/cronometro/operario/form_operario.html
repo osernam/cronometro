@@ -3,7 +3,9 @@
 {% extends 'cronometro/base/base.html' %}
 {% load static %}
 
-{% block titulo %}Inicio{% endblock titulo %}
+{% block titulo %}Creacion de operario{% endblock titulo %}
+
+
 
 {% block encabezado %}Bienbenido{% endblock encabezado %}
 {% block subencabezado %}Index{% endblock subencabezado %}
@@ -15,19 +17,36 @@
             <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
         {% endfor %}
 {% endif %}
+{% if request.session.logueoUsuario.4 == 'Usuario' %}
+
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+
+                    <p><strong >Registro de operario </strong></p>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <br>
 <div class="contact-from-section mb-150">
     <div class="container">
         <div class="formulario" style="display: flex; flex-direction: column; gap: 10px;">
             <form action="{% url 'cronometro:guardarOperario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
             <div>
-                <p>Nombres del empleado</p>
+                <p>Nombres del operario(a)</p>
                     
                 <p><input name="nombre" type="text" placeholder="Nombres" required>
                 </p>
             </div>
             <div>
-                <p>Email del operario</p>
+                <p>Email del operario(a)</p>
                     
                 <p><input name="email" type="email" placeholder="Email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
                 </p>
@@ -67,6 +86,6 @@
     </div>
 </div>
 
-
+{% endif %}
 
 {% endblock contenedor %}  

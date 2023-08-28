@@ -26,7 +26,7 @@ class Operario(models.Model):
     factorRitmo = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     escalaSuplementos = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     fecha = models.DateTimeField(auto_now_add=True, blank=True)
-    estado = models.BooleanField()
+    estado = models.BooleanField(default=True)
     
     def __str__(self) -> str:
         return f"{self.nombre}"
