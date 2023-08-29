@@ -122,6 +122,82 @@ def guardarUsuario(request):
         
     return redirect('cronometro:home')  
 
+def listarUsuarios(request):
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        usuarios = Usuario.objects.order_by('-estado')
+        paginator = Paginator(usuarios, 10)
+        page_number = request.GET.get('page')
+        usuarios = paginator.get_page(page_number)
+        return render(request, 'cronometro/usuario/listado_usuarios.html', {'usuarios' : usuarios})
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def actualizarUsuario(request, id):
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        if login:
+            usuario = Usuario.objects.get(id = id)
+            return render(request, 'cronometro/usuario/edicion_usuario.html', {'usuario': usuario})
+        else:
+            messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+            return redirect('cronometro:listarUsuarios')
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def edicionUsuario(request):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            if login:
+                if request.method == "POST":
+                    usuario = Usuario.objects.get(id = request.POST['id'])
+                    
+                    usuario.nombre = request.POST['nombre']
+                    usuario.apellido = request.POST['apellido']
+                    #usuario.rol = request.POST['rol']
+                    usuario.estado = request.POST['estado']
+                    
+                    usuario.save()
+                    messages.success(request, f"usuario ({usuario.nombre})  editado exitosamente")
+                else:
+                    messages.warning(request, "Usted no ha enviado datos")
+            else:
+                messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+                return redirect('cronometro:listarUsuarios')
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarUsuarios')
+
+
+
+def deshabilitarUsuario(request, id):
+    
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            usuario = Usuario.objects.get(id = id)
+            if usuario.estado == True:
+                usuario.estado = False
+            else:
+                usuario.estado = True
+            
+            usuario.save()
+            messages.success(request, f"Proveedor ({usuario.nombre}) modificado exitosamente")
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarUsuarios')
+
+
+
 def logout(request):
     del request.session['logueoUsuario']
     return redirect('cronometro:home')
@@ -314,27 +390,6 @@ def guardarTiempoEstandar(request, id):
     return render(request,'cronometro/cronometro.html',{'operario' : operario})
     #return redirect('cronometro:cronometro')
     
-#grafico
-
-def stats(request):
-    views = (
-        View.objects.all()	    
-        .annotate(date=TruncDay("created_at"))
-        .values("date")
-        .annotate(y=Count("id"))
-        .order_by("-date")
-    )    
-    view_s = json.dumps(list(views), cls=DjangoJSONEncoder)
-    return render(request, 'stats.html', {
-        'view_s': view_s,
-    })
-
-def actualizarDatos(request):
-    # Obtén los nuevos datos del gráfico
-    nuevos_datos = random.randint(0, 100)
-
-    # Devuelve los nuevos datos en formato JSON
-    return JsonResponse(nuevos_datos, safe=False)
 
 
 #Informe en excel

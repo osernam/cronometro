@@ -7,9 +7,16 @@ urlpatterns = [
     path('index/', homeView, name='home'),
     path('login/', login, name = 'login'),
     path('logout/', logout, name = 'logout'),
+    #Usuario
     path('registro/', registro, name = 'registro'),
     path('save/', guardarUsuario, name = 'guardarUsuario'),
     
+    path('list_usuario/', listarUsuarios, name='listarUsuarios'),
+    path('edit_usuario/<int:id>', actualizarUsuario, name='actualizarUsuario'),
+    path('edicion_usuario/>', edicionUsuario, name='edicionUsuario'),
+    path('estado_usuario/<int:id>', deshabilitarUsuario, name='deshabilitarUsuario'),
+    
+    #Cronometro
     path('cronometro/', cronometroView, name= 'cronometro'),
     path('selecOper/', selecOperario, name= 'selecOperario'),
     path('cronometro/cronometro/tiempo-parcial/', tiempo_parcial, name='tiempo-parcial'),
@@ -25,6 +32,6 @@ urlpatterns = [
     path('estado_operario/<int:id>', deshabilitarOperario, name='deshabilitarOperario'),
     
     
-    path('cronometro/actualizar_datos/', actualizarDatos, name='actualizar_datos'),
+    #informe
     path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),
 ]
