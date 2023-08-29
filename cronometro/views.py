@@ -32,9 +32,27 @@ contexto = CryptContext(
 
 
 def homeView(request):
+    """
+    Renderiza la vista de inicio.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+    
+    Devoluciones:
+        HttpResponse: la respuesta HTML representada.
+    """
     return render(request,'cronometro\index.html')
 
 def selecOperario (request):
+    """
+    Representa la plantilla 'selec_operario.html' con la solicitud dada.
+
+    Parámetros:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+    
+    Devoluciones:
+        HttpResponse: el objeto de respuesta HTTP.
+    """
     operarios = Operario.objects.all()
     
     datos = [0, 59, 75, 20, 20, 55, 40]  
@@ -49,6 +67,18 @@ def selecOperario (request):
 
 
 def login (request):
+    """
+    Esta función es responsable de manejar la solicitud de inicio de sesión.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+
+    Devoluciones:
+        HttpResponseRedirect: una respuesta de redireccionamiento a la página de inicio.
+
+    Sube:
+        Usuario.DoesNotExist: Si el usuario no existe.
+    """
     if request.method == "POST":
         try:
             
@@ -77,6 +107,7 @@ def login (request):
         return redirect('cronometro:home')
     
 def registro(request):
+    
     """
     sigup
     renderiza el template  
@@ -123,6 +154,16 @@ def guardarUsuario(request):
     return redirect('cronometro:home')  
 
 def listarUsuarios(request):
+    """
+    La función ListarUsuarios se encarga de recuperar y paginar una lista de usuarios de la base de datos.
+
+    Parámetros:
+        - solicitud: el objeto de solicitud que contiene información sobre la solicitud HTTP actual.
+    
+    Devoluciones:
+        - Si el usuario ha iniciado sesión, devuelve la lista renderizada de usuarios usando la plantilla 'cronometro/usuario/listado_usuarios.html'.
+        - Si el usuario no ha iniciado sesión, redirige a la URL 'cronometro:home' después de mostrar un mensaje de advertencia.
+    """
     login = request.session.get('logueoUsuario', False)
     if login:
         usuarios = Usuario.objects.order_by('-estado')
@@ -135,6 +176,17 @@ def listarUsuarios(request):
         return redirect('cronometro:home')
 
 def actualizarUsuario(request, id):
+    """
+    Actualiza un usuario en la base de datos con el ID proporcionado.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+        id (int): El ID del usuario que se va a actualizar.
+    
+    Devoluciones:
+        HttpResponse: la página HTML representada para editar el usuario si el usuario ha iniciado sesión y tiene permiso.
+        De lo contrario, redirige a la página de lista de usuarios con un mensaje de advertencia.
+    """
     login = request.session.get('logueoUsuario', False)
     if login:
         if login:
@@ -148,6 +200,15 @@ def actualizarUsuario(request, id):
         return redirect('cronometro:home')
 
 def edicionUsuario(request):
+    """
+    Edite un usuario en el sistema según la solicitud proporcionada.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud que contiene los datos del usuario.
+
+    Devoluciones:
+        HttpResponse: una respuesta de redireccionamiento a la página de lista de usuarios.
+    """
     try:
         login = request.session.get('logueoUsuario', False)
         if login:
@@ -177,7 +238,19 @@ def edicionUsuario(request):
 
 
 def deshabilitarUsuario(request, id):
-    
+    """
+    Deshabilita a un usuario según su ID.
+
+    Argumentos:
+        solicitud: el objeto de solicitud HTTP.
+        id: El ID del usuario que se va a deshabilitar.
+
+    Devoluciones:
+        HttpResponseRedirect: Redirección a la vista 'listarUsuarios'.
+
+    Sube:
+        Excepción: Si hay un error durante el proceso.
+    """
     try:
         login = request.session.get('logueoUsuario', False)
         if login:
@@ -199,14 +272,41 @@ def deshabilitarUsuario(request, id):
 
 
 def logout(request):
+    """
+    Elimina la clave 'logueoUsuario' del diccionario de sesión y redirige
+    al usuario a la URL 'cronometro:home'.
+
+    Parámetros:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+
+    Devoluciones:
+        HttpResponseRedirect: una respuesta de redireccionamiento a la URL 'cronometro:home'.
+    """
     del request.session['logueoUsuario']
     return redirect('cronometro:home')
     
 def cronometroView(request):
+    """
+    Representa la plantilla 'cronometro.html' con una lista de todos los objetos 'Operario'.
+
+    parámetro: 
+        el objeto de solicitud HTTP.
+    return: 
+        La plantilla HTML renderizada.
+    """
     operarios = Operario.objects.all()
     return render(request,'cronometro\cronometro.html', {'operarios' : operarios})
 
 def tiempo_parcial(request):
+    """
+    Esta función maneja la solicitud 'tiempo_parcial'.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+
+    Devoluciones:
+        JsonResponse: La respuesta JSON con el estado de la solicitud.
+    """
     if request.method == "POST":
         tiempoParcial = request.POST.get('tiempoParcial')
         if tiempoParcial is not None:
@@ -221,6 +321,15 @@ def tiempo_parcial(request):
 
 
 def base(request):
+    """
+    Representa la plantilla base para la aplicación de cronómetro.
+
+    Parámetros:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+
+    Devoluciones:
+        HttpResponse: la plantilla base renderizada.
+    """
     return render(request,'cronometro/base/base.html')
 
 def crearOperario(request):
@@ -240,7 +349,7 @@ def guardarOperario (request):
     Parameters:
     request (HttpRequest): La solicitud HTTP recibida.
     Returns:
-    HttpResponseRedirect: Redirige al usuario hacia la página home si el operario se guarda correctamente.
+        HttpResponseRedirect: Redirige al usuario hacia la página home si el operario se guarda correctamente.
     """
     
     try: 
@@ -270,6 +379,22 @@ def guardarOperario (request):
     return redirect('cronometro:home')  
 
 def listarOperarios(request):
+    """
+    Listar Operarios.
+    Esta función enumera los operarios (trabajadores). Comprueba si el usuario ha iniciado sesión y, de ser así, recupera una lista de operarios de la base de datos, pagina los resultados y renderiza la plantilla 'cronometro/operario/listado_operarios.html' con los datos de los operarios. Si el usuario no ha iniciado sesión, muestra un mensaje de advertencia y redirige a la URL 'cronometro:home'.
+
+
+    Parámetros
+    ----------
+    solicitud: Solicitud Http
+        El objeto de solicitud HTTP.
+
+    Devoluciones
+    -------
+    Respuesta HTTP
+        La respuesta HTTP que contiene la plantilla representada o una respuesta de redireccionamiento.
+
+     """
     login = request.session.get('logueoUsuario', False)
     if login:
         operarios = Operario.objects.order_by('-estado')
@@ -282,6 +407,18 @@ def listarOperarios(request):
         return redirect('cronometro:home')
 
 def actualizarOperario(request, id):
+    """
+    Actualiza la información de un operador y devuelve la página HTML correspondiente para editarla.
+
+    Parámetros:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+        id (int): El ID del operador que se actualizará.
+
+    Devoluciones:
+        HttpResponse: la página HTML para editar la información del operador.
+
+
+     """
     login = request.session.get('logueoUsuario', False)
     if login:
         if login:
@@ -295,6 +432,17 @@ def actualizarOperario(request, id):
         return redirect('cronometro:home')
 
 def edicionOperario(request):
+    """
+    Edita un operador según la solicitud proporcionada.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud HTTP que contiene la información necesaria.
+    
+    Devoluciones:
+        HttpResponseRedirect: Redirige a la vista 'listarOperarios' luego de editar el operador.
+    
+
+    """
     try:
         login = request.session.get('logueoUsuario', False)
         if login:
@@ -323,6 +471,18 @@ def edicionOperario(request):
 
 
 def deshabilitarOperario(request, id):
+    """
+    Desactiva un operador.
+
+    Argumentos:
+        solicitud: el objeto de la solicitud.
+        id: El ID del operador a deshabilitar.
+
+    Devoluciones:
+        Una redirección a la vista 'listarOperarios'.
+
+
+    """
     
     try:
         login = request.session.get('logueoUsuario', False)
@@ -343,6 +503,15 @@ def deshabilitarOperario(request, id):
     return redirect('cronometro:listarOperarios')
 
 def guardarTiempoParcial(request):
+    """
+     Guarda el tiempo parcial de una solicitud.
+    
+     Parámetros:
+         - solicitud: el objeto de solicitud HTTP.
+        
+     Devoluciones:
+         - render: La respuesta HTTP renderizada con la plantilla 'cronometro\cronometro.html'.
+     """
     
     try:
         #if request.method == "POST":
@@ -373,14 +542,24 @@ def guardarTiempoParcial(request):
     return render(request,'cronometro\cronometro.html',{'operario' : operario})
 
 def guardarTiempoEstandar(request, id):
+    """
+    Guarda el tiempo estándar de un operador en la base de datos y muestra un mensaje de éxito.
+
+    Argumentos:
+        solicitud (HttpRequest): el objeto de solicitud HTTP.
+        id (int): El ID del operador.
+    
+    Devoluciones:
+        HttpResponse: el objeto de respuesta HTTP con la plantilla representada.
+    """
     try:
         tiempoEstandar = 'sin datos'
         operario = Operario.objects.get(id = id)
         #print(json.dumps(request.session.get('tiempos_cookie')))
         
         if 'tiempos_estandar' in request.COOKIES: #de esta forma ya que esta cookie esta en el navegador al ser creada con js
-            tiempoEstandar = request.COOKIES['tiempos_estandar']
-            operario.tiempoEstandar= float(tiempoEstandar)
+            tiempoE = request.COOKIES['tiempos_estandar']
+            operario.tiempoEstandar= float( (tiempoE))
             operario.save()
         messages.success(request, f"Datos guardados ({tiempoEstandar}) seleccionado con éxito")
         return render(request,'cronometro/cronometro.html',{'operario' : operario})
@@ -395,6 +574,16 @@ def guardarTiempoEstandar(request, id):
 #Informe en excel
 
 def generarInforme(request, id):
+    """
+    Genera un informe de Excel para un operario determinado y lo devuelve como un archivo descargable.
+
+    Parámetros:
+    - solicitud: el objeto de solicitud HTTP.
+    - id: El ID del operario.
+
+    Devoluciones:
+    - respuesta: un objeto de respuesta HTTP que contiene el informe de Excel generado como un archivo descargable.
+    """
     operario = Operario.objects.get(id = id)
     # Crear un libro de Excel
     libro = Workbook()
