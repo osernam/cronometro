@@ -144,7 +144,7 @@ function parciales(){
     var tNor = document.getElementById('tiempoNor');
     var tEst = document.getElementById('tiempoEst');
     var divTiempos = document.getElementById('tiemposCronometro');
-    divTiempos.innerHTML = 'hola';
+    divTiempos.innerHTML = '';
     
 
     for (let i = 0; i < tiempoParcial.length; i++) {
@@ -172,8 +172,8 @@ function parciales(){
 
         
         
-        tNor.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(2) + " </p>";
-        tEst.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(2) + "</p>";
+        tNor.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(3) + " </p>";
+        tEst.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(3) + "</p>";
     }
 
     setCookie('tiempos_estandar',tiempoEstandar,30);

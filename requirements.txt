@@ -6,6 +6,11 @@ django
 
 #> pip Install django
 
-#> pip install renku-sphinx-theme
-openpyxl
 
+openpyxl
+#>pip install openpyxl
+
+sphinx
+
+#> pip install sphinx
+#> pip install renku-sphinx-theme
