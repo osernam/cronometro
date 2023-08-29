@@ -9,12 +9,12 @@
 {% block contenedor %}
 
                 <!-- Begin Page Content -->
-                <div class="container-fluid">
+                <div class="container-fluid" >
 
                     <!-- Page Heading -->
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         
-                        <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
+                        <a href="{% url 'cronometro:generarInforme' operario.id %}" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm"><i
                                 class="fas fa-download fa-sm text-white-50"></i> Generate Report</a>
                     </div>
 
@@ -35,10 +35,10 @@
 
                     <!-- Content Row  cajas superiores -->
 
-                    <div class="row">
+                    <div  id="contenido">
 
                         <!-- Area cronometro -->
-                        <div class="col-xl-8 col-lg-7">
+                        <div class="column">
                             <div class="card shadow mb-2">
                                 <!-- Card Header - Dropdown -->
                                 <div
@@ -52,15 +52,7 @@
 
                                         
 
-                                        <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
-                                            aria-labelledby="dropdownMenuLink">
-                                           
-                                            <div class="dropdown-header">Dropdown Header:</div>
-                                            <a class="dropdown-item" href="#">Action</a>
-                                            <a class="dropdown-item" href="#">Another action</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="#">Something else here</a>
-                                        </div>
+                                        
                                     </div>
                                 </div>
                                 <!-- Cronometro Body -->
@@ -87,11 +79,54 @@
 
                         </div>
                         <!--fin de Area cronometro -->
+                        
+                        <!--  Chart tiempos-->
+                        <div class="column">
+                            <div class="card shadow mb-4">
+                                <!-- Card Header - Dropdown -->
+                                <div
+                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">Tiempo</h6>
+                                    <div class="dropdown no-arrow">
+                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                        </a>
+                                        
+                                    </div>
+                                </div>
+                                <!-- Card Body -->
+                                <div class="card-body">
+                                    <div style="height: 200px; overflow: auto;" id= "tiemposCronometro">
+                                        <!-- Aqui apareceran los tiempos -->
+                                    </div>
+                                    <div id= "contenidoTes" class="mt-4 text-center small" >
+                                        <div id ="tiempoNor" class= "column" >
+                                            <span class="mr-2">
+                                                <i class="fas fa-circle text-primary"></i> Tiempo Normal
+                                                <div  class=""></div>
+                                            </span>
+                                        </div>
+                                        <div id="tiempoEst" class= "column"  >
+                                            
+                                            <span class="mr-2">
+                                                <i class="fas fa-circle text-success"></i> Tiempo Estandar
+                                                <div class=""></div>
+                                            </span>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--fin de Chart tiempos -->
+
                         <!-- Area graficos -->
 
-                        <div class="col-xl-4 col-lg-5">
+                        <div class="column">
                             <div class="card shadow mb-4">
-                                <a id="graficar" class="btn btn-primary" type="button">graficar</a>
+                                <a id="graficar" >grafica</a>
+                                <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
                                 <canvas id="graficoTiempos"  width="600" height="400">
 
 
@@ -151,40 +186,6 @@
                                 </script>
                             </div>    
                         </div>
-                        <!--  Chart tiempos-->
-                        <div class="col-xl-4 col-lg-5">
-                            <div class="card shadow mb-4">
-                                <!-- Card Header - Dropdown -->
-                                <div
-                                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                    <h6 class="m-0 font-weight-bold text-primary">Tiempo</h6>
-                                    <div class="dropdown no-arrow">
-                                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                        </a>
-                                        
-                                    </div>
-                                </div>
-                                <!-- Card Body -->
-                                <div class="card-body">
-                                    <div style="height: 200px; overflow: auto;" id= "tiemposCronometro">
-                                        <!-- Aqui apareceran los tiempos -->
-                                    </div>
-                                    <div class="mt-4 text-center small">
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-primary"></i> Direct
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-success"></i> Social
-                                        </span>
-                                        <span class="mr-2">
-                                            <i class="fas fa-circle text-info"></i> Referral
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
 
                         
                     </div>
@@ -224,15 +225,7 @@
                                 {% csrf_token %}    
                                 <div class="form-row"><!--Operarios-->
                                     
-                                    <label for="canIntervalos">Cantidad de intervalos</label> 
-                                        <select name="canIntervalos" class="form-control" id="canIntervalos" required>
-                                            <option value="10" selected>10</option>
-                                            <option value="11">11</option>
-                                            <option value="12">12</option>
-                                            <option value="13">13</option>
-                                            <option value="14">14</option>
-                                            <option value="15">15</option>
-                                        </select>
+                                    
                                     
                         
                                    
@@ -265,9 +258,8 @@
                         
 
                                 <div class="modal-footer">
-                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
-                                    <a class="btn btn-primary" href="#">Aceptar</a>
-                                    <button type="submit">Enviar formulario</button>
+                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cerrar</button>
+                                   
                                 </div>
                             </form>
 

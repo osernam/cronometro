@@ -15,7 +15,7 @@
     <!--  fonts for this template-->
     <link href="{% static 'cronometro/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css ">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
-    <link href="{% static 'cronometro/css/tarjetas.css' %}" rel="stylesheet">
+    <link href="{% static 'cronometro/css/estilos.css' %}" rel="stylesheet">
 
     <!-- styles for this template-->
     <link rel="stylesheet" href="{% static 'cronometro/css/sb-admin-2.min.css'  %}">
@@ -79,7 +79,7 @@
                         
                         <a class="collapse-item" href="{% url 'cronometro:listarOperarios' %}">  Reporte individual</a>
                         <a class="collapse-item" href="{% url 'cronometro:listarOperarios' %}">Consulta general</a>
-                    </div>
+                    </div>href="{% static 'cronometro:generarInforme operario.id' %}
                 </div>
             </li>
 
@@ -96,7 +96,7 @@
                         <h6 class="collapse-header">Opciones:</h6>
                         <a class="collapse-item" href="{% url 'cronometro:crearOperario' %}">Crear Operario</a>
                         <a class="collapse-item" href="utilities-border.html">Listar operarios</a>
-                        <a class="collapse-item" href="utilities-other.html">Other</a>
+                       
                     </div>
                 </div>
             </li>
@@ -104,38 +104,7 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
-            <!-- Heading -->
-            <div class="sidebar-heading">
-                Addons
-            </div>
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            <li class="nav-item">
-                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
-                    aria-expanded="true" aria-controls="collapsePages">
-                    <i class="fas fa-fw fa-folder"></i>
-                    <span>Pages</span>
-                </a>
-                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
-                    <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Login Screens:</h6>
-                        <a class="collapse-item" href="login.html">Login</a>
-                        <a class="collapse-item" href="register.html">Register</a>
-                        <a class="collapse-item" href="forgot-password.html">Forgot Password</a>
-                        <div class="collapse-divider"></div>
-                        <h6 class="collapse-header">Other Pages:</h6>
-                        <a class="collapse-item" href="404.html">404 Page</a>
-                        <a class="collapse-item" href="blank.html">Blank Page</a>
-                    </div>
-                </div>
-            </li>
-
-            <!-- Nav Item - Charts -->
-            <li class="nav-item">
-                <a class="nav-link" href="charts.html">
-                    <i class="fas fa-fw fa-chart-area"></i>
-                    <span>Charts</span></a>
-            </li>
+         
 
             <!-- Nav Item - Tables -->
             <li class="nav-item">
@@ -151,12 +120,6 @@
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
                 
-
-                <nav class="navbar navbar-dark bg-dark">
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggleExternalContent" aria-controls="navbarToggleExternalContent" aria-expanded="false" aria-label="Toggle navigation">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                </nav>
             </div>
 
             
@@ -272,7 +235,7 @@
                             
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Iniciar</span>
+                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Sesion</span>
                                 <img src="{% static 'cronometro/img/usuario.png' %}">
                                 
                             </a>

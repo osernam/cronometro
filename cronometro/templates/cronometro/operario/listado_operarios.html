@@ -52,6 +52,10 @@
                         </td>
                         <td>
                             <a href="{% url 'cronometro:actualizarOperario' operario.id %}" class="btn btn-info">Editar</a>
+                            <a class="btn"  href="{% url 'cronometro:generarInforme' operario.id %}">
+                                
+                                <i class="icono-descarga fas fa-download"></i> 
+                            </a>
                             
                         </td>
                     </tr>

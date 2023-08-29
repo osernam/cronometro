@@ -26,5 +26,5 @@ urlpatterns = [
     
     
     path('cronometro/actualizar_datos/', actualizarDatos, name='actualizar_datos'),
-    path('cronometro/informe_operario/<int:id>', generar_informe, name='generar_informe'),
+    path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),
 ]

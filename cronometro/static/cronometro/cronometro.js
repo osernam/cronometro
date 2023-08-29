@@ -5,13 +5,16 @@ var tiempoParcial = [];
 var tiempos = [];
 
 var restantes = 0;
-var canInterval = 10;
-canInterval= parseInt(document.getElementById("canIntervalos").value);
+
 var factorRitmo = parseInt(document.getElementById("factorRitmo").value);
 var escalaSuplementos = parseInt(document.getElementById("escalaSuplementos").value);
 var tPromEstandar = 0
 var sumatoriaT= 0
 var tiempoNormal = 0
+var tiempoEstandar =0
+var centesimas = 0;
+var segundos = 0;
+var minutos = 0;
 
 //Crear la cookie para guardar los tiempos
 
@@ -53,7 +56,7 @@ function eraseCookie(name) {
 }
 //fin cookies
   
-
+/*
 function parcialCronometro() {
     
     
@@ -62,11 +65,11 @@ function parcialCronometro() {
         
     }else {
         restantes = restantes - 1;        
-    }
+    
 
     if ( restantes == 0) {
         pararCronometro();
-    }  
+    }  }
     var minA = 0;
     var segA = 0;
     var centA = 0;
@@ -88,10 +91,10 @@ function parcialCronometro() {
     
     tiempoParcial.push(tiempoNormal +tiempoNormal*escalaSuplementos);
     
-    /*if (tiempoParcial.length != 0) {
+    if (tiempoParcial.length != 0) {
         var tiem = ((minutos*60)+segundos)/60+centesimas;
         tiempoParcial.push(1);
-    } */
+    } 
     //else {
       //  divTiempos.innerHTML = '';
     //}
@@ -101,7 +104,7 @@ function parcialCronometro() {
     divTiempos.innerHTML = '';
     
 
-    for (let i = 0; i < tiempoParcial.length-1; i++) {
+    for (let i = 0; i < tiempoParcial.length; i++) {
         sumatoriaT = sumatoriaT + tiempoParcial[i];
         console.log(Math.round( tiempoParcial[i]));
         divTiempos.innerHTML +=( 
@@ -126,14 +129,63 @@ function parcialCronometro() {
     setCookie('tiempos_estandar',tPromEstandar,30);
     setCookie('tiempos_cookie',tiempoParcial,30);
     setCookie('tiempos_miliseg',tiemposMiliseg,30);
+}*/
+
+function parciales(){
+    if (tiempoParcial.length == 0) {
+        tiempoParcial.push(minutos + segundos/60 + centesimas/600)
+    }else{
+        var nuevo = (minutos + segundos/60 + centesimas/600)- (tiempoParcial[tiempoParcial.length-1]);
+        tiempoParcial.push(nuevo)
+    }
+    
+
+    
+    var tNor = document.getElementById('tiempoNor');
+    var tEst = document.getElementById('tiempoEst');
+    var divTiempos = document.getElementById('tiemposCronometro');
+    divTiempos.innerHTML = 'hola';
+    
+
+    for (let i = 0; i < tiempoParcial.length; i++) {
+        var tObs = 0
+        for (let e = 0; e < tiempoParcial.length; e++) {
+            tObs = tiempoParcial[e]/tiempoParcial.length
+            
+        }
+        tiempoNormal= tObs*factorRitmo
+        tiempoEstandar = tiempoNormal + tiempoNormal*escalaSuplementos
+        
+        console.log(Math.round( tiempoParcial[i]));
+        divTiempos.innerHTML +=( 
+
+            '<div class="col-xl-3 col-md-6 mb-4" style="display: flex; >'+
+                            
+                '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
+                    'T  '+(i+1)+
+                '</div>'+
+                '<div class="h6 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i].toFixed(2) +'</div>'+
+                '<br>'+            
+            '</div>'
+
+        );
+
+        
+        
+        tNor.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(2) + " </p>";
+        tEst.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(2) + "</p>";
+    }
+
+    setCookie('tiempos_estandar',tiempoEstandar,30);
+
+    graficoT();
 }
 
 
 
 
-
 // Enviar variables a Django
-var tiempoPar = {name: "John", age: 30, city: "New York"};
+/*var tiempoPar = {name: "John", age: 30, city: "New York"};
 function enviarVariables() {
     
     $.ajax({
@@ -150,16 +202,13 @@ function enviarVariables() {
             console.log('Error enviando datos!');
         }
     });
-}
+}*/
 
 
 
 //cronometro centesimas
-var centesimas = 0;
-var cent = 0;
-var segundos = 0;
-var minutos = 0;
 
+var cent = 0;
 
 function cronometroDeci() {
     centesimas++;
@@ -176,6 +225,8 @@ function cronometroDeci() {
         minutos = 0;
         
     }
+    /* El símbolo `?` se utiliza en JavaScript como operador ternario. Es un
+    forma abreviada de escribir una declaración if-else.*/
     var tiempo = (minutos < 10 ? "0" + minutos : minutos) + ":" +
                  (segundos < 10 ? "0" + segundos : segundos) + ":" +
                  (centesimas < 10 ? "0" + centesimas : centesimas);
@@ -187,12 +238,12 @@ function cronometroDeci() {
 function iniciar() {
 
     /**
- * Inicializa el cronómetro y lo pone en marcha. Establece el elemento HTML `divTiempos` a una cadena vacía,
- * inicializa la matriz `tiempoParcial`, establece el `tiempoInicial` a la hora actual e inicia el
- * Intervalo `tiempoActual`, que llama a la función `cronometroDeci()` cada 10 milisegundos.
- *
- * @param {HTMLDivElement} divTiempos -El elemento HTML que mostrará los tiempos en el cronómetro.
- * @return {void} Esta función no devuelve nada
+ Inicializa el cronómetro y lo pone en marcha. Establece el elemento HTML `divTiempos` a una cadena vacía,
+ inicializa la matriz `tiempoParcial`, establece el `tiempoInicial` a la hora actual e inicia el
+ Intervalo `tiempoActual`, que llama a la función `cronometroDeci()` cada 10 milisegundos.
+ 
+  @param {HTMLDivElement} divTiempos -El elemento HTML que mostrará los tiempos en el cronómetro.
+  @return {void} Esta función no devuelve nada
  */
 
     var divTiempos = document.getElementById('tiemposCronometro');
@@ -219,41 +270,44 @@ function detener() {
 
 document.getElementById('iniciarBoton').addEventListener('click', iniciar);
 document.getElementById('pararBoton').addEventListener('click', detener);
-document.getElementById('enviarBoton').addEventListener('click', enviarVariables);
-document.getElementById('tiemposParciales').addEventListener('click', parcialCronometro);
+//document.getElementById('enviarBoton').addEventListener('click', enviarVariables);
+document.getElementById('tiemposParciales').addEventListener('click', parciales);
 
 
 //grafico canvas chart para tiempos
 
-var graficoTiempos = document.getElementById("graficoTiempos");
-function graficoTiempos() {
-    Chart.defaults.global.defaultFontFamily = "Lato";
-    Chart.defaults.global.defaultFontSize = 18;
+var myChart;
+function graficoT () {
 
-    var speedData = {
-    labels: ["0s", "10s", "20s", "30s", "40s", "50s", "60s"],
-    datasets: [{
-        label: "Car Speed (mph)",
-        data: [0, 59, 75, 20, 20, 55, 40],
-    }]
-    };
+// Destruir el gráfico existente si ya existe
+    if (typeof myChart !== 'undefined') {
+    myChart.destroy();
+    }
 
-    var chartOptions = {
-    legend: {
-        display: true,
-        position: 'top',
-        labels: {
-        boxWidth: 80,
-        fontColor: 'black'
+    // Configuración del gráfico
+    var graficoTiempos = document.getElementById('graficoTiempos').getContext('2d');
+    myChart = new Chart(graficoTiempos, {
+    type: 'line',
+    data: {
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+        datasets: [{
+        label: 'Intervalos',
+        data: tiempoParcial,
+        fill: false,
+        borderColor: 'rgba(54, 162, 235, 1)',
+        borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+        y: {
+            beginAtZero: true
+        }
         }
     }
-    };
-
-    var lineChart = new Chart(graficoTiempos, {
-    type: 'line',
-    data: speedData,
-    options: chartOptions
     });
-}
+    }
 
-document.getElementById('graficar').addEventListener('click', graficoTiempos);
+graficoT();
+
+//document.getElementById('graficar').addEventListener('click', graficoTiempos);

@@ -11,9 +11,11 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator 
 import json 
 from django.core.serializers.json import DjangoJSONEncoder
-#informe operario
-from django.http import HttpResponse
+#informe operario excel
+
 from openpyxl import Workbook
+import pytz
+from django.utils import timezone
 
 #Libreria para encripación
 from passlib.context import CryptContext
@@ -245,6 +247,7 @@ def edicionOperario(request):
 
 
 def deshabilitarOperario(request, id):
+    
     try:
         login = request.session.get('logueoUsuario', False)
         if login:
@@ -334,8 +337,9 @@ def actualizarDatos(request):
     return JsonResponse(nuevos_datos, safe=False)
 
 
+#Informe en excel
 
-def generar_informe(request, id):
+def generarInforme(request, id):
     operario = Operario.objects.get(id = id)
     # Crear un libro de Excel
     libro = Workbook()
@@ -350,18 +354,14 @@ def generar_informe(request, id):
     hoja['F1'] = 'Factor de ritmo'
     hoja['G1'] = 'Escala suplementos'
     
-   
-
     # Agregar datos
-    hoja['A2'] = operario.fecha
+    hoja['A2'] = operario.fecha.astimezone(pytz.UTC).replace(tzinfo=None)
     hoja['B2'] = operario.nombre
     hoja['C2'] = operario.entidad
     hoja['D2'] = operario.email
     hoja['E2'] = operario.tiempoEstandar
     hoja['F2'] = operario.factorRitmo
     hoja['G2'] = operario.escalaSuplementos
-    
-
     
 
     # Definir nombre del archivo
