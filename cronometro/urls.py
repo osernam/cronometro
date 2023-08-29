@@ -19,7 +19,7 @@ urlpatterns = [
     #Cronometro
     path('cronometro/', cronometroView, name= 'cronometro'),
     path('selecOper/', selecOperario, name= 'selecOperario'),
-    path('cronometro/cronometro/tiempo-parcial/', tiempo_parcial, name='tiempo-parcial'),
+    path('cronometro/cronometro/tiempo_parcial/', tiempo_parcial, name='tiempo-parcial'),
     path('cronometro/guardarTiempoEstandar/<int:id>',guardarTiempoEstandar , name= 'guardarTiempoEstandar'),
     path('cronometro/base/', base, name='base'),
     #operario

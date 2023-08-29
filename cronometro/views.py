@@ -553,15 +553,16 @@ def guardarTiempoEstandar(request, id):
         HttpResponse: el objeto de respuesta HTTP con la plantilla representada.
     """
     try:
-        tiempoEstandar = 'sin datos'
+        tiempoE = 'sin datos'
         operario = Operario.objects.get(id = id)
         #print(json.dumps(request.session.get('tiempos_cookie')))
         
         if 'tiempos_estandar' in request.COOKIES: #de esta forma ya que esta cookie esta en el navegador al ser creada con js
             tiempoE = request.COOKIES['tiempos_estandar']
-            operario.tiempoEstandar= float( (tiempoE))
+            
+            operario.tiempoEstandar= float( json.load(tiempoE))
             operario.save()
-        messages.success(request, f"Datos guardados ({tiempoEstandar}) seleccionado con éxito")
+        messages.success(request, f"Datos guardados ({json.load(tiempoE)}) con éxito")
         return render(request,'cronometro/cronometro.html',{'operario' : operario})
     
     except Exception as e:
