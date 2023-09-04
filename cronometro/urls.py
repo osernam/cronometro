@@ -31,6 +31,16 @@ urlpatterns = [
     path('edicion_operario/>', edicionOperario, name='edicionOperario'),
     path('estado_operario/<int:id>', deshabilitarOperario, name='deshabilitarOperario'),
     
+    #Maquina
+    path('maquina/', crearMaquina, name='crearMaquina'),
+    path('save_maquina/', guardarMaquina, name='guardarMaquina'),
+    path('list_maquinaa/', listarMaquinas, name='listarMaquinas'),
+    path('estado_maquina/<int:id>', deshabilitarMaquina, name='deshabilitarMaquina'),
+    path('edit_maquina/<int:id>', actualizarMaquina, name='actualizarMaquina'),
+    path('edicion_maquina/>', editarMaquina, name='editarMaquina'),
+    
+    #Operacion
+    
     
     #informe
     path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),

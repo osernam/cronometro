@@ -22,9 +22,6 @@ class Operario(models.Model):
     email = models.EmailField(max_length=100, unique = True)
     #tiemposMiliseg = models.BinaryField(blank=True, null=True)
     #tiemposNormales =models.BinaryField(blank=True, null=True) 
-    tiempoEstandar = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    factorRitmo = models.DecimalField(max_digits=5, decimal_places=2, default=0)
-    escalaSuplementos = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     fecha = models.DateTimeField(auto_now_add=True, blank=True)
     estado = models.BooleanField(default=True)
     
@@ -45,5 +42,9 @@ class Operacion (models.Model):
 class OperacionOperario(models.Model):
     idOperario = models.ForeignKey(Operario, on_delete=models.DO_NOTHING)
     idOperacion = models.ForeignKey(Operacion, on_delete=models.DO_NOTHING)
+    fecha = models.DateTimeField(auto_now_add=True, blank=True)
+    tiempoEstandar = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    factorRitmo = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    escalaSuplementos = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     estado = models.BooleanField(default=True)
     

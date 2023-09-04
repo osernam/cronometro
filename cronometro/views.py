@@ -54,16 +54,15 @@ def selecOperario (request):
         HttpResponse: el objeto de respuesta HTTP.
     """
     operarios = Operario.objects.all()
-    
-    datos = [0, 59, 75, 20, 20, 55, 40]  
-    datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
-    return render(request, 'cronometro\operario\selec_operario.html', {
-        'datos_json': datos_json,
-        'operarios' : operarios
-    })
-    
-    
-    return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios})
+    maquinas = Maquina.objects.all()
+      
+    #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
+    #return render(request, 'cronometro\operario\selec_operario.html', {
+     #   'datos_json': datos_json,
+      #  'operarios' : operarios
+    #})
+        
+    return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas})
 
 
 def login (request):
@@ -84,8 +83,7 @@ def login (request):
             
             email = request.POST['email']
             clavePost = request.POST['clave']
-            clave= contexto.hash(clavePost)
-            
+            clave= contexto.hash(clavePost)       
             usuario = Usuario.objects.get(email = email)
             
             if contexto.verify(clavePost, usuario.clave):
@@ -110,7 +108,7 @@ def registro(request):
     
     """
     sigup
-    renderiza el template  
+    renderiza el template  para registrar usuario
 
     Args:
         request (_type_): _description_
@@ -287,7 +285,7 @@ def logout(request):
     
 def cronometroView(request):
     """
-    Representa la plantilla 'cronometro.html' con una lista de todos los objetos 'Operario'.
+    Representa la plantilla 'cronometro.html' con una lista de todos los objetos 'Operario' 'maquina' y 'operacion'.
 
     parámetro: 
         el objeto de solicitud HTTP.
@@ -295,7 +293,9 @@ def cronometroView(request):
         La plantilla HTML renderizada.
     """
     operarios = Operario.objects.all()
-    return render(request,'cronometro\cronometro.html', {'operarios' : operarios})
+    maquina = Maquina.objects.all()
+    operacion = Operacion.objects.all()
+    return render(request,'cronometro\cronometro.html', {'operarios' : operarios , 'maquina' : maquina, 'operacion' : operacion})
 
 def tiempo_parcial(request):
     """
@@ -342,6 +342,7 @@ def crearOperario(request):
     :rtype: HttpRespuesta
     """
     return render((request), 'cronometro/operario/form_operario.html')
+
 
 def guardarOperario (request):
     """
@@ -468,8 +469,6 @@ def edicionOperario(request):
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarOperarios')
 
-
-
 def deshabilitarOperario(request, id):
     """
     Desactiva un operador.
@@ -540,6 +539,106 @@ def guardarTiempoParcial(request):
         messages.warning(request, f"Error: {e}")
         
     return render(request,'cronometro\cronometro.html',{'operario' : operario})
+
+
+# Maquina
+def crearMaquina(request):
+    
+    return render((request), 'cronometro/maquina/registro_maquina.html')
+
+def guardarMaquina(request):
+    try: 
+        if request.method == "POST":
+            maquina = Maquina(
+                nombre= request.POST['nombre'],
+                descripcion= request.POST['descripcion'],
+                estado= True
+                 
+            )
+            maquina.full_clean()
+            maquina.save()
+            messages.success(request, f"maquina ha sido creado con éxito")
+        
+        else:
+            messages.warning(request, "Usted no ha enviado datos")
+    
+    except Exception as e:
+        messages.error(request, f"Error: Ya existe un elemento con estos datos")
+        return redirect('cronometro:crearMaquina')
+        
+    return redirect('cronometro:home') 
+
+def listarMaquinas(request):
+    
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        maquinas= Maquina.objects.order_by('-estado')
+        paginator = Paginator(maquinas, 10)
+        page_number = request.GET.get('page')
+        maquinas = paginator.get_page(page_number)
+        return render(request, 'cronometro/maquina/listado_maquinas.html', {'maquinas' : maquinas})
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def deshabilitarMaquina(request, id):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            maquina = Maquina.objects.get(id = id)
+            if maquina.estado == True:
+                maquina.estado = False
+            else:
+                maquina.estado = True
+            
+            maquina.save()
+            messages.success(request, f"Estado Maquina ({maquina.nombre}) cambiado exitosamente")
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarMaquinas')
+def actualizarMaquina(request, id):
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        if login:
+            maquina = Maquina.objects.get(id = id)
+            return render(request, 'cronometro/maquina/edicion_maquina.html', {'maquina': maquina})
+        else:
+            messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+            return redirect('cronometro:listarMaquinas')
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def editarMaquina(request):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            if login:
+                if request.method == "POST":
+                    maquina = Maquina.objects.get(id = request.POST['id'])
+                    
+                    maquina.nombre = request.POST['nombre']
+                    maquina.descripcion = request.POST['descripcion']
+                    maquina.estado = request.POST['estado']
+                    
+                    maquina.save()
+                    messages.success(request, f"maquina ({maquina.nombre})  editado exitosamente")
+                else:
+                    messages.warning(request, "Usted no ha enviado datos")
+            else:
+                messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+                return redirect('cronometro:listarMaquinas')
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarMaquinas')
+
+
 
 def guardarTiempoEstandar(request, id):
     """

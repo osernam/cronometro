@@ -1,0 +1,75 @@
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if request.session.logueoUsuario %}
+{% if request.session.logueoUsuario.4 == 'Usuario' %}
+
+
+<br>
+<div class="contact-from-section mb-150">
+    <div class="container">
+        <div class="formulario">
+            <form action="{% url 'cronometro:editarMaquina' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+                <input value="{{maquina.id}}" readonly name="id" type="hidden" required>
+                <div class="col">
+                    <p>Nombre  </p>
+                    <input value="{{maquina.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
+                    
+                </div>
+                <div class="col">
+                    <p>Descripción  </p>
+                    <input value="{{maquina.descripcion}}" name="descripcion" type="text" placeholder="Descripción" required>
+                    
+                </div>
+                
+
+                <div class="col">
+                    <br>
+                    <label for="habilitadomaquinas">Estado</label>
+                    <br>
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" {% if maquina.estado %} checked {% endif %} value="True">Habilitado
+                        </label>
+                      </div>
+                      <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" {% if not maquina.estado %} checked {% endif %}value="False">Deshabilitado
+                        </label>
+                    </div>
+                </div>
+                    
+                <br/>
+                <!-- Botón del enviar formulario-->
+                <div class="form-btns">
+                    <button type="submit">Enviar formulario</button>
+                    <button type="reset">Limpiar formulario</button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+</div>
+
+
+
+{% else %}
+No hay datos.
+Inicie sesion.
+{% endif %}
+{% endif %}
+
+{% endblock contenedor %}

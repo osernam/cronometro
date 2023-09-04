@@ -66,32 +66,25 @@
                         </select>
                     </a>   
                     <a>
-                        <label for="operacion">Operación</label>
-                        <select name= "operacion" class="form-control" id="operacion" required>
+                        <label for="idOperacion">Operación</label>
+                        <select name= "idOperacion" class="form-control" id="idOperacion" required>
                             
-                            <option value="0.02" selected>2%</option>
-                            <option value="0.04">4%</option>
-                            <option value="0.06">6%</option>
-                            <option value="0.08">8%</option>
-                            <option value="0.10">10%</option>
-                            <option value="0.12">12%</option>
-                            <option value="0.14">14%</option>
-                            <option value="0.16">16%</option>
+                            {% for operacion in operarciones %}
+                                <option value="{{operacion.id}}">{{operacion.nombre}}</option>
+                                                                
+                            {% endfor %}
                         </select>
+                        
                     </a>
 
                     <a>
                         <label for="maquina">Maquina</label>
-                        <select name= "maquina" class="form-control" id="maquina" required>
+                        <select name= "idMaquina" class="form-control" id="idMaquina" required>
                             
-                            <option value="0.02" selected>2%</option>
-                            <option value="0.04">4%</option>
-                            <option value="0.06">6%</option>
-                            <option value="0.08">8%</option>
-                            <option value="0.10">10%</option>
-                            <option value="0.12">12%</option>
-                            <option value="0.14">14%</option>
-                            <option value="0.16">16%</option>
+                            {% for maquina in maquinas %}
+                                <option value="{{maquina.id}}">{{maquina.nombre}}</option>
+                                                                
+                            {% endfor %}
                         </select>
                     </a>
                             
