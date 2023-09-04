@@ -21,15 +21,11 @@
         <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">
              {% csrf_token %}  
      
-            
-                   
-
-                
                     
                     <a>
                         <label for="idOperario">Seleccione un operario:</label>
                         <select id="idOperario" name="idOperario" class="form-control"  required>
-                            <option disabled selected value>- Operario -</option>
+                            
                             {% for operario in operarios %}
                                 <option value="{{operario.id}}">{{operario.nombre}}</option>
                                                                 
@@ -68,7 +64,36 @@
                             <option value="0.14">14%</option>
                             <option value="0.16">16%</option>
                         </select>
-                    </a>                                       
+                    </a>   
+                    <a>
+                        <label for="operacion">Operación</label>
+                        <select name= "operacion" class="form-control" id="operacion" required>
+                            
+                            <option value="0.02" selected>2%</option>
+                            <option value="0.04">4%</option>
+                            <option value="0.06">6%</option>
+                            <option value="0.08">8%</option>
+                            <option value="0.10">10%</option>
+                            <option value="0.12">12%</option>
+                            <option value="0.14">14%</option>
+                            <option value="0.16">16%</option>
+                        </select>
+                    </a>
+
+                    <a>
+                        <label for="maquina">Maquina</label>
+                        <select name= "maquina" class="form-control" id="maquina" required>
+                            
+                            <option value="0.02" selected>2%</option>
+                            <option value="0.04">4%</option>
+                            <option value="0.06">6%</option>
+                            <option value="0.08">8%</option>
+                            <option value="0.10">10%</option>
+                            <option value="0.12">12%</option>
+                            <option value="0.14">14%</option>
+                            <option value="0.16">16%</option>
+                        </select>
+                    </a>
                             
                 
 

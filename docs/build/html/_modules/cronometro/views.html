@@ -1,0 +1,701 @@
+
+<!DOCTYPE html>
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>cronometro.views &#8212; documentación de Cronte - 1.0</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/alabaster.css" />
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/translations.js"></script>
+    <link rel="index" title="Índice" href="../../genindex.html" />
+    <link rel="search" title="Búsqueda" href="../../search.html" />
+   
+  <link rel="stylesheet" href="../../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Código fuente para cronometro.views</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">django.shortcuts</span> <span class="kn">import</span> <span class="n">render</span><span class="p">,</span> <span class="n">redirect</span>
+<span class="kn">from</span> <span class="nn">django.http</span> <span class="kn">import</span> <span class="n">HttpResponse</span><span class="p">,</span> <span class="n">JsonResponse</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">django.db.models</span> <span class="kn">import</span> <span class="n">Q</span>
+<span class="c1"># Mensajes tipo cookies temporales</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">messages</span>
+<span class="kn">from</span> <span class="nn">django</span> <span class="kn">import</span> <span class="n">forms</span>
+<span class="c1"># Gestión de errores de base de datos</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">IntegrityError</span>  
+<span class="c1"># Paginador</span>
+<span class="kn">from</span> <span class="nn">django.core.paginator</span> <span class="kn">import</span> <span class="n">Paginator</span> 
+<span class="kn">import</span> <span class="nn">json</span> 
+<span class="kn">from</span> <span class="nn">django.core.serializers.json</span> <span class="kn">import</span> <span class="n">DjangoJSONEncoder</span>
+<span class="c1">#informe operario excel</span>
+
+<span class="kn">from</span> <span class="nn">openpyxl</span> <span class="kn">import</span> <span class="n">Workbook</span>
+<span class="kn">import</span> <span class="nn">pytz</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="c1">#Libreria para encripación</span>
+<span class="kn">from</span> <span class="nn">passlib.context</span> <span class="kn">import</span> <span class="n">CryptContext</span>
+<span class="c1"># Round: Iteraciones para reducir la posibilidad de cracking.</span>
+<span class="n">contexto</span> <span class="o">=</span> <span class="n">CryptContext</span><span class="p">(</span>
+    <span class="n">schemes</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;pbkdf2_sha256&quot;</span><span class="p">],</span>
+    <span class="n">default</span><span class="o">=</span><span class="s2">&quot;pbkdf2_sha256&quot;</span><span class="p">,</span>
+    <span class="n">pbkdf2_sha256__default_rounds</span><span class="o">=</span><span class="mi">333</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Create your views here.</span>
+
+
+
+<div class="viewcode-block" id="homeView"><a class="viewcode-back" href="../../index.html#cronometro.views.homeView">[documentos]</a><span class="k">def</span> <span class="nf">homeView</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Renderiza la vista de inicio.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+<span class="sd">    </span>
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: la respuesta HTML representada.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro\index.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="selecOperario"><a class="viewcode-back" href="../../index.html#cronometro.views.selecOperario">[documentos]</a><span class="k">def</span> <span class="nf">selecOperario</span> <span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representa la plantilla &#39;selec_operario.html&#39; con la solicitud dada.</span>
+
+<span class="sd">    Parámetros:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+<span class="sd">    </span>
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: el objeto de respuesta HTTP.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">operarios</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    
+    <span class="n">datos</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">59</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>  
+    <span class="n">datos_json</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">datos</span><span class="p">),</span> <span class="bp">cls</span><span class="o">=</span><span class="n">DjangoJSONEncoder</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;cronometro\operario\selec_operario.html&#39;</span><span class="p">,</span> <span class="p">{</span>
+        <span class="s1">&#39;datos_json&#39;</span><span class="p">:</span> <span class="n">datos_json</span><span class="p">,</span>
+        <span class="s1">&#39;operarios&#39;</span> <span class="p">:</span> <span class="n">operarios</span>
+    <span class="p">})</span>
+    
+    
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro\operario\selec_operario.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;operarios&#39;</span> <span class="p">:</span> <span class="n">operarios</span><span class="p">})</span></div>
+
+
+<div class="viewcode-block" id="login"><a class="viewcode-back" href="../../index.html#cronometro.views.login">[documentos]</a><span class="k">def</span> <span class="nf">login</span> <span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Esta función es responsable de manejar la solicitud de inicio de sesión.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponseRedirect: una respuesta de redireccionamiento a la página de inicio.</span>
+
+<span class="sd">    Sube:</span>
+<span class="sd">        Usuario.DoesNotExist: Si el usuario no existe.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            
+            <span class="n">email</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">]</span>
+            <span class="n">clavePost</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;clave&#39;</span><span class="p">]</span>
+            <span class="n">clave</span><span class="o">=</span> <span class="n">contexto</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">clavePost</span><span class="p">)</span>
+            
+            <span class="n">usuario</span> <span class="o">=</span> <span class="n">Usuario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">contexto</span><span class="o">.</span><span class="n">verify</span><span class="p">(</span><span class="n">clavePost</span><span class="p">,</span> <span class="n">usuario</span><span class="o">.</span><span class="n">clave</span><span class="p">):</span>
+                <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s2">&quot;logueoUsuario&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">usuario</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">usuario</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span> <span class="n">usuario</span><span class="o">.</span><span class="n">apellido</span><span class="p">,</span> <span class="n">usuario</span><span class="o">.</span><span class="n">email</span><span class="p">,</span> <span class="n">usuario</span><span class="o">.</span><span class="n">get_rol_display</span><span class="p">()]</span>       
+                <span class="c1"># -------------</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Bienvenido&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Contraseña incorrecta&quot;</span><span class="p">)</span>
+                
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="n">Usuario</span><span class="o">.</span><span class="n">DoesNotExist</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;El usuario no existe&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Usted no ha enviado datos&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="registro"><a class="viewcode-back" href="../../index.html#cronometro.views.registro">[documentos]</a><span class="k">def</span> <span class="nf">registro</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    sigup</span>
+<span class="sd">    renderiza el template  </span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        request (_type_): _description_</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        _type_:  rendeiza la pagina sig-up.html</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;cronometro/usuario/registro_usuario.html&#39;</span><span class="p">)</span></div>
+    
+
+<div class="viewcode-block" id="guardarUsuario"><a class="viewcode-back" href="../../index.html#cronometro.views.guardarUsuario">[documentos]</a><span class="k">def</span> <span class="nf">guardarUsuario</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Guarda un usuario en la base de datos.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    request (HttpRequest): La solicitud HTTP recibida.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    HttpResponseRedirect: Redirige al usuario hacia la página home si el usuario se guarda correctamente.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+            <span class="n">usuario</span> <span class="o">=</span> <span class="n">Usuario</span><span class="p">(</span>
+                <span class="n">email</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span>
+                <span class="n">nombre</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">],</span>
+                <span class="n">apellido</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;apellido&#39;</span><span class="p">],</span>
+                <span class="n">fecha_nacimiento</span><span class="o">=</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;fecha_nacimiento&#39;</span><span class="p">],</span>
+                <span class="n">clave</span> <span class="o">=</span> <span class="n">contexto</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;clave&#39;</span><span class="p">])</span> <span class="p">,</span>
+                
+            <span class="p">)</span>
+            <span class="n">usuario</span><span class="o">.</span><span class="n">full_clean</span><span class="p">()</span>
+            <span class="n">usuario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Operari@ ha sido creado con éxito&quot;</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Usted no ha enviado datos&quot;</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:registro&#39;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>  </div>
+
+<div class="viewcode-block" id="listarUsuarios"><a class="viewcode-back" href="../../index.html#cronometro.views.listarUsuarios">[documentos]</a><span class="k">def</span> <span class="nf">listarUsuarios</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    La función ListarUsuarios se encarga de recuperar y paginar una lista de usuarios de la base de datos.</span>
+
+<span class="sd">    Parámetros:</span>
+<span class="sd">        - solicitud: el objeto de solicitud que contiene información sobre la solicitud HTTP actual.</span>
+<span class="sd">    </span>
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        - Si el usuario ha iniciado sesión, devuelve la lista renderizada de usuarios usando la plantilla &#39;cronometro/usuario/listado_usuarios.html&#39;.</span>
+<span class="sd">        - Si el usuario no ha iniciado sesión, redirige a la URL &#39;cronometro:home&#39; después de mostrar un mensaje de advertencia.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+        <span class="n">usuarios</span> <span class="o">=</span> <span class="n">Usuario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-estado&#39;</span><span class="p">)</span>
+        <span class="n">paginator</span> <span class="o">=</span> <span class="n">Paginator</span><span class="p">(</span><span class="n">usuarios</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">page_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">)</span>
+        <span class="n">usuarios</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">get_page</span><span class="p">(</span><span class="n">page_number</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;cronometro/usuario/listado_usuarios.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;usuarios&#39;</span> <span class="p">:</span> <span class="n">usuarios</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="actualizarUsuario"><a class="viewcode-back" href="../../index.html#cronometro.views.actualizarUsuario">[documentos]</a><span class="k">def</span> <span class="nf">actualizarUsuario</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Actualiza un usuario en la base de datos con el ID proporcionado.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+<span class="sd">        id (int): El ID del usuario que se va a actualizar.</span>
+<span class="sd">    </span>
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: la página HTML representada para editar el usuario si el usuario ha iniciado sesión y tiene permiso.</span>
+<span class="sd">        De lo contrario, redirige a la página de lista de usuarios con un mensaje de advertencia.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+            <span class="n">usuario</span> <span class="o">=</span> <span class="n">Usuario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;cronometro/usuario/edicion_usuario.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;usuario&#39;</span><span class="p">:</span> <span class="n">usuario</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;No posee los permisos para hacer esa acción. Contacte un administrador&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarUsuarios&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="edicionUsuario"><a class="viewcode-back" href="../../index.html#cronometro.views.edicionUsuario">[documentos]</a><span class="k">def</span> <span class="nf">edicionUsuario</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Edite un usuario en el sistema según la solicitud proporcionada.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud que contiene los datos del usuario.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: una respuesta de redireccionamiento a la página de lista de usuarios.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+                    <span class="n">usuario</span> <span class="o">=</span> <span class="n">Usuario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                    
+                    <span class="n">usuario</span><span class="o">.</span><span class="n">nombre</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">]</span>
+                    <span class="n">usuario</span><span class="o">.</span><span class="n">apellido</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;apellido&#39;</span><span class="p">]</span>
+                    <span class="c1">#usuario.rol = request.POST[&#39;rol&#39;]</span>
+                    <span class="n">usuario</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;estado&#39;</span><span class="p">]</span>
+                    
+                    <span class="n">usuario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;usuario (</span><span class="si">{</span><span class="n">usuario</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">)  editado exitosamente&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Usted no ha enviado datos&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;No posee los permisos para hacer esa acción. Contacte un administrador&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarUsuarios&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarUsuarios&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="deshabilitarUsuario"><a class="viewcode-back" href="../../index.html#cronometro.views.deshabilitarUsuario">[documentos]</a><span class="k">def</span> <span class="nf">deshabilitarUsuario</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Deshabilita a un usuario según su ID.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud: el objeto de solicitud HTTP.</span>
+<span class="sd">        id: El ID del usuario que se va a deshabilitar.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponseRedirect: Redirección a la vista &#39;listarUsuarios&#39;.</span>
+
+<span class="sd">    Sube:</span>
+<span class="sd">        Excepción: Si hay un error durante el proceso.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+            <span class="n">usuario</span> <span class="o">=</span> <span class="n">Usuario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">usuario</span><span class="o">.</span><span class="n">estado</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">usuario</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">usuario</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="n">usuario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Proveedor (</span><span class="si">{</span><span class="n">usuario</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">) modificado exitosamente&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarUsuarios&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="logout"><a class="viewcode-back" href="../../index.html#cronometro.views.logout">[documentos]</a><span class="k">def</span> <span class="nf">logout</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Elimina la clave &#39;logueoUsuario&#39; del diccionario de sesión y redirige</span>
+<span class="sd">    al usuario a la URL &#39;cronometro:home&#39;.</span>
+
+<span class="sd">    Parámetros:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponseRedirect: una respuesta de redireccionamiento a la URL &#39;cronometro:home&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">del</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="p">[</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span></div>
+    
+<div class="viewcode-block" id="cronometroView"><a class="viewcode-back" href="../../index.html#cronometro.views.cronometroView">[documentos]</a><span class="k">def</span> <span class="nf">cronometroView</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representa la plantilla &#39;cronometro.html&#39; con una lista de todos los objetos &#39;Operario&#39;.</span>
+
+<span class="sd">    parámetro: </span>
+<span class="sd">        el objeto de solicitud HTTP.</span>
+<span class="sd">    return: </span>
+<span class="sd">        La plantilla HTML renderizada.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">operarios</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro\cronometro.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;operarios&#39;</span> <span class="p">:</span> <span class="n">operarios</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="tiempo_parcial"><a class="viewcode-back" href="../../index.html#cronometro.views.tiempo_parcial">[documentos]</a><span class="k">def</span> <span class="nf">tiempo_parcial</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Esta función maneja la solicitud &#39;tiempo_parcial&#39;.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        JsonResponse: La respuesta JSON con el estado de la solicitud.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+        <span class="n">tiempoParcial</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;tiempoParcial&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tiempoParcial</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tiempoParcial</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">tiempoParcial</span><span class="p">)</span>
+            <span class="c1"># Do something with the tiempoParcial object here</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;tiempoParcial is None&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Request method is not POST&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">JsonResponse</span><span class="p">({</span><span class="s1">&#39;status&#39;</span><span class="p">:</span> <span class="s1">&#39;success&#39;</span><span class="p">})</span>
+    <span class="o">...</span></div>
+
+
+<div class="viewcode-block" id="base"><a class="viewcode-back" href="../../index.html#cronometro.views.base">[documentos]</a><span class="k">def</span> <span class="nf">base</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Representa la plantilla base para la aplicación de cronómetro.</span>
+
+<span class="sd">    Parámetros:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: la plantilla base renderizada.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro/base/base.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="crearOperario"><a class="viewcode-back" href="../../index.html#cronometro.views.crearOperario">[documentos]</a><span class="k">def</span> <span class="nf">crearOperario</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Crea un operario utilizando el objeto de solicitud y presenta la plantilla form_operario.html.</span>
+
+<span class="sd">    :param request: el objeto de solicitud HTTP que contiene información sobre la solicitud del usuario</span>
+<span class="sd">    :tipo de solicitud: HttpRequest</span>
+<span class="sd">    :return: un objeto de respuesta HTML que representa la plantilla form_operario.html</span>
+<span class="sd">    :rtype: HttpRespuesta</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">((</span><span class="n">request</span><span class="p">),</span> <span class="s1">&#39;cronometro/operario/form_operario.html&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="guardarOperario"><a class="viewcode-back" href="../../index.html#cronometro.views.guardarOperario">[documentos]</a><span class="k">def</span> <span class="nf">guardarOperario</span> <span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Guarda un operario en la base de datos.</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    request (HttpRequest): La solicitud HTTP recibida.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        HttpResponseRedirect: Redirige al usuario hacia la página home si el operario se guarda correctamente.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">try</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+            <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="p">(</span>
+                <span class="n">email</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;email&#39;</span><span class="p">],</span>
+                <span class="n">nombre</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">],</span>
+                <span class="n">entidad</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;entidad&#39;</span><span class="p">],</span>
+                <span class="n">estado</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;estado&#39;</span><span class="p">],</span>
+                <span class="c1">#fecha= request.POST[&#39;email&#39;],</span>
+                <span class="c1">#factorRitmo= request.POST[&#39;email&#39;],</span>
+                <span class="c1">#tiempoEstandar= request.POST[&#39;email&#39;],</span>
+                <span class="c1">#escalaSuplementos= request.POST[&#39;email&#39;],</span>
+                
+            <span class="p">)</span>
+            <span class="n">operario</span><span class="o">.</span><span class="n">full_clean</span><span class="p">()</span>
+            <span class="n">operario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Operari@ ha sido creado con éxito&quot;</span><span class="p">)</span>
+        
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Usted no ha enviado datos&quot;</span><span class="p">)</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: Ya existe un usuario con este correo&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:crearOperario&#39;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>  </div>
+
+<div class="viewcode-block" id="listarOperarios"><a class="viewcode-back" href="../../index.html#cronometro.views.listarOperarios">[documentos]</a><span class="k">def</span> <span class="nf">listarOperarios</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Listar Operarios.</span>
+<span class="sd">    Esta función enumera los operarios (trabajadores). Comprueba si el usuario ha iniciado sesión y, de ser así, recupera una lista de operarios de la base de datos, pagina los resultados y renderiza la plantilla &#39;cronometro/operario/listado_operarios.html&#39; con los datos de los operarios. Si el usuario no ha iniciado sesión, muestra un mensaje de advertencia y redirige a la URL &#39;cronometro:home&#39;.</span>
+
+
+<span class="sd">    Parámetros</span>
+<span class="sd">    ----------</span>
+<span class="sd">    solicitud: Solicitud Http</span>
+<span class="sd">        El objeto de solicitud HTTP.</span>
+
+<span class="sd">    Devoluciones</span>
+<span class="sd">    -------</span>
+<span class="sd">    Respuesta HTTP</span>
+<span class="sd">        La respuesta HTTP que contiene la plantilla representada o una respuesta de redireccionamiento.</span>
+
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+        <span class="n">operarios</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="s1">&#39;-estado&#39;</span><span class="p">)</span>
+        <span class="n">paginator</span> <span class="o">=</span> <span class="n">Paginator</span><span class="p">(</span><span class="n">operarios</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">page_number</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">GET</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;page&#39;</span><span class="p">)</span>
+        <span class="n">operarios</span> <span class="o">=</span> <span class="n">paginator</span><span class="o">.</span><span class="n">get_page</span><span class="p">(</span><span class="n">page_number</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;cronometro/operario/listado_operarios.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;operarios&#39;</span> <span class="p">:</span> <span class="n">operarios</span><span class="p">})</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="actualizarOperario"><a class="viewcode-back" href="../../index.html#cronometro.views.actualizarOperario">[documentos]</a><span class="k">def</span> <span class="nf">actualizarOperario</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Actualiza la información de un operador y devuelve la página HTML correspondiente para editarla.</span>
+
+<span class="sd">    Parámetros:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+<span class="sd">        id (int): El ID del operador que se actualizará.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: la página HTML para editar la información del operador.</span>
+
+
+<span class="sd">     &quot;&quot;&quot;</span>
+    <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+            <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;cronometro/operario/edicion_operario.html&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;operario&#39;</span><span class="p">:</span> <span class="n">operario</span><span class="p">})</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;No posee los permisos para hacer esa acción. Contacte un administrador&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarOperarios&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="edicionOperario"><a class="viewcode-back" href="../../index.html#cronometro.views.edicionOperario">[documentos]</a><span class="k">def</span> <span class="nf">edicionOperario</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Edita un operador según la solicitud proporcionada.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP que contiene la información necesaria.</span>
+<span class="sd">    </span>
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponseRedirect: Redirige a la vista &#39;listarOperarios&#39; luego de editar el operador.</span>
+<span class="sd">    </span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+                    <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;id&#39;</span><span class="p">])</span>
+                    
+                    <span class="n">operario</span><span class="o">.</span><span class="n">nombre</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;nombre&#39;</span><span class="p">]</span>
+                    <span class="n">operario</span><span class="o">.</span><span class="n">entidad</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;entidad&#39;</span><span class="p">]</span>
+                    <span class="n">operario</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;estado&#39;</span><span class="p">]</span>
+                    
+                    <span class="n">operario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;operario (</span><span class="si">{</span><span class="n">operario</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">)  editado exitosamente&quot;</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Usted no ha enviado datos&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;No posee los permisos para hacer esa acción. Contacte un administrador&quot;</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarOperarios&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarOperarios&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="deshabilitarOperario"><a class="viewcode-back" href="../../index.html#cronometro.views.deshabilitarOperario">[documentos]</a><span class="k">def</span> <span class="nf">deshabilitarOperario</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Desactiva un operador.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud: el objeto de la solicitud.</span>
+<span class="sd">        id: El ID del operador a deshabilitar.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        Una redirección a la vista &#39;listarOperarios&#39;.</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">login</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;logueoUsuario&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">login</span><span class="p">:</span>
+            <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">operario</span><span class="o">.</span><span class="n">estado</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="n">operario</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">operario</span><span class="o">.</span><span class="n">estado</span> <span class="o">=</span> <span class="kc">True</span>
+            
+            <span class="n">operario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Proveedor (</span><span class="si">{</span><span class="n">operario</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">) deshabilitado exitosamente&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;Inicie sesión primero&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:home&#39;</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">redirect</span><span class="p">(</span><span class="s1">&#39;cronometro:listarOperarios&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="guardarTiempoParcial"><a class="viewcode-back" href="../../index.html#cronometro.views.guardarTiempoParcial">[documentos]</a><span class="k">def</span> <span class="nf">guardarTiempoParcial</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">     Guarda el tiempo parcial de una solicitud.</span>
+<span class="sd">    </span>
+<span class="sd">     Parámetros:</span>
+<span class="sd">         - solicitud: el objeto de solicitud HTTP.</span>
+<span class="sd">        </span>
+<span class="sd">     Devoluciones:</span>
+<span class="sd">         - render: La respuesta HTTP renderizada con la plantilla &#39;cronometro\cronometro.html&#39;.</span>
+<span class="sd">     &quot;&quot;&quot;</span>
+    
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1">#if request.method == &quot;POST&quot;:</span>
+           <span class="c1"># tiempoParcial = request.POST.get(&#39;tiempos_cookie&#39;)</span>
+           <span class="c1"># if tiempoParcial is not None:</span>
+               <span class="c1"># tiempoParcial = json.loads(tiempoParcial)</span>
+
+        <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;POST&quot;</span><span class="p">:</span>
+            <span class="c1">#tiempoEstandar = request.session.get(&#39;tiempos_estandar&#39;)</span>
+            <span class="n">idOperario</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;idOperario&#39;</span><span class="p">]</span>
+            <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="n">idOperario</span><span class="p">)</span>
+            
+            <span class="n">operario</span><span class="o">.</span><span class="n">factorRitmo</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;factorRitmo&#39;</span><span class="p">]</span>
+            <span class="n">operario</span><span class="o">.</span><span class="n">escalaSuplementos</span><span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">POST</span><span class="p">[</span><span class="s1">&#39;escalaSuplementos&#39;</span><span class="p">]</span>
+            <span class="c1">#operario.tiempoEstandar = tiempoEstandar</span>
+            <span class="n">operario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+                    
+            <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Operario (</span><span class="si">{</span><span class="n">operario</span><span class="o">.</span><span class="n">nombre</span><span class="si">}</span><span class="s2">) seleccionado con éxito&quot;</span><span class="p">)</span>
+           <span class="c1"># else:</span>
+                <span class="c1">#print(&quot;tiempos cookie es None&quot;)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;El metodo de solisitud no es POST&quot;</span><span class="p">)</span>
+        <span class="c1">#return JsonResponse({&#39;status&#39;: &#39;success&#39;})</span>
+            
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro\cronometro.html&#39;</span><span class="p">,{</span><span class="s1">&#39;operario&#39;</span> <span class="p">:</span> <span class="n">operario</span><span class="p">})</span></div>
+
+<div class="viewcode-block" id="guardarTiempoEstandar"><a class="viewcode-back" href="../../index.html#cronometro.views.guardarTiempoEstandar">[documentos]</a><span class="k">def</span> <span class="nf">guardarTiempoEstandar</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Guarda el tiempo estándar de un operador en la base de datos y muestra un mensaje de éxito.</span>
+
+<span class="sd">    Argumentos:</span>
+<span class="sd">        solicitud (HttpRequest): el objeto de solicitud HTTP.</span>
+<span class="sd">        id (int): El ID del operador.</span>
+<span class="sd">    </span>
+<span class="sd">    Devoluciones:</span>
+<span class="sd">        HttpResponse: el objeto de respuesta HTTP con la plantilla representada.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">tiempoE</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">)</span>
+        <span class="c1">#print(json.dumps(request.session.get(&#39;tiempos_cookie&#39;)))</span>
+        
+        <span class="k">if</span> <span class="s1">&#39;tiempos_estandar&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">COOKIES</span><span class="p">:</span> <span class="c1">#de esta forma ya que esta cookie esta en el navegador al ser creada con js</span>
+            <span class="n">tiempoE</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">COOKIES</span><span class="p">[</span><span class="s1">&#39;tiempos_estandar&#39;</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">tiempoE</span><span class="p">)</span>
+            <span class="n">operario</span><span class="o">.</span><span class="n">tiempoEstandar</span><span class="o">=</span> <span class="nb">float</span><span class="p">(</span> <span class="p">(</span><span class="n">tiempoE</span><span class="p">))</span>
+            <span class="n">operario</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">success</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Datos guardados (</span><span class="si">{</span><span class="p">(</span><span class="n">tiempoE</span><span class="p">)</span><span class="si">}</span><span class="s2">) con éxito&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro/cronometro.html&#39;</span><span class="p">,{</span><span class="s1">&#39;operario&#39;</span> <span class="p">:</span> <span class="n">operario</span><span class="p">})</span>
+    
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">messages</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">render</span><span class="p">(</span><span class="n">request</span><span class="p">,</span><span class="s1">&#39;cronometro/cronometro.html&#39;</span><span class="p">,{</span><span class="s1">&#39;operario&#39;</span> <span class="p">:</span> <span class="n">operario</span><span class="p">})</span></div>
+    <span class="c1">#return redirect(&#39;cronometro:cronometro&#39;)</span>
+    
+
+
+<span class="c1">#Informe en excel</span>
+
+<div class="viewcode-block" id="generarInforme"><a class="viewcode-back" href="../../index.html#cronometro.views.generarInforme">[documentos]</a><span class="k">def</span> <span class="nf">generarInforme</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="nb">id</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Genera un informe de Excel para un operario determinado y lo devuelve como un archivo descargable.</span>
+
+<span class="sd">    Parámetros:</span>
+<span class="sd">    - solicitud: el objeto de solicitud HTTP.</span>
+<span class="sd">    - id: El ID del operario.</span>
+
+<span class="sd">    Devoluciones:</span>
+<span class="sd">    - respuesta: un objeto de respuesta HTTP que contiene el informe de Excel generado como un archivo descargable.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">operario</span> <span class="o">=</span> <span class="n">Operario</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">id</span> <span class="o">=</span> <span class="nb">id</span><span class="p">)</span>
+    <span class="c1"># Crear un libro de Excel</span>
+    <span class="n">libro</span> <span class="o">=</span> <span class="n">Workbook</span><span class="p">()</span>
+    <span class="n">hoja</span> <span class="o">=</span> <span class="n">libro</span><span class="o">.</span><span class="n">active</span>
+
+    <span class="c1"># Agregar encabezados</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;A1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Fecha&#39;</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;B1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Nombre&#39;</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;C1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Entidad&#39;</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;D1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Email&#39;</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;E1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Tiempo estandar&#39;</span> 
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;F1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Factor de ritmo&#39;</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;G1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Escala suplementos&#39;</span>
+    
+    <span class="c1"># Agregar datos</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;A2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">fecha</span><span class="o">.</span><span class="n">astimezone</span><span class="p">(</span><span class="n">pytz</span><span class="o">.</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">tzinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;B2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">nombre</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;C2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">entidad</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;D2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">email</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;E2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">tiempoEstandar</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;F2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">factorRitmo</span>
+    <span class="n">hoja</span><span class="p">[</span><span class="s1">&#39;G2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">operario</span><span class="o">.</span><span class="n">escalaSuplementos</span>
+    
+
+    <span class="c1"># Definir nombre del archivo</span>
+    <span class="n">nombre_archivo</span> <span class="o">=</span> <span class="s1">&#39;informeOperario.xlsx&#39;</span>
+
+    <span class="c1"># Crear la respuesta HTTP con el archivo adjunto</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">HttpResponse</span><span class="p">(</span><span class="n">content_type</span><span class="o">=</span><span class="s1">&#39;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&#39;</span><span class="p">)</span>
+    <span class="n">response</span><span class="p">[</span><span class="s1">&#39;Content-Disposition&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;attachment; filename=&quot;</span><span class="si">{</span><span class="n">nombre_archivo</span><span class="si">}</span><span class="s1">&quot;&#39;</span>
+
+    <span class="c1"># Guardar el libro de Excel en la respuesta HTTP</span>
+    <span class="n">libro</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">response</span></div>
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="../../index.html">Tabla de contenido</a></h3>
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../../index.html">Documentation overview</a><ul>
+  <li><a href="../index.html">Código de módulo</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Orley Serna.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>

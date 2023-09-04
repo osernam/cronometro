@@ -30,3 +30,20 @@ class Operario(models.Model):
     
     def __str__(self) -> str:
         return f"{self.nombre}"
+    
+
+class Maquina(models.Model):
+    nombre = models.CharField(max_length=50)
+    descripcion = models.CharField(max_length=50)
+    estado = models.BooleanField(default=True)    
+
+class Operacion (models.Model):
+    nombre = models.CharField(max_length=50)
+    descripcion = models.CharField(max_length=50)
+    estado = models.BooleanField(default=True)
+    
+class OperacionOperario(models.Model):
+    idOperario = models.ForeignKey(Operario, on_delete=models.DO_NOTHING)
+    idOperacion = models.ForeignKey(Operacion, on_delete=models.DO_NOTHING)
+    estado = models.BooleanField(default=True)
+    
