@@ -55,6 +55,7 @@ def selecOperario (request):
     """
     operarios = Operario.objects.all()
     maquinas = Maquina.objects.all()
+    operaciones = Operacion.objects.all()
       
     #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
     #return render(request, 'cronometro\operario\selec_operario.html', {
@@ -62,7 +63,7 @@ def selecOperario (request):
       #  'operarios' : operarios
     #})
         
-    return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas})
+    return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
 
 
 def login (request):
@@ -502,43 +503,33 @@ def deshabilitarOperario(request, id):
     return redirect('cronometro:listarOperarios')
 
 def guardarTiempoParcial(request):
-    """
-     Guarda el tiempo parcial de una solicitud.
     
-     Parámetros:
-         - solicitud: el objeto de solicitud HTTP.
-        
-     Devoluciones:
-         - render: La respuesta HTTP renderizada con la plantilla 'cronometro\cronometro.html'.
-     """
-    
-    try:
-        #if request.method == "POST":
-           # tiempoParcial = request.POST.get('tiempos_cookie')
-           # if tiempoParcial is not None:
-               # tiempoParcial = json.loads(tiempoParcial)
-
-        if request.method == "POST":
-            #tiempoEstandar = request.session.get('tiempos_estandar')
-            idOperario = request.POST['idOperario']
-            operario = Operario.objects.get(id = idOperario)
+    if request.method == "POST":
+        #tiempoEstandar = request.session.get('tiempos_estandar')
+        try:
+            operario = Operario.objects.get(id = request.POST['idOperario'])
+            operacion = Operacion.objects.get(id = request.POST['idOperacion'])
+            maquina= Maquina.objects.get(id = request.POST['idMaquina'])
             
-            operario.factorRitmo= request.POST['factorRitmo']
-            operario.escalaSuplementos= request.POST['escalaSuplementos']
-            #operario.tiempoEstandar = tiempoEstandar
-            operario.save()
-                    
-            messages.success(request, f"Operario ({operario.nombre}) seleccionado con éxito")
-           # else:
-                #print("tiempos cookie es None")
-        else:
-            print("El metodo de solisitud no es POST")
-        #return JsonResponse({'status': 'success'})
+            opOpera= OperacionOperario(
+                idOperario= operario,
+                idOperacion= operacion,
+                idMaquinas= maquina,
+                factorRitmo= request.POST['factorRitmo'],
+                escalaSuplementos= request.POST['escalaSuplementos'],
+            )
             
-    except Exception as e:
-        messages.warning(request, f"Error: {e}")
-        
-    return render(request,'cronometro\cronometro.html',{'operario' : operario})
+            
+            opOpera.save()
+            print("guardado")
+            messages.success(request, f"Datos seleccionados con éxito")
+        except Exception as e:
+            messages.warning(request, f"Error: {e}")
+            print( f"Error: {e}")
+    else:
+        return HttpResponse(request,"no se envio datos")
+    #return HttpResponse(request,"OK")
+    return render(request,'cronometro\cronometro.html',{'operario' : operario , 'operacion' : operacion, 'maquina' : maquina , 'opOpera' : opOpera})   
 
 
 # Maquina
@@ -638,6 +629,102 @@ def editarMaquina(request):
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarMaquinas')
 
+# Operación
+def crearOperacion(request):
+    
+    return render((request), 'cronometro/operacion/registro_operacion.html')
+
+def guardarOperacion(request):
+    try: 
+        if request.method == "POST":
+            operacion = Operacion(
+                nombre= request.POST['nombre'],
+                descripcion= request.POST['descripcion'],
+                estado= True
+                 
+            )
+            operacion.full_clean()
+            operacion.save()
+            messages.success(request, f"operacion ha sido creado con éxito")
+        
+        else:
+            messages.warning(request, "Usted no ha enviado datos")
+    
+    except Exception as e:
+        messages.error(request, f"Error: Ya existe un elemento con estos datos")
+        return redirect('cronometro:crearOperacion')
+        
+    return redirect('cronometro:home') 
+
+def listarOperaciones(request):
+    
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        operaciones= Operacion.objects.order_by('-estado')
+        paginator = Paginator(operaciones, 10)
+        page_number = request.GET.get('page')
+        operaciones = paginator.get_page(page_number)
+        return render(request, 'cronometro/operacion/listado_operaciones.html', {'operaciones' : operaciones})
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def deshabilitarOperacion(request, id):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            operacion = Operacion.objects.get(id = id)
+            if operacion.estado == True:
+                operacion.estado = False
+            else:
+                operacion.estado = True
+            
+            operacion.save()
+            messages.success(request, f"Estado de operacion ({operacion.nombre}) cambiado exitosamente")
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarOperaciones')
+def actualizarOperacion(request, id):
+    login = request.session.get('logueoUsuario', False)
+    if login:
+        if login:
+            operacion = Operacion.objects.get(id = id)
+            return render(request, 'cronometro/operacion/edicion_operacion.html', {'operacion': operacion})
+        else:
+            messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+            return redirect('cronometro:listarOperaciones')
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
+
+def editarOperacion(request):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            if login:
+                if request.method == "POST":
+                    operacion = Operacion.objects.get(id = request.POST['id'])
+                    
+                    operacion.nombre = request.POST['nombre']
+                    operacion.descripcion = request.POST['descripcion']
+                    operacion.estado = request.POST['estado']
+                    
+                    operacion.save()
+                    messages.success(request, f"operacion ({operacion.nombre})  editado exitosamente")
+                else:
+                    messages.warning(request, "Usted no ha enviado datos")
+            else:
+                messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+                return redirect('cronometro:listarOperaciones')
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarOperaciones')
 
 
 def guardarTiempoEstandar(request, id):
@@ -651,22 +738,30 @@ def guardarTiempoEstandar(request, id):
     Devoluciones:
         HttpResponse: el objeto de respuesta HTTP con la plantilla representada.
     """
+   
+    tiempoE = 0
+    opOpera = OperacionOperario.objects.get(id = id)
+    print(opOpera)
+    #print(json.dumps(request.session.get('tiempos_cookie')))
     try:
-        tiempoE = 0
-        operario = Operario.objects.get(id = id)
-        #print(json.dumps(request.session.get('tiempos_cookie')))
+        print( request.COOKIES['tiempos_estandar'])
         
-        if 'tiempos_estandar' in request.COOKIES: #de esta forma ya que esta cookie esta en el navegador al ser creada con js
-            tiempoE = request.COOKIES['tiempos_estandar']
-            print(tiempoE)
-            operario.tiempoEstandar= float( (tiempoE))
-            operario.save()
-        messages.success(request, f"Datos guardados ({(tiempoE)}) con éxito")
-        return render(request,'cronometro/cronometro.html',{'operario' : operario})
-    
+        if request.method =="POST":
+            opOpera.tiempoEstandar = request.POST['cajaTiemposEstandar']
+            opOpera.save()
+            
+            operario= Operario.objects.get(id = opOpera.idOperario.id)
+            maquina= Maquina.objects.get(id = opOpera.idMaquinas.id)
+            operacion= Operacion.objects.get(id = opOpera.idOperacion.id)
+            
+        messages.success(request, f"Tiempo estandar ({(request.POST['cajaTiemposEstandar'])}) guardado con éxito")
+        print("guardado")
     except Exception as e:
-        messages.warning(request, f"Error: {e}")
-    return render(request,'cronometro/cronometro.html',{'operario' : operario})
+        print ( f"Error: {e}")
+    #return render(request,'cronometro/cronometro.html',{'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
+
+
+    return render(request,'cronometro/cronometro.html',{'operario' : operario , 'maquina' : maquina , 'operacion' : operacion, 'opOpera' : opOpera})
     #return redirect('cronometro:cronometro')
     
 

@@ -9,7 +9,9 @@ django
 
 openpyxl
 #>pip install openpyxl
+pytz
 
+passlib
 sphinx
 
 #> pip install sphinx

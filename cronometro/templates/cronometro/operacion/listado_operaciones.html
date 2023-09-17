@@ -3,7 +3,7 @@
 
 {% block titulo %}Inicio{% endblock titulo %}
 
-{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block encabezado %}Bienvenido{% endblock encabezado %}
 {% block subencabezado %}Index{% endblock subencabezado %}
 
 {% block contenedor %}
@@ -19,7 +19,7 @@
 
 
 
-<div class="listar-operario mt-50 mb-150 pl-5 pr-5" id="respuesta">
+<div class="listar- mt-50 mb-150 pl-5 pr-5" id="respuesta">
     <div class="contenedor">
         <div class="table-responsive">
             <table id="lista" class="table table-striped table-hover">
@@ -27,27 +27,24 @@
                     <tr>
                         <th>ID</th>
                         <th>Nombre</th>
-                        <th>Apellidos</th>
-                        <th>Email</th>
-                        <th>Rol</th>
-                        <th>estado</th>
-                        <th>Opciones</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                        
                         
                     </tr>
                 </thead>
                 <tbody>
-                    {% for usuario in usuarios %}
+                    {% for operacion in operaciones %}
                     <tr>
-                        <td> {{usuario.id}} </td>
-                        <td> {{usuario.nombre}}</td>
-                        <td> {{usuario.apellido}}</td>
-                        <td> {{usuario.email}}</td>
-                        <td> {{usuario.rol}}</td>
+                        <td> {{operacion.id}} </td>
+                        <td> {{operacion.nombre}}</td>
+                        <td> {{operacion.descripcion}}</td>
+                        
                         <td> 
-                            <a href="{% url  'cronometro:deshabilitarUsuario' usuario.id %}" {% if usuario.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
+                            <a href="{% url  'cronometro:deshabilitarOperacion' operacion.id %}" {% if operacion.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
                         </td>
                         <td>
-                            <a href="{% url 'cronometro:actualizarUsuario' usuario.id %}" class="btn btn-info">Editar</a>
+                            <a href="{% url 'cronometro:actualizarOperacion' operacion.id %}" class="btn btn-info">Editar</a>
                             
                             
                         </td>
@@ -61,14 +58,14 @@
                 <div class="pagination-wrap mb-100">
                     <ul>
                         <li><a href="?page=1">&laquo;</a></li>
-                        <li><a {% if usuarios.has_previous %} href="?page={{ usuarios.previous_page_number }}" {% endif %}>Anterior</a></li>
+                        <li><a {% if operaciones.has_previous %} href="?page={{ operaciones.previous_page_number }}" {% endif %}>Anterior</a></li>
 
-                        {% for i in "x"|rjust:usuarios.paginator.num_pages|make_list %}
-                        <li><a {% if forloop.counter == usuarios.number %} class="active" {% endif %} href="?page={{ forloop.counter }}"> {{ forloop.counter }} </a></li>
+                        {% for i in "x"|rjust:operaciones.paginator.num_pages|make_list %}
+                        <li><a {% if forloop.counter == operaciones.number %} class="active" {% endif %} href="?page={{ forloop.counter }}"> {{ forloop.counter }} </a></li>
                         {% endfor %}
 
-                        <li><a {% if usuarios.has_next %} href="?page={{usuarios.next_page_number }}" {% endif %}>Siguiente</a></li>
-                        <li><a {% if usuarios.has_next %} href="?page={{usuarios.paginator.num_pages }}" {% endif %}>&raquo;</a></li>
+                        <li><a {% if operaciones.has_next %} href="?page={{operaciones.next_page_number }}" {% endif %}>Siguiente</a></li>
+                        <li><a {% if operaciones.has_next %} href="?page={{operaciones.paginator.num_pages }}" {% endif %}>&raquo;</a></li>
                     </ul>
                 </div>
             </div>

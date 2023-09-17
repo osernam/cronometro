@@ -22,37 +22,32 @@
 <div class="contact-from-section mb-150">
     <div class="container">
         <div class="formulario">
-            <form action="{% url 'cronometro:edicionUsuario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
-                <input value="{{usuario.id}}" readonly name="id" type="hidden" required>
+            <form action="{% url 'cronometro:editarOperacion' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+                <input value="{{operacion.id}}" readonly name="id" type="hidden" required>
                 <div class="col">
-                    <p>Nombres  </p>
-                    <input value="{{usuario.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
+                    <p>Nombre  </p>
+                    <input value="{{operacion.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
                     
                 </div>
                 <div class="col">
-                    <p>Apellidos  </p>
-                    <input value="{{usuario.apellido}}" name="apellido" type="text" placeholder="Apellidos" required>
+                    <p>Descripción  </p>
+                    <input value="{{operacion.descripcion}}" name="descripcion" type="text" placeholder="Descripción" required>
                     
                 </div>
-                <div class="col">
-                    <br>
-                <p>Rol</p>
-                <input value="{{usuario.rol}}" name="rol" type="text" placeholder="rol" disabled>
                 
-                </div>
 
                 <div class="col">
                     <br>
-                    <label for="habilitadoUsuarios">Estado</label>
+                    <label for="habilitadoOperaciones">Estado</label>
                     <br>
                     <div class="form-check-inline">
                         <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="estado" {% if usuario.estado %} checked {% endif %} value="True">Sí
+                            <input type="radio" class="form-check-input" name="estado" {% if operacion.estado %} checked {% endif %} value="True">Habilitado
                         </label>
                       </div>
                       <div class="form-check-inline">
                         <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="estado" {% if not usuario.estado %} checked {% endif %}value="False">No
+                            <input type="radio" class="form-check-input" name="estado" {% if not operacion.estado %} checked {% endif %}value="False">Deshabilitado
                         </label>
                     </div>
                 </div>
@@ -60,7 +55,7 @@
                 <br/>
                 <!-- Botón del enviar formulario-->
                 <div class="form-btns">
-                    <button type="submit">Enviar formulario</button>
+                    <button type="submit">Enviar </button>
                     <button type="reset">Limpiar formulario</button>
                 </div>
             </form>

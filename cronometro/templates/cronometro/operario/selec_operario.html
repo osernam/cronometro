@@ -39,18 +39,15 @@
                         <label for="factorRitmo">Factor de ritmo (BSI)</label>
                         <select name="factorRitmo" class="form-control" id="factorRitmo" required>
                             
-                            <option  value= 0  selected>0</option> 
-                            <option  value= 0.5  >50</option> 
-                            <option  value= 0.75 >75</option>
-                            <option  value= 1>100</option>
-                            <option  value= 1.25 >125</option>
-                            <option  value= 1.50 >150</option>
+                            <option  value= "0.5"  selected>50</option> 
+                            <option  value= "0.75" >75</option>
+                            <option  value= "1">100</option>
+                            <option  value= "1.25" >125</option>
+                            <option  value= "1.50">150</option>
                         </select>
                     </a>
                             
-                
-
-                
+       
                     <a>
                         <label for="escalaSuplementos">Escala de suplementos</label>
                         <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" required>
@@ -69,7 +66,7 @@
                         <label for="idOperacion">Operación</label>
                         <select name= "idOperacion" class="form-control" id="idOperacion" required>
                             
-                            {% for operacion in operarciones %}
+                            {% for operacion in operaciones %}
                                 <option value="{{operacion.id}}">{{operacion.nombre}}</option>
                                                                 
                             {% endfor %}

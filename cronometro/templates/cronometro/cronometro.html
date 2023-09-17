@@ -65,9 +65,13 @@
                                                         
                                         <a id="iniciarBoton" class="btn btn-primary" type="button">Iniciar</a>
                                         <a id="pararBoton" class="btn btn-primary" type="button">Parar</a>
-                                        <a id="tiemposParciales" class="btn btn-primary" type="button">parcial</a>
-                                        <a id="enviarBoton" href="{% url 'cronometro:guardarTiempoEstandar' operario.id %}" class="btn btn-primary" type="button">Guardar</a>
-                                        
+                                        <a id="tiemposParciales" class="btn btn-primary" type="button" disabled="true">parcial</a>
+
+                                        <form action="{% url 'cronometro:guardarTiempoEstandar' opOpera.id %}" method="post">
+                                            {%csrf_token%}
+                                                <input type='number' id='cajaTiemposEstandar' name='cajaTiemposEstandar'  readonly ='' placeholder="0">
+                                            <button   class="btn btn-primary" type="submit">Guardar</button>
+                                        </form>   
 
                                         
                                         
@@ -223,8 +227,7 @@
                             </button>
                         </div>
                         <div class="modal-body">
-                            <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">
-                                {% csrf_token %}    
+                                
                                 <div class="form-row"><!--Operarios-->
                                     
                                     
@@ -235,25 +238,28 @@
                                         <select name="operario" class="form-control" id="operario" required>
                                             <option value="1" selected>{{operario.nombre }}</option>
                                         </select>
-
-                                    <label for="factorRitmo">Factor de ritmo (BSI)</label> 
-                                        <select name="factorRitmo" class="form-control" id="factorRitmo" required>
-                                            
-                                            <option  value= {{operario.factorRitmo}}  selected>{{operario.factorRitmo}}</option> 
-                                            
-                                        </select>
-                                        
-                                                
                                     
+                                    <label for="operacion">Operación</label>
+                                        <select name="operacion" class="form-control" id="operacion" required>
+                                            <option value="1" selected>{{operacion.nombre }}</option>
+                                        </select>
+
+                                    <label for="maquina">Maquina</label>
+                                        <select name="maquina" class="form-control" id="maquina" required>
+                                            <option value="1" selected>{{maquina.nombre }}</option>
+                                        </select>
+
+                                    <label for="factorRitmo">Factor de ritmo (BSI) </label> 
+                                          
+                                            
+                                            <input name="factorRitmo" id="factorRitmo" value= "{{opOpera.factorRitmo}}" readonly=""> 
+                                 
 
                                     <label for="escalaSuplementos"> Escala de suplementos</label>
-                                            <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" required>
+                                            
                                                 
-                                                <option value="{{operario.escalaSuplementos}}" selected>{{operario.escalaSuplementos}}</option>
-                                               
-                                            </select>
-                                                                             
-                                                
+                                            <input name= "escalaSuplementos" id="escalaSuplementos" value="{{opOpera.escalaSuplementos}}" readonly="">
+                                           
                                     
 
                                 </div>
@@ -273,7 +279,7 @@
 
             </div>
 
-            <script src="{% static 'cronometro/cronometro.js' %}">
+            <script src="{% static 'cronometro/js/cronometro.js' %}">
             </script>
             <!-- End of Main Content -->
 {% else %}

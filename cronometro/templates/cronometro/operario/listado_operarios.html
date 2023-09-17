@@ -44,9 +44,9 @@
                         <td> {{operario.nombre}}</td>
                         <td> {{operario.fecha}}</td>
                         <td> {{operario.entidad}}</td>
-                        <td> {{operario.tiempoEstandar}}</td>
-                        <td> {{operario.factorRitmo}}</td>
-                        <td> {{operario.escalaSuplementos}}</td>
+                        <td> <a class="btn" >Tiempo estandar</a></td>
+                        <td> <a class="btn" >factor ritmo</a></td>
+                        <td> <a class="btn" >Escala suplementos</a></td>
                         <td> 
                             <a href="{% url  'cronometro:deshabilitarOperario' operario.id %}" {% if operario.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
                         </td>

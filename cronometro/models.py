@@ -42,9 +42,14 @@ class Operacion (models.Model):
 class OperacionOperario(models.Model):
     idOperario = models.ForeignKey(Operario, on_delete=models.DO_NOTHING)
     idOperacion = models.ForeignKey(Operacion, on_delete=models.DO_NOTHING)
-    fecha = models.DateTimeField(auto_now_add=True, blank=True)
+    idMaquinas = models.ForeignKey(Maquina, on_delete=models.DO_NOTHING)
+    fechas = models.DateTimeField(auto_now_add=True, blank=True)
     tiempoEstandar = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     factorRitmo = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     escalaSuplementos = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     estado = models.BooleanField(default=True)
+    
+    def __str__(self):
+        return f"id: {self.id} - Fr {self.factorRitmo} - Es {self.escalaSuplementos}"
+    
     

@@ -34,12 +34,18 @@ urlpatterns = [
     #Maquina
     path('maquina/', crearMaquina, name='crearMaquina'),
     path('save_maquina/', guardarMaquina, name='guardarMaquina'),
-    path('list_maquinaa/', listarMaquinas, name='listarMaquinas'),
+    path('list_maquina/', listarMaquinas, name='listarMaquinas'),
     path('estado_maquina/<int:id>', deshabilitarMaquina, name='deshabilitarMaquina'),
     path('edit_maquina/<int:id>', actualizarMaquina, name='actualizarMaquina'),
     path('edicion_maquina/>', editarMaquina, name='editarMaquina'),
     
     #Operacion
+    path('operacion/', crearOperacion, name='crearOperacion'),
+    path('save_operacion/', guardarOperacion, name='guardarOperacion'),
+    path('list_operacion/', listarOperaciones, name='listarOperaciones'),
+    path('estado_operacion/<int:id>', deshabilitarOperacion, name='deshabilitarOperacion'),
+    path('edit_operacion/<int:id>', actualizarOperacion, name='actualizarOperacion'),
+    path('edicion_operacion/>', editarOperacion, name='editarOperacion'),
     
     
     #informe
