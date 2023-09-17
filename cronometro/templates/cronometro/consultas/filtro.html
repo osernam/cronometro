@@ -1,0 +1,31 @@
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if request.session.logueoUsuario %}
+{% if request.session.logueoUsuario.4 == 'Usuario' %}
+
+
+
+
+
+
+{% else %}
+No hay datos.
+Inicie sesion.
+{% endif %}
+{% endif %}
+
+{% endblock contenedor %}

@@ -147,8 +147,11 @@ function parciales(){
     var tNor = document.getElementById('tiempoNor');
     var tEst = document.getElementById('tiempoEst');
     var divTiempos = document.getElementById('tiemposCronometro');
+    var cajaTEst = document.getElementById('cajaTiemposEstandar');
+    var proNuevo= document.getElementsByName('cajaTiemposParciales');
     divTiempos.innerHTML = '';
-    
+    var tiempoEstandar2 = 0;
+    var acumulador=0;
 
     for (let i = 0; i < tiempoParcial.length; i++) {
         
@@ -158,8 +161,8 @@ function parciales(){
             tObs = tiempoParcial[e]/tiempoParcial.length
             
         }
-        tiempoNormal= tObs*factorRitmo
-        tiempoEstandar = tiempoNormal + tiempoNormal*escalaSuplementos
+        tiempoNormal= tObs*factorRitmo/100
+        tiempoEstandar2 = tiempoNormal + tiempoNormal*escalaSuplementos
 
 
         
@@ -178,21 +181,24 @@ function parciales(){
         );
 
         
+        
         proNuevo= document.getElementsByName('cajaTiemposParciales');
-        acumulador=0
         for (let j = 0; j < proNuevo.length; j++) {
             acumulador = acumulador + parseFloat(proNuevo[j].value);
         }
 
-        acumulador = acumulador/proNuevo.length
-        tiempoNormal = acumulador*factorRitmo
-        tiempoEstandar = tiempoNormal + tiempoNormal*escalaSuplementos
-        cajaTEst = document.getElementById('cajaTiemposEstandar');
-        cajaTEst.value= tiempoEstandar
-
-        tNor.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(6) + " </p>";
-        tEst.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(3) + "<input type='text' id='cajaTiemposEstandar2' name='cajaTiemposEstandar2' value='"+acumulador+"'>"+"</p>";
     }
+    
+
+    acumulador = acumulador/proNuevo.length
+    tiempoNormal = acumulador*factorRitmo/100
+    tiempoEstandar = tiempoNormal + (tiempoNormal*escalaSuplementos)
+    
+    cajaTEst.value= tiempoEstandar.toFixed(3);
+
+    tEst.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(3) + " </p>";
+    tNor.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(3) + "<input type='text' id='cajaTiemposEstandar' name='cajaTiemposEstandar' value='"+acumulador.toFixed(3)+"'>"+"</p>";
+
     
     
     setCookie('tiempos_estandar',tiempoEstandar,30);
@@ -232,7 +238,7 @@ var cent = 0;
 function cronometroDeci() {
     centesimas++;
     
-    if (centesimas == 100) {
+    if (centesimas == 10) {
         centesimas = 0;
         segundos++;
     }
@@ -273,7 +279,7 @@ function iniciar() {
     setCookie('tiempos_cookie',tiempoParcial,30); // nombre, valor, tiempo de expiracion
     tiempoInicial = Date.now();
     tAnterior= 0;
-    tiempoActual = setInterval(cronometroDeci, 10);
+    tiempoActual = setInterval(cronometroDeci, 100);
 
     
 }

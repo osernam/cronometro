@@ -30,6 +30,7 @@ urlpatterns = [
     path('edit_operario/<int:id>', actualizarOperario, name='actualizarOperario'),
     path('edicion_operario/>', edicionOperario, name='edicionOperario'),
     path('estado_operario/<int:id>', deshabilitarOperario, name='deshabilitarOperario'),
+    path('operario/historico/<int:id>', historial, name='historial'),
     
     #Maquina
     path('maquina/', crearMaquina, name='crearMaquina'),

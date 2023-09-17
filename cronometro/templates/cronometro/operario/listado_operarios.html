@@ -29,11 +29,9 @@
                         <th>Nombre</th>
                         <th>Fecha</th>
                         <th>Entidad</th>
-                        <th>Tiempo estandar</th>
-                        <th>factor ritmo</th>
-                        <th>escala suplementos</th>
-                        <th>estado</th>
-                        <th>Descargar</th>
+                        <th>Registros</th>
+                        <th>Estado</th>
+                        <th>Opciones</th>
                         
                     </tr>
                 </thead>
@@ -44,9 +42,7 @@
                         <td> {{operario.nombre}}</td>
                         <td> {{operario.fecha}}</td>
                         <td> {{operario.entidad}}</td>
-                        <td> <a class="btn" >Tiempo estandar</a></td>
-                        <td> <a class="btn" >factor ritmo</a></td>
-                        <td> <a class="btn" >Escala suplementos</a></td>
+                        <td> <a href="{% url 'cronometro:historial' operario.id %}" class="btn btn-info">Consultar</a></td>
                         <td> 
                             <a href="{% url  'cronometro:deshabilitarOperario' operario.id %}" {% if operario.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
                         </td>

@@ -502,6 +502,17 @@ def deshabilitarOperario(request, id):
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarOperarios')
 
+
+def historial(request, id): 
+    
+    historial = OperacionOperario.objects.filter(idOperario = id)
+    paginator = Paginator(historial, 10)
+    page_number = request.GET.get('page')
+    historial = paginator.get_page(page_number)
+    return render(request, 'cronometro/operario/historico.html', {'historial' : historial})
+
+
+
 def guardarTiempoParcial(request):
     
     if request.method == "POST":
@@ -779,7 +790,8 @@ def generarInforme(request, id):
     Devoluciones:
     - respuesta: un objeto de respuesta HTTP que contiene el informe de Excel generado como un archivo descargable.
     """
-    operario = Operario.objects.get(id = id)
+    operario= Operario.objects.get(id = id)
+    historico = OperacionOperario.objects.filter(idOperario = id)
     # Crear un libro de Excel
     libro = Workbook()
     hoja = libro.active
@@ -789,22 +801,32 @@ def generarInforme(request, id):
     hoja['B1'] = 'Nombre'
     hoja['C1'] = 'Entidad'
     hoja['D1'] = 'Email'
-    hoja['E1'] = 'Tiempo estandar' 
-    hoja['F1'] = 'Factor de ritmo'
-    hoja['G1'] = 'Escala suplementos'
+    hoja['E1'] = 'Operación' 
+    hoja['F1'] = 'Desc operación'
+    hoja['G1'] = 'Maquina'
+    hoja['H1'] = 'Desc Maquina' 
+    hoja['I1'] = 'T estandar' 
+    hoja['J1'] = 'Ritmo'
+    hoja['K1'] = 'Suplementos'
     
     # Agregar datos
-    hoja['A2'] = operario.fecha.astimezone(pytz.UTC).replace(tzinfo=None)
-    hoja['B2'] = operario.nombre
-    hoja['C2'] = operario.entidad
-    hoja['D2'] = operario.email
-    hoja['E2'] = operario.tiempoEstandar
-    hoja['F2'] = operario.factorRitmo
-    hoja['G2'] = operario.escalaSuplementos
+    
+    for i, registro in enumerate( historico, start=2):
+        hoja[f'A{i}'] = registro.fechas.astimezone(pytz.UTC).replace(tzinfo=None)
+        hoja[f'B{i}'] = registro.idOperario.nombre
+        hoja[f'C{i}'] = registro.idOperario.entidad
+        hoja[f'D{i}'] = registro.idOperario.email
+        hoja[f'E{i}'] = registro.idOperacion.nombre
+        hoja[f'F{i}'] = registro.idOperacion.descripcion
+        hoja[f'G{i}'] = registro.idMaquinas.nombre
+        hoja[f'H{i}'] = registro.idMaquinas.descripcion
+        hoja[f'I{i}'] = registro.tiempoEstandar
+        hoja[f'J{i}'] = registro.factorRitmo
+        hoja[f'K{i}'] = registro.escalaSuplementos
     
 
     # Definir nombre del archivo
-    nombre_archivo = 'informeOperario.xlsx'
+    nombre_archivo = 'informe+' + (operario.nombre) + '.xlsx'
 
     # Crear la respuesta HTTP con el archivo adjunto
     response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -814,3 +836,7 @@ def generarInforme(request, id):
     libro.save(response)
 
     return response
+
+def calculos(request):
+    tiemposEstandar= OperacionOperario.objects.all()
+    return render(request,'cronometro/consultas/filtro.gtml',{'tiemposEstandar' : tiemposEstandar})
