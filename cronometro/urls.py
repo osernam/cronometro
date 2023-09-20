@@ -51,4 +51,5 @@ urlpatterns = [
     
     #informe
     path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),
+    path('calculos/', calculos, name='calculos'),
 ]

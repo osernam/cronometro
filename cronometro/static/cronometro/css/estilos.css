@@ -12,3 +12,14 @@
 }
 
 
+
+.contenidoPrincipal { display: flex; flex-direction: row ;}
+@media (max-width: 768px) { .contenedoPrincipal { flex-direction: column; } }
+
+.secciones { border-radius: 10px ; flex: 1; border: 1px solid rgba(30, 3, 81, 0.26); }
+
+.uno { flex-basis: 30%; }
+
+.dos { flex-basis: 20%; }
+
+.tres { flex-basis: 50%; } 

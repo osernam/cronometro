@@ -147,7 +147,7 @@ function parciales(){
     var tNor = document.getElementById('tiempoNor');
     var tEst = document.getElementById('tiempoEst');
     var divTiempos = document.getElementById('tiemposCronometro');
-    var cajaTEst = document.getElementById('cajaTiemposEstandar');
+    var cajaObs = document.getElementById('cajaTiempoObservado');
     var proNuevo= document.getElementsByName('cajaTiemposParciales');
     divTiempos.innerHTML = '';
     var tiempoEstandar2 = 0;
@@ -156,11 +156,12 @@ function parciales(){
     for (let i = 0; i < tiempoParcial.length; i++) {
         
         
-        var tObs = 0
+        var sumtObs = 0
         for (let e = 0; e < tiempoParcial.length; e++) {
-            tObs = tiempoParcial[e]/tiempoParcial.length
+            sumtObs += tiempoParcial[e]
             
         }
+        var tObs = sumtObs/tiempoParcial.length
         tiempoNormal= tObs*factorRitmo/100
         tiempoEstandar2 = tiempoNormal + tiempoNormal*escalaSuplementos
 
@@ -172,34 +173,48 @@ function parciales(){
             
                             
                 '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
-                    'T      '+(i+1)+ 
-                    '<input type="text" name="cajaTiemposParciales" style="border: none;"  value="'+tiempoParcial[i].toFixed(2) +'" readonly ="" >'+
+                    'T '+(i+1)+'  '+ 
+                    '<input type="text" name="cajaTiemposParciales" style="border: none;" style="height: 50px;" value="'+tiempoParcial[i].toFixed(2) +'" readonly ="" >'+
 
-                '</div>'        
+                '</div>'    
+                
             
 
         );
+        
+        
 
         
         
         proNuevo= document.getElementsByName('cajaTiemposParciales');
         for (let j = 0; j < proNuevo.length; j++) {
-            acumulador = acumulador + parseFloat(proNuevo[j].value);
+            acumulador += parseFloat(proNuevo[j].value);
+            
         }
 
+        
+        
+        var prom = acumulador/proNuevo.length
+        tiempoNormal = prom*factorRitmo/100
+        tiempoEstandar = tiempoNormal + (tiempoNormal*escalaSuplementos)
+        
     }
     
-
-    acumulador = acumulador/proNuevo.length
-    tiempoNormal = acumulador*factorRitmo/100
-    tiempoEstandar = tiempoNormal + (tiempoNormal*escalaSuplementos)
+   
     
-    cajaTEst.value= tiempoEstandar.toFixed(3);
+    cajaObs.value= tObs.toFixed(3);
 
-    tEst.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(3) + " </p>";
-    tNor.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(3) + "<input type='text' id='cajaTiemposEstandar' name='cajaTiemposEstandar' value='"+acumulador.toFixed(3)+"'>"+"</p>";
-
+    tEst.innerHTML = "<span class='mr-2'>"+
+                        "<i class='fas fa-circle text-success'></i>Te "+ tiempoEstandar.toFixed(3)+
+                        "<div  class=''></div>"+
+                    "</span>";
     
+
+    tNor.innerHTML= 
+                    "<span class='mr-2'>"+
+                        "<i class='fas fa-circle text-primary'></i>Tn "+ tiempoNormal.toFixed(3)+
+                        "<div  class=''></div>"+
+                    "</span>";
     
     setCookie('tiempos_estandar',tiempoEstandar,30);
 
@@ -274,14 +289,15 @@ function iniciar() {
  */
     document.getElementById('tiemposParciales').disabled=true;
     var divTiempos = document.getElementById('tiemposCronometro');
-    divTiempos.innerHTML = '';
+    //divTiempos.innerHTML = '';
     tiempoParcial = []
     setCookie('tiempos_cookie',tiempoParcial,30); // nombre, valor, tiempo de expiracion
     tiempoInicial = Date.now();
     tAnterior= 0;
     tiempoActual = setInterval(cronometroDeci, 100);
 
-    
+    document.getElementById('iniciarBoton').removeEventListener('click', iniciar);
+    document.getElementById('pararBoton').addEventListener('click', detener);
 }
 
 function detener() {
@@ -290,6 +306,8 @@ function detener() {
     console.log(( tPromEstandar));
     clearInterval(tiempoActual);
     document.getElementById('tiemposParciales').disabled=true;
+    document.getElementById('pararBoton').removeEventListener('click', detener);
+    document.getElementById('iniciarBoton').addEventListener('click', iniciar);
     
 }
 
@@ -297,9 +315,13 @@ function detener() {
 
 
 $( document ).ready(function() {
+    
     document.getElementById('iniciarBoton').addEventListener('click', iniciar);
-    document.getElementById('pararBoton').addEventListener('click', detener);
-//document.getElementById('enviarBoton').addEventListener('click', enviarVariables);
+
+    if (!tiempoParcial.length) {
+        document.getElementById('pararBoton').addEventListener('click', detener);
+    }
+    //document.getElementById('pararBoton').addEventListener('click', detener);
     document.getElementById('tiemposParciales').addEventListener('click', parciales);
 
   });

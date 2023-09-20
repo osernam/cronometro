@@ -1,7 +1,7 @@
 {% extends 'cronometro/base/base.html' %}
 {% load static %}
 
-{% block titulo %}Inicio{% endblock titulo %}
+{% block titulo %}Calculos{% endblock titulo %}
 
 {% block encabezado %}Bienbenido{% endblock encabezado %}
 {% block subencabezado %}Index{% endblock subencabezado %}
@@ -17,6 +17,73 @@
 {% if request.session.logueoUsuario %}
 {% if request.session.logueoUsuario.4 == 'Usuario' %}
 
+
+<div class="breadcrumb-section breadcrumb-bg">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 offset-lg-2 text-center">
+                <div class="breadcrumb-text">
+
+                    <p><strong >Calculos </strong></p>
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<br>
+<div class="contact-from-section mb-150">
+    <div class="container">
+        <div class="formulario" style="display: flex; flex-direction: column; gap: 10px;">
+            <form action="{% url 'cronometro:guardarOperario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+            <div>
+                <p>Nombres del operario(a)</p>
+                    
+                <p><input name="nombre" type="text" placeholder="Nombres" required>
+                </p>
+            </div>
+            <div>
+                <p>Email del operario(a)</p>
+                    
+                <p><input name="email" type="email" placeholder="Email" pattern="[^@]+@[^@]+\.[a-zA-Z]{2,6}" required>
+                </p>
+            </div>
+            <div>
+                <p>Entidad</p>
+                    
+                <p><input name="entidad" type="text" placeholder="Entidad" required>
+                </p>
+            </div>
+            
+                <div class="col">
+                    <label for="habilitadoJuego">Habilitado</label>
+                    <br>
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" value="True">Sí
+                        </label>
+                      </div>
+                      <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" value="False" checked>No
+                        </label>
+                    </div>
+                </div>
+                
+                
+                <br/>
+                <!-- Botón del enviar formulario-->
+                <div class="form-btns">
+                    <button type="submit">Enviar formulario</button>
+                    <button type="reset">Limpiar formulario</button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+</div>
 
 
 

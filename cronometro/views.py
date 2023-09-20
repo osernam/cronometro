@@ -522,12 +522,19 @@ def guardarTiempoParcial(request):
             operacion = Operacion.objects.get(id = request.POST['idOperacion'])
             maquina= Maquina.objects.get(id = request.POST['idMaquina'])
             
+            ritmo= request.POST['factorRitmo']
+            suplementos= request.POST['escalaSuplementos']
+            
+            ritmoP= ritmo.replace(",", ".")
+            suplementosP= suplementos.replace(",", ".")
+            
+            
             opOpera= OperacionOperario(
                 idOperario= operario,
                 idOperacion= operacion,
                 idMaquinas= maquina,
-                factorRitmo= request.POST['factorRitmo'],
-                escalaSuplementos= request.POST['escalaSuplementos'],
+                factorRitmo= float(ritmoP),
+                escalaSuplementos= float(suplementosP),
             )
             
             
@@ -752,20 +759,44 @@ def guardarTiempoEstandar(request, id):
    
     tiempoE = 0
     opOpera = OperacionOperario.objects.get(id = id)
-    print(opOpera)
+    operario= Operario.objects.get(id = opOpera.idOperario.id)
+    maquina= Maquina.objects.get(id = opOpera.idMaquinas.id)
+    operacion= Operacion.objects.get(id = opOpera.idOperacion.id)
+    
     #print(json.dumps(request.session.get('tiempos_cookie')))
     try:
         print( request.COOKIES['tiempos_estandar'])
         
-        if request.method =="POST":
-            opOpera.tiempoEstandar = request.POST['cajaTiemposEstandar']
+        if request.method =="POST":            
+            escalaSuplementos = ( request.POST['escalaSuplemento'])
+            factorRitmo = (request.POST['factoRitmo'])
+            tObservado=  (request.POST['cajaTiempoObservado'])
+            
+            escalaSuplementos = escalaSuplementos.replace(",", ".")
+            factorRitmo = factorRitmo.replace(",", ".")
+            tObservado = tObservado.replace(",", ".")
+            
+            escala = float(escalaSuplementos)
+            ritmo = float(factorRitmo)
+            observado = float(tObservado)
+            print("")
+            print(observado)
+            
+            opOpera.factorRitmo = ritmo        
+            opOpera.escalaSuplementos = escala
+            print(escala)
+            print(ritmo)
+            tNormal= observado* ritmo/100
+            print(tNormal)
+            tEstandar = tNormal+(tNormal*escala)
+            print(tEstandar)
+            opOpera.tiempoEstandar =  tEstandar
+            print("")
             opOpera.save()
             
-            operario= Operario.objects.get(id = opOpera.idOperario.id)
-            maquina= Maquina.objects.get(id = opOpera.idMaquinas.id)
-            operacion= Operacion.objects.get(id = opOpera.idOperacion.id)
             
-        messages.success(request, f"Tiempo estandar ({(request.POST['cajaTiemposEstandar'])}) guardado con éxito")
+            
+        messages.success(request, f"Tiempo estandar ({(tEstandar)}) guardado con éxito")
         print("guardado")
     except Exception as e:
         print ( f"Error: {e}")
@@ -839,4 +870,4 @@ def generarInforme(request, id):
 
 def calculos(request):
     tiemposEstandar= OperacionOperario.objects.all()
-    return render(request,'cronometro/consultas/filtro.gtml',{'tiemposEstandar' : tiemposEstandar})
+    return render(request,'cronometro/consultas/filtro.html',{'tiemposEstandar' : tiemposEstandar})
