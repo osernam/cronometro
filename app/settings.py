@@ -127,3 +127,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR / 'uploads'
 MEDIA_URL = 'uploads/'
 STATIC_ROOT = 'static/'
+
+#correos
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'osernam@gmail.com'
+EMAIL_HOST_PASSWORD = 'tcvu nnkx xvwx tfko'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'osernam@gmail.com'

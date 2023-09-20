@@ -11,6 +11,12 @@ from django.db import IntegrityError
 from django.core.paginator import Paginator 
 import json 
 from django.core.serializers.json import DjangoJSONEncoder
+# recuperacion de contraseña
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.shortcuts import get_object_or_404
+
+from django.core.mail import send_mail
+from django.conf import settings
 #informe operario excel
 
 from openpyxl import Workbook
@@ -151,6 +157,100 @@ def guardarUsuario(request):
         return redirect('cronometro:registro')
         
     return redirect('cronometro:home')  
+
+def inicioRecuperacion(request):
+    return render(request, 'cronometro/usuario/inicio_recuperacion.html')
+
+def correoRecuperacion(request):
+    try:    
+        if request.method == "POST":
+            
+            correo=  request.POST['correo'],
+            correoV=  request.POST['correoV'],
+            print(correo)
+            print(correoV)
+            
+            if correo== correoV:
+                usuario= Usuario.objects.get(email = request.POST['correo'])
+                print(usuario.nombre)
+                email= usuario.email
+                
+                token_generator = PasswordResetTokenGenerator()
+                token = token_generator.make_token(usuario)
+                # Almacena el token asociado con el usuario
+
+                request.session["usuarioR"] = [usuario.id]
+                mensaje = f'Haz clic en el siguiente enlace para restablecer tu contraseña: http://127.0.0.1:8000/cronometro/recuperar/?token={token}'
+                
+                send_mail('Recuperación de contraseña', 
+                          mensaje, 
+                          settings.DEFAULT_FROM_EMAIL, 
+                          [email],)
+                
+                messages.success(request, "Correo enviado")
+                return redirect('cronometro:inicioRecuperacion')
+            else:
+                messages.warning(request, "Correo incorrecto")
+                return redirect('cronometro:inicioRecuperacion')
+        else:
+            messages.warning(request, "Usted no ha enviado datos")
+            return redirect('cronometro:inicioRecuperacion')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return redirect('cronometro:inicioRecuperacion')    
+        
+def recuperar(request):
+    try:
+        idUsuario = request.session.get('usuarioR')[0]
+        
+        print(idUsuario)
+        token_generator = PasswordResetTokenGenerator()
+        # Obtener el usuario correspondiente al token
+        usuario = get_object_or_404(Usuario, pk=idUsuario)
+        print(usuario)
+        token = request.GET.get('token')
+        print(token)
+
+        # Validar el token
+        if token_generator.check_token(usuario, token):
+            # Token válido, permitir al usuario restablecer la contraseña
+            # Mostrar un formulario para restablecer la contraseña
+            messages.success(request, "Token válido")
+            
+            
+            return render(request, 'cronometro/usuario/restablecer_contrasena.html', {'usuario': usuario})
+        else:
+            # Token inválido, mostrar un mensaje de error o redirigir a otra página
+            # ...
+            messages.warning(request, "Token inválido")
+            return redirect('cronometro:inicioRecuperacion')
+    except Usuario.DoesNotExist:
+        # Handle the case when no Usuario object is found
+        messages.warning(request, "Usuario no encontrado")
+        return redirect('cronometro:inicioRecuperacion')
+    
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return redirect('cronometro:inicioRecuperacion')  
+
+def formRestablecerContrasena(request, id):
+    try:
+        usuario = Usuario.objects.get(id = id)
+        if request.method == "POST":
+            
+            clave = request.POST['password']
+            claveV= request.POST['passwordV']
+            
+            if clave==claveV:
+                usuario.clave = contexto.hash(clave)
+                usuario.save()
+                messages.success(request, "Contraseña actualizada")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return render(request, 'cronometro/usuario/restablecer_contrasena.html', {'usuario': usuario})
+        
+    
 
 def listarUsuarios(request):
     """

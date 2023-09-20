@@ -1,0 +1,54 @@
+
+
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Recuperación de contraseña{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+{% endif %}
+
+<div class="contact-from-section mb-150" >
+    <div class="container" style="width: 50%;"> 
+        <form action="{% url 'cronometro:formRestablecerContrasena' usuario.id %}" class="needs-validation" novalidate="" method="post">
+             {% csrf_token %}  
+     
+                    
+                    <a>
+                        <label for="correo">Nueva contraseña:</label>
+                            <input type="password" id="password" name="password" class="form-control"  required>
+                                                                    
+                            </input>
+                    </a>
+                
+
+                
+                    <a>
+                        <label for="correo">Repite la nueva contraseña:</label>
+                            <input type="password" id="passwordV" name="passwordV" class="form-control"  required>
+                                                                    
+                            </input>
+                    </a>
+                            
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="reset" data-dismiss="modal">Limpiar</button>
+                
+                <button type="submit" class="btn btn-primary">Guardar</button>
+            </div>
+        </form>    
+    </div>
+</div>
+
+
+
+
+{% endblock contenedor %}  

@@ -1,9 +1,10 @@
 from django.db import models
 from datetime import date
 from email.policy import default
+from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
-class Usuario(models.Model):
+class Usuario(AbstractUser):
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     email = models.EmailField(max_length=100, unique = True)
@@ -12,6 +13,14 @@ class Usuario(models.Model):
     rol = models.CharField(max_length=20, choices=roles_CHOISES, default='U')
     fecha_nacimiento = models.DateField(default=date.today)
     estado = models.BooleanField(default=True)
+    
+     # Agregue related_name para resolver el conflicto
+    groups = models.ManyToManyField(
+        'auth.Group', related_name='usuario_set', blank=True
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission', related_name='usuario_set', blank=True
+    )
     
     def __str__(self) -> str:
         return f"{self.nombre}"

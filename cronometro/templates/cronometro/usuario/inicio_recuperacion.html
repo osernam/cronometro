@@ -1,0 +1,60 @@
+
+
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Recuperación de contraseña{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+{% endif %}
+
+<div class="contact-from-section mb-150" >
+    <div class="container" style="width: 50%;"> 
+        <form action="{% url 'cronometro:correoRecuperacion' %}" class="needs-validation" novalidate="" method="post">
+             {% csrf_token %}  
+     
+                    
+                    <a>
+                        <label for="correo">Correo electrónico:</label>
+                            <input type="email" id="correo" name="correo" class="form-control"  required>
+                                                                    
+                            </input>
+                    </a>
+                
+
+                
+                    <a>
+                        <label for="correoV">Repite el correo electrónico:</label>
+                            <input type="email" id="correoV" name="correoV" class="form-control"  required>
+                                                                    
+                            </input>
+                    </a>
+                            
+       
+                    
+                        
+                   
+                            
+                
+
+            <div class="modal-footer">
+                <button class="btn btn-secondary" type="reset" data-dismiss="modal">Limpiar</button>
+                
+                <button type="submit" class="btn btn-primary">Enviar correo</button>
+            </div>
+        </form>    
+    </div>
+</div>
+
+
+
+
+{% endblock contenedor %}  

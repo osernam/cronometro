@@ -10,6 +10,11 @@ urlpatterns = [
     #Usuario
     path('registro/', registro, name = 'registro'),
     path('save/', guardarUsuario, name = 'guardarUsuario'),
+    #recuperacion
+    path('inicio_recuperar/', inicioRecuperacion, name = 'inicioRecuperacion'),
+    path('correo/', correoRecuperacion, name = 'correoRecuperacion'),
+    path('recuperar/', recuperar, name = 'recuperar'),
+    path('restablecer_contrasena/<int:id>', formRestablecerContrasena, name = 'formRestablecerContrasena'),
     
     path('list_usuario/', listarUsuarios, name='listarUsuarios'),
     path('edit_usuario/<int:id>', actualizarUsuario, name='actualizarUsuario'),
