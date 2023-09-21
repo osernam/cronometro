@@ -7,15 +7,16 @@ urlpatterns = [
     path('index/', homeView, name='home'),
     path('login/', login, name = 'login'),
     path('logout/', logout, name = 'logout'),
-    #Usuario
-    path('registro/', registro, name = 'registro'),
-    path('save/', guardarUsuario, name = 'guardarUsuario'),
+    
     #recuperacion
     path('inicio_recuperar/', inicioRecuperacion, name = 'inicioRecuperacion'),
     path('correo/', correoRecuperacion, name = 'correoRecuperacion'),
     path('recuperar/', recuperar, name = 'recuperar'),
     path('restablecer_contrasena/<int:id>', formRestablecerContrasena, name = 'formRestablecerContrasena'),
     
+    #Usuario
+    path('registro/', registro, name = 'registro'),
+    path('save/', guardarUsuario, name = 'guardarUsuario'),
     path('list_usuario/', listarUsuarios, name='listarUsuarios'),
     path('edit_usuario/<int:id>', actualizarUsuario, name='actualizarUsuario'),
     path('edicion_usuario/>', edicionUsuario, name='edicionUsuario'),
@@ -56,5 +57,6 @@ urlpatterns = [
     
     #informe
     path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),
+    path('buscar_operario/', buscarOperario, name='buscarOperario'),
     path('calculos/', calculos, name='calculos'),
 ]

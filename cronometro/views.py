@@ -59,9 +59,9 @@ def selecOperario (request):
     Devoluciones:
         HttpResponse: el objeto de respuesta HTTP.
     """
-    operarios = Operario.objects.all()
-    maquinas = Maquina.objects.all()
-    operaciones = Operacion.objects.all()
+    operarios = Operario.objects.filter(estado=True)
+    maquinas = Maquina.objects.filter(estado=True)
+    operaciones = Operacion.objects.filter(estado=True)
       
     #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
     #return render(request, 'cronometro\operario\selec_operario.html', {
@@ -143,6 +143,8 @@ def guardarUsuario(request):
                 apellido= request.POST['apellido'],
                 fecha_nacimiento=request.POST['fecha_nacimiento'],
                 clave = contexto.hash(request.POST['clave']) ,
+                password= contexto.hash(request.POST['clave']),
+                username= request.POST['email'],
                 
             )
             usuario.full_clean()
@@ -157,6 +159,7 @@ def guardarUsuario(request):
         return redirect('cronometro:registro')
         
     return redirect('cronometro:home')  
+
 
 def inicioRecuperacion(request):
     return render(request, 'cronometro/usuario/inicio_recuperacion.html')
@@ -264,7 +267,7 @@ def listarUsuarios(request):
         - Si el usuario no ha iniciado sesión, redirige a la URL 'cronometro:home' después de mostrar un mensaje de advertencia.
     """
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if login[4] == 'Administrador':
         usuarios = Usuario.objects.order_by('-estado')
         paginator = Paginator(usuarios, 10)
         page_number = request.GET.get('page')
@@ -317,11 +320,12 @@ def edicionUsuario(request):
                     
                     usuario.nombre = request.POST['nombre']
                     usuario.apellido = request.POST['apellido']
-                    #usuario.rol = request.POST['rol']
+                    usuario.rol = request.POST['rol']
                     usuario.estado = request.POST['estado']
                     
                     usuario.save()
-                    messages.success(request, f"usuario ({usuario.nombre})  editado exitosamente")
+                    messages.success(request, f"Usuario ({usuario.nombre})  editado exitosamente")
+                    return redirect('cronometro:home')
                 else:
                     messages.warning(request, "Usted no ha enviado datos")
             else:
@@ -967,6 +971,30 @@ def generarInforme(request, id):
     libro.save(response)
 
     return response
+
+def buscarOperario(request):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            
+            if request.method == "POST":
+                resultado = request.POST["buscar"]
+                
+                operarios = Operario.objects.filter(Q(nombre__icontains = resultado) | Q(entidad__icontains = resultado) | Q(email__icontains = resultado) | Q(estado__icontains = resultado))
+                paginator = Paginator(operarios, 10)
+                page_number = request.GET.get('page')
+                operarios = paginator.get_page(page_number)
+                
+                return render(request, 'cronometro/operario/listado_operarios.html', {'operarios' : operarios})
+            else:
+                messages.error(request, "No envió datos")
+                return redirect('cronometro:listarOperarios')
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:listarOperarios')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarOperarios')
 
 def calculos(request):
     tiemposEstandar= OperacionOperario.objects.all()

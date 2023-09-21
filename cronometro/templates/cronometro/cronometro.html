@@ -8,7 +8,6 @@
 
 {% block contenedor %}
 {% if request.session.logueoUsuario %}
-{% if request.session.logueoUsuario.4 == 'Usuario' %}
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid" >
@@ -316,7 +315,7 @@
 {% else %}
 No hay datos.
 Inicie sesion.
-{% endif %}
+
 {% endif %}
 
             {% endblock contenedor %}     

@@ -15,48 +15,79 @@
 {% endif %}
 
 {% if request.session.logueoUsuario %}
-{% if request.session.logueoUsuario.4 == 'Usuario' %}
+
 
 
 <br>
 <div class="contact-from-section mb-150">
-    <div class="container">
-        <div class="formulario">
-            <form action="{% url 'cronometro:edicionUsuario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+    <div class="container text-center">
+        <div class="formulario mx-auto">
+            <form action="{% url 'cronometro:edicionUsuario' %}" class="needs-validation" novalidate="" method="post">
+                {% csrf_token %}
                 <input value="{{usuario.id}}" readonly name="id" type="hidden" required>
-                <div class="col">
-                    <p>Nombres  </p>
-                    <input value="{{usuario.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
-                    
-                </div>
-                <div class="col">
-                    <p>Apellidos  </p>
-                    <input value="{{usuario.apellido}}" name="apellido" type="text" placeholder="Apellidos" required>
-                    
-                </div>
-                <div class="col">
-                    <br>
-                <p>Rol</p>
-                <input value="{{usuario.rol}}" name="rol" type="text" placeholder="rol" disabled>
-                
-                </div>
-
-                <div class="col">
-                    <br>
-                    <label for="habilitadoUsuarios">Estado</label>
-                    <br>
-                    <div class="form-check-inline">
-                        <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="estado" {% if usuario.estado %} checked {% endif %} value="True">Sí
-                        </label>
-                      </div>
-                      <div class="form-check-inline">
-                        <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="estado" {% if not usuario.estado %} checked {% endif %}value="False">No
-                        </label>
+                <div class="row">
+                    <div class="col-6">
+                        <p>Nombres</p>
+                        <input value="{{usuario.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
+                    </div>
+                    <div class="col-6">
+                        <p>Apellidos</p>
+                        <input value="{{usuario.apellido}}" name="apellido" type="text" placeholder="Apellidos" required>
                     </div>
                 </div>
-                    
+                <div class="row">
+                    <div class="col-6 ">
+                        <br>
+                        
+                        <div class="d-flex justify-content-center">
+                            {% if request.session.logueoUsuario.4 == 'Administrador' %}
+                                <p>Rol</p>
+                                <div>
+                                <select name="rol" class="form-control col-6" id="rol" title="Selecciona un rol" required>
+                                    <option {% if usuario.rol == 'A' %} selected {% endif %} value="A">Administrador</option>
+                                    <option {% if usuario.rol == 'U' %} selected {% endif %} value="U">Usuario</option>
+                                </select>
+                                </div>
+                            {%else%}
+                                <p>Rol</p>
+                                <input {% if usuario.rol == 'A' %} value="Administrador" {% else %} value="Usuario" {% endif %} name="rol" type="text" readonly>
+                                
+                                
+                            {%endif%}
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <br>
+                        <p>Fecha de nacimiento</p>
+                        <input value="{{usuario.fecha_nacimiento|date:'Y-m-d'}}" name="fecha_nacimiento" type="date" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
+                        <br>
+                        <label for="habilitadoUsuarios">Habilitado</label>
+                        <br>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="estado" {% if usuario.estado %} checked {% endif %} value="True" readonly>Sí
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label class="form-check-label">
+                                <input type="radio" class="form-check-input" name="estado" {% if not usuario.estado %} checked {% endif %}value="False" readonly>No
+                            </label>
+                        </div>
+                        {%else%}
+                            <span> Estado </span>
+                            <input type="text" {% if usuario.estado == True %} value="True" placeholder="Habilitado" {% else %} value="False" placeholder="Deshabilitado" {% endif %} name="estado"  type="text" readonly>
+                        {%endif%}
+
+                        
+
+
+                    </div>
+                </div>
                 <br/>
                 <!-- Botón del enviar formulario-->
                 <div class="form-btns">
@@ -65,7 +96,6 @@
                 </div>
             </form>
         </div>
-        
     </div>
 </div>
 
@@ -75,6 +105,6 @@
 No hay datos.
 Inicie sesion.
 {% endif %}
-{% endif %}
+
 
 {% endblock contenedor %}

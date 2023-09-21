@@ -50,7 +50,7 @@
             <hr class="sidebar-divider my-0">
 
             <!-- Nav Item - Cronometro -->
-            {% if request.session.logueoUsuario.4 == 'Usuario' %}
+            {% if request.session.logueoUsuario %}
             <li class="nav-item active">
                 <a class="nav-link" href="{% url 'cronometro:selecOperario' %}">
                     <i class="fas fa-fw fa-tachometer-alt" ></i>
@@ -78,6 +78,10 @@
                         
                         
                         <a class="collapse-item" href="{% url 'cronometro:listarOperarios' %}">Consulta general</a>
+                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
+                        <a class="collapse-item" href="{% url 'cronometro:listarUsuarios' %}">Listar Usuarios</a>
+
+                        {% endif %}
                     </div>
                 </div>
             </li>
@@ -98,8 +102,7 @@
                         <h6 class="collapse-header">Opciones:</h6>
                         <a class="collapse-item" href="{% url 'cronometro:crearOperario' %}">Crear Operario</a>
                         
-                        <a class="collapse-item" href="{% url 'cronometro:listarUsuarios' %}">Listar Usuarios</a>
-
+                        
                         <a class="collapse-item" href="{% url 'cronometro:crearMaquina' %}">Crear Maquina</a>
                        
                         <a class="collapse-item" href="{% url 'cronometro:listarMaquinas' %}">Listar Maquina</a>
@@ -260,7 +263,7 @@
                                     Perfil
                                 </a>
                                 {%endif%}
-                                {% if request.session.logueoUsuario.4 == 'Usuario' %}
+                                {% if request.session.logueoUsuario %}
                                 <div class="dropdown-divider"></div>
                                 <a class="dropdown-item" href="{% url 'cronometro:logout' %}">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-40"></i>
@@ -395,7 +398,7 @@
 
     <!-- Bootstrap core JavaScript-->
     
-
+    <script src="{% static 'cronometro/js/buscador.js' %}"></script>
     <script src="{% static 'bootstrap/js/bootstrap.min.js'%}"></script>
     <!-- Core plugin JavaScript-->
     

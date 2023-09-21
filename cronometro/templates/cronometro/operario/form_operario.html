@@ -17,7 +17,7 @@
             <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
         {% endfor %}
 {% endif %}
-{% if request.session.logueoUsuario.4 == 'Usuario' %}
+{% if request.session.logueoUsuario %}
 
 <div class="breadcrumb-section breadcrumb-bg">
     <div class="container">

@@ -17,18 +17,10 @@
             <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
         {% endfor %}
 {% endif %}
-{% if request.session.logueoUsuario.4 == 'Usuario' %}
+{% if request.session.logueoUsuario %}
 
 
-{% if historial %}
-<form action="" method="post">
-    {% csrf_token %}
-    <div class="search-bar">
-        <div class="search-bar-tablecell">
-            <input onkeyup="" type="search" placeholder="Buscar" id="buscar" name="buscar">
-        </div>
-    </div>
-</form>
+
 
 <div class=" mt-50 mb-150 pl-5 pr-5" id="respuesta">
     <div class="contenedor">
@@ -87,7 +79,6 @@
 {% else %}
 No hay datos
 
-{% endif %}
 {% endif %}
 {% endblock contenedor %}  
 
