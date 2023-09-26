@@ -55,6 +55,7 @@ class OperacionOperario(models.Model):
     fechas = models.DateTimeField(auto_now_add=True, blank=True)
     tiempoEstandar = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     factorRitmo = models.DecimalField(max_digits=5, decimal_places=2, default=0)
+    uniHoras = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     escalaSuplementos = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     estado = models.BooleanField(default=True)
     

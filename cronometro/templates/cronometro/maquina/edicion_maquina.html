@@ -20,6 +20,10 @@
 <br>
 <div class="contact-from-section mb-150">
     <div class="container">
+        <div class="form-title">
+            <h2>Edición de máquina</h2>
+            
+        </div>
         <div class="formulario">
             <form action="{% url 'cronometro:editarMaquina' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
                 <input value="{{maquina.id}}" readonly name="id" type="hidden" required>

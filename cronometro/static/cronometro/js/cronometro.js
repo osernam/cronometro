@@ -324,6 +324,7 @@ $( document ).ready(function() {
     //document.getElementById('pararBoton').addEventListener('click', detener);
     document.getElementById('tiemposParciales').addEventListener('click', parciales);
 
+
   });
 
 
@@ -343,7 +344,7 @@ function graficoT () {
     myChart = new Chart(graficoTiempos, {
     type: 'line',
     data: {
-        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12','13','14'],
         datasets: [{
         label: 'Intervalos',
         data: tiempoParcial,

@@ -1,10 +1,10 @@
 {% extends 'cronometro/base/base.html' %}
 {% load static %}
 
-{% block titulo %}cronómetro{% endblock titulo %}
+{% block titulo %}Cronometro{% endblock titulo %}
 
 {% block encabezado %}Inicio{% endblock encabezado %}
-{% block subencabezado %}cronómetro{% endblock subencabezado %}
+{% block subencabezado %}Cronometro{% endblock subencabezado %}
 
 {% block contenedor %}
 {% if request.session.logueoUsuario %}
@@ -31,82 +31,122 @@
 
                     <!-- Content Row  cajas superiores -->
 
-                    <div  id="contenido" class="contenedoPrincipal">
+                    <div  id="contenido" class="container-fluid">
                         
-                            <!-- Area cronómetro -->
+                            <!-- Area cronometro -->
                             <div class="secciones uno">
-                                <div class="">
-                                    <div class="card shadow mb-2">
-                                        <!-- Card Header - Dropdown -->
-                                        <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                            <h6 class="m-0 font-weight-bold text-primary">cronómetro</h6>
-                                            <div class="dropdown no-arrow">
-                                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                                </a>
-                                                
-                                            </div>
+                                <div class="card shadow mb-2">
+                                    <!-- Card Header - Dropdown -->
+                                    <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Cronometro</h6>
+                                        <div class="dropdown no-arrow">
+                                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                            </a>
+
+                                            
+
+                                            
                                         </div>
-                                        <!-- cronómetro Body -->
-                                        <div class="card-body" ">
-                                            <div class=" ">
-                                                <div >
-                                                    <h3 id="tiempo" >00:00:00</h3>
-                                                </div>
-
-                                                <div style="width: auto;">              
-                                                <a id="iniciarBoton" class="btn btn-primary" type="button">Iniciar</a>
-                                                <a id="pararBoton" class="btn btn-primary" type="button" >Detener</a>
-                                                <a id="tiemposParciales" class="btn btn-primary" type="button" disabled="true">Parcial</a>
-                                                </div>
-                                                <div style="width: auto;">
-                                                    <br/>
-                                                <form action="{% url 'cronometro:guardarTiempoEstandar' opOpera.id %}" method="POST">
-                                                    {%csrf_token%}
-                                                    <div class="columnaG">
-                                                        <div class="columna">
-                                                            <label for="factoRitmo">Ritmo (BSI) </label>
-                                                            <input name="factoRitmo" id="factoRitmo" value= "{{opOpera.factorRitmo}}" readonly="">
-                                                            <label for="escalaSuplemento"> Suplementos</label>
-                                                            <input name= "escalaSuplemento" id="escalaSuplemento" value="{{opOpera.escalaSuplementos}}" readonly="">
-                                                            
-                                                        </div>
-
-                                                        <div class="columna">
-                                                            <label for="cajaTiempoObservado"> Tiempo observado</label>
-                                                            <input type='number' id="cajaTiempoObservado" name="cajaTiempoObservado"  readonly ="" placeholder="0">
-                                                        </div>
-                                                    </div>
-                                                     
-                                                    <div class="columnaG">
-                                                        <br/>
-                                                        <button   class="btn btn-primary" type="submit">Guardar</button>
-                                                    </div>
-                                                </form>  
-                                                </div> 
-    
+                                    </div>
+                                    <!-- Cronometro Body -->
+                                    <div class="card-body" ">
+                                        <div class="chart-area" ">
+                                            <div >
+                                            <h2 id="tiempo" >00:00:00</h2>
                                             </div>
-                                        </div>
+                                            <div style="width: auto;">              
+                                            <a id="iniciarBoton" class="btn btn-primary" type="button">Iniciar</a>
+                                            <a id="pararBoton" class="btn btn-primary" type="button" >Detener</a>
+                                            <a id="tiemposParciales" class="btn btn-primary" type="button" disabled="true">Parcial</a>
+                                            </div>
+                                            <div style="width: auto;">
+                                                <br/>
+                                            <form action="{% url 'cronometro:guardarTiempoEstandar' opOpera.id %}" method="POST">
+                                                {%csrf_token%}
 
+                                                <label for="factoRitmo">Factor de ritmo (BSI) </label> 
+                                                <input name="factoRitmo" id="factoRitmo" value= "{{opOpera.factorRitmo}}" readonly=""> 
+                                    
+                                                <label for="escalaSuplemento"> Escala de suplementos</label>    
+                                                <input name= "escalaSuplemento" id="escalaSuplemento" value="{{opOpera.escalaSuplementos}}" readonly="">
+                                            
+                                                <label for="cajaTiempoObservado"> Tiempo observado</label>
+                                                <input type='number' id="cajaTiempoObservado" name="cajaTiempoObservado"  readonly ='' placeholder="0">
+
+                                                <br/>
+                                                <button   class="btn btn-primary" type="submit">Guardar</button>
+
+                                            </form>  
+                                            </div> 
+
+                                            
+                                            
+
+                                            
+                                            
+                                        </div>
                                     </div>
 
-
-                                    
-
                                 </div>
+
+
+                                
+
                             </div>
                             <!--fin de Area cronometro -->
                             
+                            <!--  Chart tiempos-->
+                            <div class="secciones dos">
+                                <div class="card shadow mb-4">
+                                    <!-- Card Header - Dropdown -->
+                                    <div
+                                        class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                        <h6 class="m-0 font-weight-bold text-primary">Tiempo</h6>
+                                        <div class="dropdown no-arrow">
+                                            <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                                            </a>
+                                            
+                                        </div>
+                                    </div>
+                                    <!-- Card Body -->
+                                    <div class="card-body">
+                                        <div style="height: 200px; overflow: auto;" id= "tiemposCronometro">
+                                            <!-- Aqui apareceran los tiempos -->
+                                            
+
+                                        </div>
+                                        <div id= "contenidoTes" class="mt-4 text-center small" >
+                                            <div id ="tiempoNor" class= "column" >
+                                                <span class="mr-2">
+                                                    <i class="fas fa-circle text-primary"></i> Tiempo Normal
+                                                    <div  class=""></div>
+                                                </span>
+                                            </div>
+                                            <div id="tiempoEst" class= "column"  >
+                                                
+                                                <span class="mr-2">
+                                                    <i class="fas fa-circle text-success"></i> Tiempo Estandar
+                                                    <div class=""></div>
+                                                </span>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--fin de Chart tiempos -->
+
                             <!-- Area graficos -->
-                            
                             <div class="secciones tres">
-                                
                                 <div class="card shadow mb-4">
 
                                     <!-- Card Header - Dropdown -->
                                     <div  class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                        <h6 class="m-0 font-weight-bold text-primary">Gráfica (centésimas)</h6>
+                                        <h6 class="m-0 font-weight-bold text-primary">Cronometro</h6>
                                         <div class="dropdown no-arrow">
                                             <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -123,9 +163,9 @@
 
                                         <div style="height: 100%; overflow: auto;">
                                         
-                                            <a id="graficar" ></a>
+                                            <a id="graficar" >Grafica en centesimas</a>
                                             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-                                            <canvas id="graficoTiempos"  width="100%" height="200px">
+                                            <canvas id="graficoTiempos"  width="100%" height="100%">
 
 
                                             </canvas>
@@ -186,56 +226,7 @@
                                     </div>
                                 </div>    
                             </div>
-                        
                             <!--fin de Chart graficos -->
-
-
-                            <!--  Chart tiempos-->
-                            <div class="secciones dos">
-                                <div class="">
-                                    <div class="">
-                                        <!-- Card Header - Dropdown -->
-                                        <div
-                                            class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                                            <h6 class="m-0 font-weight-bold text-primary">Intervalos </h6>
-                                            <div class="dropdown no-arrow">
-                                                <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
-                                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                                    <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
-                                                </a>
-                                                
-                                            </div>
-                                        </div>
-                                        <!-- Card Body -->
-                                        <div class="card-body">
-                                            <div class="chart-pie pt-4 pb-2"  id= "tiemposCronometro">
-                                                <!-- Aqui apareceran los tiempos -->
-                                                
-
-                                            </div>
-                                            <div id= "contenidoTes" class="mt-4 text-center small" >
-                                                <div id ="tiempoNor" class= "column" >
-                                                    <span class="mr-2">
-                                                        <i class="fas fa-circle text-primary"></i> Tiempo Normal
-                                                        <div  class=""></div>
-                                                    </span>
-                                                </div>
-                                                <div id="tiempoEst" class= "column"  >
-                                                    
-                                                    <span class="mr-2">
-                                                        <i class="fas fa-circle text-success"></i> Tiempo Estandar
-                                                        <div class=""></div>
-                                                    </span>
-                                                </div>
-                                                
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--fin de Chart tiempos -->
-
-                            
 
                         
                     </div>

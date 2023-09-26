@@ -22,10 +22,18 @@
 <div class="contact-from-section mb-150">
     <div class="container text-center">
         <div class="formulario mx-auto">
+            <div class="form-title">
+                <h2>Edición de usuario</h2>
+                
+            </div>
             <form action="{% url 'cronometro:edicionUsuario' %}" class="needs-validation" novalidate="" method="post">
                 {% csrf_token %}
                 <input value="{{usuario.id}}" readonly name="id" type="hidden" required>
                 <div class="row">
+                    <div class="col-6">
+                        <p>Correo</p>
+                        <input value="{{usuario.email}}" name="email" type="email" placeholder="" readonly>
+                    </div>
                     <div class="col-6">
                         <p>Nombres</p>
                         <input value="{{usuario.nombre}}" name="nombre" type="text" placeholder="Nombres" required>

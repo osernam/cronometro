@@ -49,28 +49,36 @@ def homeView(request):
     """
     return render(request,'cronometro\index.html')
 
+def homeView2(request):
+    return render(request,'cronometro/base/base2.html')
+
 def selecOperario (request):
-    """
-    Representa la plantilla 'selec_operario.html' con la solicitud dada.
-
-    Parámetros:
-        solicitud (HttpRequest): el objeto de solicitud HTTP.
-    
-    Devoluciones:
-        HttpResponse: el objeto de respuesta HTTP.
-    """
-    operarios = Operario.objects.filter(estado=True)
-    maquinas = Maquina.objects.filter(estado=True)
-    operaciones = Operacion.objects.filter(estado=True)
-      
-    #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
-    #return render(request, 'cronometro\operario\selec_operario.html', {
-     #   'datos_json': datos_json,
-      #  'operarios' : operarios
-    #})
+    if request.session.get('logueoUsuario'):
         
-    return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
+            
+        """
+        Representa la plantilla 'selec_operario.html' con la solicitud dada.
 
+        Parámetros:
+            solicitud (HttpRequest): el objeto de solicitud HTTP.
+        
+        Devoluciones:
+            HttpResponse: el objeto de respuesta HTTP.
+        """
+        operarios = Operario.objects.filter(estado=True)
+        maquinas = Maquina.objects.filter(estado=True)
+        operaciones = Operacion.objects.filter(estado=True)
+        
+        #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
+        #return render(request, 'cronometro\operario\selec_operario.html', {
+        #   'datos_json': datos_json,
+        #  'operarios' : operarios
+        #})
+            
+        return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
+    else:
+        messages.warning(request, "Inicie sesión primero")
+        return redirect('cronometro:home')
 
 def login (request):
     """
@@ -460,21 +468,27 @@ def guardarOperario (request):
     
     try: 
         if request.method == "POST":
-            operario = Operario(
-                email= request.POST['email'],
-                nombre= request.POST['nombre'],
-                entidad= request.POST['entidad'],
-                estado= request.POST['estado'],
-                #fecha= request.POST['email'],
-                #factorRitmo= request.POST['email'],
-                #tiempoEstandar= request.POST['email'],
-                #escalaSuplementos= request.POST['email'],
+            opExist= Operario.objects.filter(email= request.POST['email'])
+            if opExist.exists():
+                messages.warning(request, "Operari@ ya existe")
+                return redirect('cronometro:crearOperario')
                 
-            )
-            operario.full_clean()
-            operario.save()
-            messages.success(request, f"Operari@ ha sido creado con éxito")
-        
+            else:
+                operario = Operario(
+                    email= request.POST['email'],
+                    nombre= request.POST['nombre'],
+                    entidad= request.POST['entidad'],
+                    estado= request.POST['estado'],
+                    #fecha= request.POST['email'],
+                    #factorRitmo= request.POST['email'],
+                    #tiempoEstandar= request.POST['email'],
+                    #escalaSuplementos= request.POST['email'],
+                    
+                )
+                operario.full_clean()
+                operario.save()
+                messages.success(request, f"Operari@ ha sido creado con éxito")
+            return redirect('cronometro:home')
         else:
             messages.warning(request, "Usted no ha enviado datos")
     
@@ -610,13 +624,22 @@ def deshabilitarOperario(request, id):
 def historial(request, id): 
     
     historial = OperacionOperario.objects.filter(idOperario = id)
+    operarios = Operario.objects.all()
+    
     paginator = Paginator(historial, 10)
     page_number = request.GET.get('page')
     historial = paginator.get_page(page_number)
     return render(request, 'cronometro/operario/historico.html', {'historial' : historial})
 
-
-
+def eliminarHistoria(request, id):
+    try:
+        historial = OperacionOperario.objects.get(id = id)
+        historial.delete()
+        messages.success(request, f"Registro eliminado exitosamente")
+        return redirect('cronometro:historial', id = historial.idOperario.id)
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return redirect('cronometro:historial', id = historial.idOperario.id)
 def guardarTiempoParcial(request):
     
     if request.method == "POST":
@@ -645,14 +668,14 @@ def guardarTiempoParcial(request):
             opOpera.save()
             print("guardado")
             messages.success(request, f"Datos seleccionados con éxito")
+            return render(request,'cronometro\cronometro.html',{'operario' : operario , 'operacion' : operacion, 'maquina' : maquina , 'opOpera' : opOpera})
         except Exception as e:
-            messages.warning(request, f"Error: {e}")
+            messages.warning(request, f"Error: {e} vacio")
             print( f"Error: {e}")
     else:
         return HttpResponse(request,"no se envio datos")
     #return HttpResponse(request,"OK")
-    return render(request,'cronometro\cronometro.html',{'operario' : operario , 'operacion' : operacion, 'maquina' : maquina , 'opOpera' : opOpera})   
-
+    return redirect('cronometro:selecOperario')
 
 # Maquina
 def crearMaquina(request):
@@ -860,57 +883,66 @@ def guardarTiempoEstandar(request, id):
     Devoluciones:
         HttpResponse: el objeto de respuesta HTTP con la plantilla representada.
     """
-   
-    tiempoE = 0
-    opOpera = OperacionOperario.objects.get(id = id)
-    operario= Operario.objects.get(id = opOpera.idOperario.id)
-    maquina= Maquina.objects.get(id = opOpera.idMaquinas.id)
-    operacion= Operacion.objects.get(id = opOpera.idOperacion.id)
-    
-    #print(json.dumps(request.session.get('tiempos_cookie')))
     try:
-        print( request.COOKIES['tiempos_estandar'])
-        
-        if request.method =="POST":            
-            escalaSuplementos = ( request.POST['escalaSuplemento'])
-            factorRitmo = (request.POST['factoRitmo'])
-            tObservado=  (request.POST['cajaTiempoObservado'])
+        login = request.session.get('logueoUsuario', False)
+        if login:
+            tiempoE = 0
+            opOpera = OperacionOperario.objects.get(id = id)
+            operario= Operario.objects.get(id = opOpera.idOperario.id)
+            maquina= Maquina.objects.get(id = opOpera.idMaquinas.id)
+            operacion= Operacion.objects.get(id = opOpera.idOperacion.id)
             
-            escalaSuplementos = escalaSuplementos.replace(",", ".")
-            factorRitmo = factorRitmo.replace(",", ".")
-            tObservado = tObservado.replace(",", ".")
-            
-            escala = float(escalaSuplementos)
-            ritmo = float(factorRitmo)
-            observado = float(tObservado)
-            print("")
-            print(observado)
-            
-            opOpera.factorRitmo = ritmo        
-            opOpera.escalaSuplementos = escala
-            print(escala)
-            print(ritmo)
-            tNormal= observado* ritmo/100
-            print(tNormal)
-            tEstandar = tNormal+(tNormal*escala)
-            print(tEstandar)
-            opOpera.tiempoEstandar =  tEstandar
-            print("")
-            opOpera.save()
-            
-            
-            
-        messages.success(request, f"Tiempo estandar ({(tEstandar)}) guardado con éxito")
-        print("guardado")
+            #print(json.dumps(request.session.get('tiempos_cookie')))
+            try:
+                print( request.COOKIES['tiempos_estandar'])
+                
+                if request.method =="POST":            
+                    escalaSuplementos = ( request.POST['escalaSuplemento'])
+                    factorRitmo = (request.POST['factoRitmo'])
+                    tObservado=  (request.POST['cajaTiempoObservado'])
+                    
+                    escalaSuplementos = escalaSuplementos.replace(",", ".")
+                    factorRitmo = factorRitmo.replace(",", ".")
+                    tObservado = tObservado.replace(",", ".")
+                    
+                    try:
+                        escala = float(escalaSuplementos)
+                        ritmo = float(factorRitmo)
+                        observado = float(tObservado)
+                        print("")
+                        print(observado)
+                        
+                        opOpera.factorRitmo = ritmo        
+                        opOpera.escalaSuplementos = escala
+                        print(escala)
+                        print(ritmo)
+                        tNormal= observado* ritmo/100
+                        print(tNormal)
+                        tEstandar = tNormal+(tNormal*escala)
+                        print(tEstandar)
+                        opOpera.tiempoEstandar =  tEstandar
+                        opOpera.uniHoras = 60/tEstandar*0.8
+                        print("")
+                        opOpera.save()
+                    except Exception as e:
+                        print("Error en la operación matemática:", str(e))
+                        
+                    
+                    
+                messages.success(request, f"Tiempo estandar ({(tEstandar)}) guardado con éxito")
+                print("guardado")
+            except Exception as e:
+                print ( f"Error: {e}")
+        #return render(request,'cronometro/cronometro.html',{'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
+
+
+            return render(request,'cronometro/cronometro.html',{'operario' : operario , 'maquina' : maquina , 'operacion' : operacion, 'opOpera' : opOpera})
+        #return redirect('cronometro:cronometro')
+        else:
+            messages.warning(request, "Inicie sesión primero")
+            return redirect('cronometro:home')
     except Exception as e:
         print ( f"Error: {e}")
-    #return render(request,'cronometro/cronometro.html',{'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
-
-
-    return render(request,'cronometro/cronometro.html',{'operario' : operario , 'maquina' : maquina , 'operacion' : operacion, 'opOpera' : opOpera})
-    #return redirect('cronometro:cronometro')
-    
-
 
 #Informe en excel
 
@@ -940,9 +972,10 @@ def generarInforme(request, id):
     hoja['F1'] = 'Desc operación'
     hoja['G1'] = 'Maquina'
     hoja['H1'] = 'Desc Maquina' 
-    hoja['I1'] = 'T estandar' 
+    hoja['I1'] = 'Suplementos'
     hoja['J1'] = 'Ritmo'
-    hoja['K1'] = 'Suplementos'
+    hoja['K1'] = 'T estandar'
+    hoja['L1'] = 'Uni/hora'
     
     # Agregar datos
     
@@ -955,9 +988,10 @@ def generarInforme(request, id):
         hoja[f'F{i}'] = registro.idOperacion.descripcion
         hoja[f'G{i}'] = registro.idMaquinas.nombre
         hoja[f'H{i}'] = registro.idMaquinas.descripcion
-        hoja[f'I{i}'] = registro.tiempoEstandar
+        hoja[f'I{i}'] = registro.escalaSuplementos
         hoja[f'J{i}'] = registro.factorRitmo
-        hoja[f'K{i}'] = registro.escalaSuplementos
+        hoja[f'K{i}'] = registro.tiempoEstandar
+        hoja[f'L{i}'] = registro.uniHoras
     
 
     # Definir nombre del archivo
@@ -996,6 +1030,3 @@ def buscarOperario(request):
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarOperarios')
 
-def calculos(request):
-    tiemposEstandar= OperacionOperario.objects.all()
-    return render(request,'cronometro/consultas/filtro.html',{'tiemposEstandar' : tiemposEstandar})

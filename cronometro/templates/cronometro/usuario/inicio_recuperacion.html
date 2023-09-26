@@ -18,6 +18,10 @@
 
 <div class="contact-from-section mb-150" >
     <div class="container" style="width: 50%;"> 
+        <div class="form-title">
+            <h4>Complete los datos para proceder con la recuperación</h4>
+            
+        </div>
         <form action="{% url 'cronometro:correoRecuperacion' %}" class="needs-validation" novalidate="" method="post">
              {% csrf_token %}  
      

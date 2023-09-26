@@ -6,20 +6,95 @@
   display: flex;
 }
 
+.pagination li {
+  display: inline;
+  margin-right: 5px;
+}
+
 .column {
   flex: 1;
   padding: 10px;
 }
+#factoRitmo{
+  width: 80px;
+}
+#escalaSuplemento{
+  width: 80px;
+}
+#cajaTiempoObservado{
+  width: 80px;
+}
 
+.columna {
+  float: left;
+  width: 50%;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0 10px;
+  
+}
+.columnaG{
+  float: left;
+  width: 100%;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 0 10px;
+}
+
+/* Regla para pantallas de más de 480px */
+@media screen and (min-width: 481px) {
+  .secciones { border-radius: 10px ; flex: 1; border: 2px solid rgba(70, 18, 166, 0.26); }
+
+  .uno { flex-basis: 30%; 
+    margin: 3px;
+    overflow: auto; height: auto; }
+
+  .dos { flex-basis: 20%; 
+    margin: 3px;}
+
+  .tres { flex-basis: 50%;
+    margin: 3px; } 
+
+}
 
 
 .contenidoPrincipal { display: flex; flex-direction: row ;}
-@media (max-width: 768px) { .contenedoPrincipal { flex-direction: column; } }
 
-.secciones { border-radius: 10px ; flex: 1; border: 1px solid rgba(30, 3, 81, 0.26); }
+@media (max-width: 480px) { 
+  .contenedoPrincipal { flex-direction: column; }
 
-.uno { flex-basis: 30%; }
+  .secciones { 
+    border-radius: 10px ;
+    flex: 1; 
+    border: 2px solid rgba(70, 18, 166, 0.26); }
+  .contenedoPrincipal {
+    display: inline-block;
+    width: 100%;
+  }
 
-.dos { flex-basis: 20%; }
+  .uno  {
+    width: 100%;
+    height: auto;
+    display: inline-block;
 
-.tres { flex-basis: 50%; } 
+  
+  }
+  .dos {
+    width: 100%;
+    height: auto;
+    display: inline-block;
+    
+  }
+  .tres{
+    width: 100%;
+    height: auto;
+    display: inline-block;
+    
+  }
+  
+  
+}
+
+
+
+

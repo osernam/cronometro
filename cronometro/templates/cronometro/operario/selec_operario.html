@@ -18,14 +18,19 @@
 
 {% if request.session.logueoUsuario %}
 <div class="contact-from-section mb-150" >
+    
     <div class="container" style="width: 50%;"> 
-        <form action="{% url 'cronometro:guardarTiempoParcial' %}" class="needs-validation" novalidate="" method="post">
+        <div class="form-title">
+            <h2>Datos para cronometrar</h2>
+            
+        </div>
+        <form action="{% url 'cronometro:guardarTiempoParcial' %}" name="myForm" id="myForm" class="needs-validation" novalidate="" method="post">
              {% csrf_token %}  
      
                     
                     <a>
                         <label for="idOperario">Seleccione un operario:</label>
-                        <select id="idOperario" name="idOperario" class="form-control"  required>
+                        <select id="idOperario" name="idOperario" class="form-control" size="5" required >
                             
                             {% for operario in operarios %}
                                 <option value="{{operario.id}}">{{operario.nombre}}</option>
@@ -38,7 +43,7 @@
                 
                     <a>
                         <label for="factorRitmo">Factor de ritmo (BSI)</label>
-                        <select name="factorRitmo" class="form-control" id="factorRitmo" required>
+                        <select name="factorRitmo" class="form-control" id="factorRitmo" size="5" required>
                             
                             <option  value= "50"  selected>50</option> 
                             <option  value= "75" >75</option>
@@ -51,7 +56,7 @@
        
                     <a>
                         <label for="escalaSuplementos">Escala de suplementos</label>
-                        <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" required>
+                        <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" size="5" required>
                             
                             <option value="0.02" selected>2%</option>
                             <option value="0.04">4%</option>
@@ -65,7 +70,7 @@
                     </a>   
                     <a>
                         <label for="idOperacion">Operación</label>
-                        <select name= "idOperacion" class="form-control" id="idOperacion" required>
+                        <select name= "idOperacion" class="form-control" id="idOperacion" size="5" required>
                             
                             {% for operacion in operaciones %}
                                 <option value="{{operacion.id}}">{{operacion.nombre}}</option>
@@ -77,7 +82,7 @@
 
                     <a>
                         <label for="maquina">Maquina</label>
-                        <select name= "idMaquina" class="form-control" id="idMaquina" required>
+                        <select name= "idMaquina" class="form-control" id="idMaquina" size="5" required>
                             
                             {% for maquina in maquinas %}
                                 <option value="{{maquina.id}}">{{maquina.nombre}}</option>
@@ -91,7 +96,7 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" type="reset" data-dismiss="modal">Limpiar</button>
                 
-                <button type="submit" class="btn btn-primary">Enviar formulario</button>
+                <button type="submit" class="btn btn-primary">Continuar</button>
             </div>
         </form>    
     </div>
