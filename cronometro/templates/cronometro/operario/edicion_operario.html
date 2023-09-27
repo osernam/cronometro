@@ -15,12 +15,15 @@
 {% endif %}
 
 {% if request.session.logueoUsuario %}
-{% if request.session.logueoUsuario.4 == 'Usuario' %}
 
 
 <br>
 <div class="contact-from-section mb-150">
     <div class="container">
+        <div class="form-title">
+            <h2>Edición de operario</h2>
+            
+        </div>
         <div class="formulario">
             <form action="{% url 'cronometro:edicionOperario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
                 <input value="{{operario.id}}" readonly name="id" type="hidden" required>
@@ -69,7 +72,6 @@
 {% else %}
 No hay datos.
 Inicie sesion.
-{% endif %}
 {% endif %}
 
 {% endblock contenedor %}

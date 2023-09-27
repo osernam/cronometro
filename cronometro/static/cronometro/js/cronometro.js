@@ -8,6 +8,7 @@ var restantes = 0;
 
 var factorRitmo = parseInt(document.getElementById("factorRitmo").value);
 var escalaSuplementos = parseInt(document.getElementById("escalaSuplementos").value);
+
 var tPromEstandar = 0
 var sumatoriaT= 0
 var tiempoNormal = 0
@@ -15,6 +16,7 @@ var tiempoEstandar =0
 var centesimas = 0;
 var segundos = 0;
 var minutos = 0;
+var tAnterior = 0;
 
 //Crear la cookie para guardar los tiempos
 
@@ -132,50 +134,88 @@ function parcialCronometro() {
 }*/
 
 function parciales(){
+    var nuevo = ((minutos + segundos/60 + centesimas/600));
     if (tiempoParcial.length == 0) {
-        tiempoParcial.push(minutos + segundos/60 + centesimas/600)
-    }else{
-        var nuevo = (minutos + segundos/60 + centesimas/600)- (tiempoParcial[tiempoParcial.length-1]);
         tiempoParcial.push(nuevo)
+    }else{
+        
+        tiempoParcial.push(nuevo - (tAnterior))
     }
-    
+    tAnterior= nuevo;
 
     
     var tNor = document.getElementById('tiempoNor');
     var tEst = document.getElementById('tiempoEst');
     var divTiempos = document.getElementById('tiemposCronometro');
-    divTiempos.innerHTML = 'hola';
-    
+    var cajaObs = document.getElementById('cajaTiempoObservado');
+    var proNuevo= document.getElementsByName('cajaTiemposParciales');
+    divTiempos.innerHTML = '';
+    var tiempoEstandar2 = 0;
+    var acumulador=0;
 
     for (let i = 0; i < tiempoParcial.length; i++) {
-        var tObs = 0
+        
+        
+        var sumtObs = 0
         for (let e = 0; e < tiempoParcial.length; e++) {
-            tObs = tiempoParcial[e]/tiempoParcial.length
+            sumtObs += tiempoParcial[e]
             
         }
-        tiempoNormal= tObs*factorRitmo
-        tiempoEstandar = tiempoNormal + tiempoNormal*escalaSuplementos
+        var tObs = sumtObs/tiempoParcial.length
+        tiempoNormal= tObs*factorRitmo/100
+        tiempoEstandar2 = tiempoNormal + tiempoNormal*escalaSuplementos
+
+
         
         console.log(Math.round( tiempoParcial[i]));
         divTiempos.innerHTML +=( 
 
-            '<div class="col-xl-3 col-md-6 mb-4" style="display: flex; >'+
+            
                             
                 '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
-                    'T  '+(i+1)+
-                '</div>'+
-                '<div class="h6 mb-0 font-weight-bold text-gray-800">'+tiempoParcial[i].toFixed(2) +'</div>'+
-                '<br>'+            
-            '</div>'
+                    'T '+(i+1)+'  '+ 
+                    '<input type="text" name="cajaTiemposParciales" style="border: none;" style="height: 50px;" value="'+tiempoParcial[i].toFixed(2) +'" readonly ="" >'+
+
+                '</div>'    
+                
+            
 
         );
+        
+        
 
         
         
-        tNor.innerHTML = "<p>Tn = " + tiempoNormal.toFixed(2) + " </p>";
-        tEst.innerHTML = "<p>Te = " + tiempoEstandar.toFixed(2) + "</p>";
+        proNuevo= document.getElementsByName('cajaTiemposParciales');
+        for (let j = 0; j < proNuevo.length; j++) {
+            acumulador += parseFloat(proNuevo[j].value);
+            
+        }
+
+        
+        
+        var prom = acumulador/proNuevo.length
+        tiempoNormal = prom*factorRitmo/100
+        tiempoEstandar = tiempoNormal + (tiempoNormal*escalaSuplementos)
+        
     }
+    
+   
+    
+    cajaObs.value= tObs.toFixed(3);
 
+    tEst.innerHTML = "<span class='mr-2'>"+
+                        "<i class='fas fa-circle text-success'></i>Te "+ tiempoEstandar.toFixed(3)+
+                        "<div  class=''></div>"+
+                    "</span>";
+    
+
+    tNor.innerHTML= 
+                    "<span class='mr-2'>"+
+                        "<i class='fas fa-circle text-primary'></i>Tn "+ tiempoNormal.toFixed(3)+
+                        "<div  class=''></div>"+
+                    "</span>";
+    
     setCookie('tiempos_estandar',tiempoEstandar,30);
 
     graficoT();
@@ -213,7 +253,7 @@ var cent = 0;
 function cronometroDeci() {
     centesimas++;
     
-    if (centesimas == 100) {
+    if (centesimas == 10) {
         centesimas = 0;
         segundos++;
     }
@@ -225,6 +265,8 @@ function cronometroDeci() {
         minutos = 0;
         
     }
+
+    
     /* El símbolo `?` se utiliza en JavaScript como operador ternario. Es un
     forma abreviada de escribir una declaración if-else.*/
     var tiempo = (minutos < 10 ? "0" + minutos : minutos) + ":" +
@@ -236,7 +278,7 @@ function cronometroDeci() {
 
 
 function iniciar() {
-
+    
     /**
  Inicializa el cronómetro y lo pone en marcha. Establece el elemento HTML `divTiempos` a una cadena vacía,
  inicializa la matriz `tiempoParcial`, establece el `tiempoInicial` a la hora actual e inicia el
@@ -245,15 +287,17 @@ function iniciar() {
   @param {HTMLDivElement} divTiempos -El elemento HTML que mostrará los tiempos en el cronómetro.
   @return {void} Esta función no devuelve nada
  */
-
+    document.getElementById('tiemposParciales').disabled=true;
     var divTiempos = document.getElementById('tiemposCronometro');
-    divTiempos.innerHTML = '';
+    //divTiempos.innerHTML = '';
     tiempoParcial = []
     setCookie('tiempos_cookie',tiempoParcial,30); // nombre, valor, tiempo de expiracion
     tiempoInicial = Date.now();
-    tiempoActual = setInterval(cronometroDeci, 10);
+    tAnterior= 0;
+    tiempoActual = setInterval(cronometroDeci, 100);
 
-    
+    document.getElementById('iniciarBoton').removeEventListener('click', iniciar);
+    document.getElementById('pararBoton').addEventListener('click', detener);
 }
 
 function detener() {
@@ -261,17 +305,28 @@ function detener() {
     tiempos=tiempoParcial;
     console.log(( tPromEstandar));
     clearInterval(tiempoActual);
+    document.getElementById('tiemposParciales').disabled=true;
+    document.getElementById('pararBoton').removeEventListener('click', detener);
+    document.getElementById('iniciarBoton').addEventListener('click', iniciar);
     
 }
 
 
 
 
+$( document ).ready(function() {
+    
+    document.getElementById('iniciarBoton').addEventListener('click', iniciar);
 
-document.getElementById('iniciarBoton').addEventListener('click', iniciar);
-document.getElementById('pararBoton').addEventListener('click', detener);
-//document.getElementById('enviarBoton').addEventListener('click', enviarVariables);
-document.getElementById('tiemposParciales').addEventListener('click', parciales);
+    if (!tiempoParcial.length) {
+        document.getElementById('pararBoton').addEventListener('click', detener);
+    }
+    //document.getElementById('pararBoton').addEventListener('click', detener);
+    document.getElementById('tiemposParciales').addEventListener('click', parciales);
+
+
+  });
+
 
 
 //grafico canvas chart para tiempos
@@ -289,7 +344,7 @@ function graficoT () {
     myChart = new Chart(graficoTiempos, {
     type: 'line',
     data: {
-        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25', '26', '27', '28', '29', '30'],
+        labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10','11','12','13','14'],
         datasets: [{
         label: 'Intervalos',
         data: tiempoParcial,

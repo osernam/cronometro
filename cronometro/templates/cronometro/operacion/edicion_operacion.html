@@ -1,0 +1,78 @@
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if request.session.logueoUsuario %}
+
+
+
+<br>
+<div class="contact-from-section mb-150">
+    <div class="container">
+        <div class="form-title">
+            <h2>Edición de operación</h2>
+            
+        </div>
+        <div class="formulario">
+            <form action="{% url 'cronometro:editarOperacion' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+                <input value="{{operacion.id}}" readonly name="id" type="hidden" required>
+                <div class="col">
+                    <p>Nombre  </p>
+                    <input value="{{operacion.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
+                    
+                </div>
+                <div class="col">
+                    <p>Descripción  </p>
+                    <input value="{{operacion.descripcion}}" name="descripcion" type="text" placeholder="Descripción" required>
+                    
+                </div>
+                
+
+                <div class="col">
+                    <br>
+                    <label for="habilitadoOperaciones">Estado</label>
+                    <br>
+                    <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" {% if operacion.estado %} checked {% endif %} value="True">Habilitado
+                        </label>
+                      </div>
+                      <div class="form-check-inline">
+                        <label class="form-check-label">
+                            <input type="radio" class="form-check-input" name="estado" {% if not operacion.estado %} checked {% endif %}value="False">Deshabilitado
+                        </label>
+                    </div>
+                </div>
+                    
+                <br/>
+                <!-- Botón del enviar formulario-->
+                <div class="form-btns">
+                    <button type="submit">Enviar </button>
+                    <button type="reset">Limpiar formulario</button>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+</div>
+
+
+
+{% else %}
+No hay datos.
+Inicie sesion.
+{% endif %}
+
+{% endblock contenedor %}

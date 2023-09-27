@@ -1,0 +1,405 @@
+
+<!DOCTYPE html>
+
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+    <title>Welcome to Cronte’s documentation! &#8212; documentación de Cronte - 1.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/nature.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/translations.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Índice General"
+             accesskey="I">índice</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">documentación de Cronte - 1.0</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to Cronte’s documentation!</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <section id="welcome-to-cronte-s-documentation">
+<h1>Welcome to Cronte’s documentation!<a class="headerlink" href="#welcome-to-cronte-s-documentation" title="Enlace permanente a este encabezado">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<span class="target" id="module-cronometro.views"></span><dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.actualizarOperario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">actualizarOperario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#actualizarOperario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.actualizarOperario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Actualiza la información de un operador y devuelve la página HTML correspondiente para editarla.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.
+id (int): El ID del operador que se actualizará.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: la página HTML para editar la información del operador.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.actualizarUsuario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">actualizarUsuario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#actualizarUsuario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.actualizarUsuario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Actualiza un usuario en la base de datos con el ID proporcionado.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.
+id (int): El ID del usuario que se va a actualizar.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: la página HTML representada para editar el usuario si el usuario ha iniciado sesión y tiene permiso.
+De lo contrario, redirige a la página de lista de usuarios con un mensaje de advertencia.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.base">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">base</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#base"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.base" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Representa la plantilla base para la aplicación de cronómetro.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: la plantilla base renderizada.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.crearOperario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">crearOperario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#crearOperario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.crearOperario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Crea un operario utilizando el objeto de solicitud y presenta la plantilla form_operario.html.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> – el objeto de solicitud HTTP que contiene información sobre la solicitud del usuario</p>
+</dd>
+<dt class="field-even">Tipo de solicitud<span class="colon">:</span></dt>
+<dd class="field-even"><p>HttpRequest</p>
+</dd>
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>un objeto de respuesta HTML que representa la plantilla form_operario.html</p>
+</dd>
+<dt class="field-even">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-even"><p>HttpRespuesta</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.cronometroView">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">cronometroView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#cronometroView"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.cronometroView" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Representa la plantilla “cronometro.html” con una lista de todos los objetos “Operario”.</p>
+<dl class="simple">
+<dt>parámetro:</dt><dd><p>el objeto de solicitud HTTP.</p>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Devuelve<span class="colon">:</span></dt>
+<dd class="field-odd"><p>La plantilla HTML renderizada.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.deshabilitarOperario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">deshabilitarOperario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#deshabilitarOperario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.deshabilitarOperario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Desactiva un operador.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud: el objeto de la solicitud.
+id: El ID del operador a deshabilitar.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>Una redirección a la vista “listarOperarios”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.deshabilitarUsuario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">deshabilitarUsuario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#deshabilitarUsuario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.deshabilitarUsuario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Deshabilita a un usuario según su ID.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud: el objeto de solicitud HTTP.
+id: El ID del usuario que se va a deshabilitar.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponseRedirect: Redirección a la vista “listarUsuarios”.</p>
+</dd>
+<dt>Sube:</dt><dd><p>Excepción: Si hay un error durante el proceso.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.edicionOperario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">edicionOperario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#edicionOperario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.edicionOperario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Edita un operador según la solicitud proporcionada.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP que contiene la información necesaria.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponseRedirect: Redirige a la vista “listarOperarios” luego de editar el operador.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.edicionUsuario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">edicionUsuario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#edicionUsuario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.edicionUsuario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Edite un usuario en el sistema según la solicitud proporcionada.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud que contiene los datos del usuario.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: una respuesta de redireccionamiento a la página de lista de usuarios.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.generarInforme">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">generarInforme</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#generarInforme"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.generarInforme" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Genera un informe de Excel para un operario determinado y lo devuelve como un archivo descargable.</p>
+<p>Parámetros:
+- solicitud: el objeto de solicitud HTTP.
+- id: El ID del operario.</p>
+<p>Devoluciones:
+- respuesta: un objeto de respuesta HTTP que contiene el informe de Excel generado como un archivo descargable.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.guardarOperario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">guardarOperario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#guardarOperario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.guardarOperario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Guarda un operario en la base de datos.
+Parameters:
+request (HttpRequest): La solicitud HTTP recibida.
+:returns: Redirige al usuario hacia la página home si el operario se guarda correctamente.
+:rtype: HttpResponseRedirect</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.guardarTiempoEstandar">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">guardarTiempoEstandar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#guardarTiempoEstandar"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.guardarTiempoEstandar" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Guarda el tiempo estándar de un operador en la base de datos y muestra un mensaje de éxito.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.
+id (int): El ID del operador.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: el objeto de respuesta HTTP con la plantilla representada.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.guardarTiempoParcial">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">guardarTiempoParcial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#guardarTiempoParcial"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.guardarTiempoParcial" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Guarda el tiempo parcial de una solicitud.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><ul class="simple">
+<li><p>solicitud: el objeto de solicitud HTTP.</p></li>
+</ul>
+</dd>
+<dt>Devoluciones:</dt><dd><ul class="simple">
+<li><p>render: La respuesta HTTP renderizada con la plantilla “cronometrocronometro.html”.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.guardarUsuario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">guardarUsuario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#guardarUsuario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.guardarUsuario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Guarda un usuario en la base de datos.
+Parameters:
+request (HttpRequest): La solicitud HTTP recibida.
+Returns:
+HttpResponseRedirect: Redirige al usuario hacia la página home si el usuario se guarda correctamente.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.homeView">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">homeView</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#homeView"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.homeView" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Renderiza la vista de inicio.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: la respuesta HTML representada.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.listarOperarios">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">listarOperarios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#listarOperarios"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.listarOperarios" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Listar Operarios.
+Esta función enumera los operarios (trabajadores). Comprueba si el usuario ha iniciado sesión y, de ser así, recupera una lista de operarios de la base de datos, pagina los resultados y renderiza la plantilla “cronometro/operario/listado_operarios.html” con los datos de los operarios. Si el usuario no ha iniciado sesión, muestra un mensaje de advertencia y redirige a la URL “cronometro:home”.</p>
+<section id="parametros">
+<h2>Parámetros<a class="headerlink" href="#parametros" title="Enlace permanente a este encabezado">¶</a></h2>
+<dl class="simple">
+<dt>solicitud: Solicitud Http</dt><dd><p>El objeto de solicitud HTTP.</p>
+</dd>
+</dl>
+</section>
+<section id="devoluciones">
+<h2>Devoluciones<a class="headerlink" href="#devoluciones" title="Enlace permanente a este encabezado">¶</a></h2>
+<dl class="simple">
+<dt>Respuesta HTTP</dt><dd><p>La respuesta HTTP que contiene la plantilla representada o una respuesta de redireccionamiento.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.listarUsuarios">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">listarUsuarios</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#listarUsuarios"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.listarUsuarios" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>La función ListarUsuarios se encarga de recuperar y paginar una lista de usuarios de la base de datos.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><ul class="simple">
+<li><p>solicitud: el objeto de solicitud que contiene información sobre la solicitud HTTP actual.</p></li>
+</ul>
+</dd>
+<dt>Devoluciones:</dt><dd><ul class="simple">
+<li><p>Si el usuario ha iniciado sesión, devuelve la lista renderizada de usuarios usando la plantilla “cronometro/usuario/listado_usuarios.html”.</p></li>
+<li><p>Si el usuario no ha iniciado sesión, redirige a la URL “cronometro:home” después de mostrar un mensaje de advertencia.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.login">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">login</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#login"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.login" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Esta función es responsable de manejar la solicitud de inicio de sesión.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponseRedirect: una respuesta de redireccionamiento a la página de inicio.</p>
+</dd>
+<dt>Sube:</dt><dd><p>Usuario.DoesNotExist: Si el usuario no existe.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.logout">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">logout</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#logout"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.logout" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Elimina la clave “logueoUsuario” del diccionario de sesión y redirige
+al usuario a la URL “cronometro:home”.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponseRedirect: una respuesta de redireccionamiento a la URL “cronometro:home”.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.registro">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">registro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#registro"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.registro" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>sigup
+renderiza el template</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parámetros<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>request</strong> (<em>_type_</em>) – _description_</p>
+</dd>
+<dt class="field-even">Devuelve<span class="colon">:</span></dt>
+<dd class="field-even"><p>rendeiza la pagina sig-up.html</p>
+</dd>
+<dt class="field-odd">Tipo del valor devuelto<span class="colon">:</span></dt>
+<dd class="field-odd"><p>_type_</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.selecOperario">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">selecOperario</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#selecOperario"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.selecOperario" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Representa la plantilla “selec_operario.html” con la solicitud dada.</p>
+<dl class="simple">
+<dt>Parámetros:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>HttpResponse: el objeto de respuesta HTTP.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="cronometro.views.tiempo_parcial">
+<span class="sig-prename descclassname"><span class="pre">cronometro.views.</span></span><span class="sig-name descname"><span class="pre">tiempo_parcial</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">request</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/cronometro/views.html#tiempo_parcial"><span class="viewcode-link"><span class="pre">[fuente]</span></span></a><a class="headerlink" href="#cronometro.views.tiempo_parcial" title="Enlazar permanentemente con esta definición">¶</a></dt>
+<dd><p>Esta función maneja la solicitud “tiempo_parcial”.</p>
+<dl class="simple">
+<dt>Argumentos:</dt><dd><p>solicitud (HttpRequest): el objeto de solicitud HTTP.</p>
+</dd>
+<dt>Devoluciones:</dt><dd><p>JsonResponse: La respuesta JSON con el estado de la solicitud.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Enlace permanente a este encabezado">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Índice</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Índice de Módulos</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Página de Búsqueda</span></a></p></li>
+</ul>
+</section>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h3><a href="#">Tabla de contenido</a></h3>
+
+  <div role="note" aria-label="source link">
+    <h3>Esta página</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Mostrar el código</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Búsqueda rápida</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Ir a" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navegación</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="Índice General"
+             >índice</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Índice de Módulos Python"
+             >módulos</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">documentación de Cronte - 1.0</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">Welcome to Cronte’s documentation!</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Derechos de autor 2023, Orley Serna.
+      Creado usando <a href="https://www.sphinx-doc.org/">Sphinx</a> 6.1.3.
+    </div>
+  </body>
+</html>

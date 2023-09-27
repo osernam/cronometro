@@ -1,9 +1,9 @@
 {% extends 'cronometro/base/base.html' %}
 {% load static %}
 
-{% block titulo %}Inicio{% endblock titulo %}
+{% block titulo %}Operarios{% endblock titulo %}
 
-{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block encabezado %}Bienvenido{% endblock encabezado %}
 {% block subencabezado %}Index{% endblock subencabezado %}
 
 {% block contenedor %}
@@ -15,12 +15,24 @@
 {% endif %}
 
 {% if request.session.logueoUsuario %}
-{% if request.session.logueoUsuario.4 == 'Usuario' %}
 
 
+{% if operarios %}
+<form action="{% url 'cronometro:buscarOperario' %}" method="post">
+    {% csrf_token %}
+    <div class="search-bar">
+        <div class="search-bar-tablecell">
+            <input onkeyup="busqueda_ajax" type="search" placeholder="Buscar" id="buscar" name="buscar">
+        </div>
+    </div>
+</form>
 
 <div class="listar-operario mt-50 mb-150 pl-5 pr-5" id="respuesta">
     <div class="contenedor">
+        <div class="form-title">
+            <h2>Operarios registrados</h2>
+            
+        </div>
         <div class="table-responsive">
             <table id="lista" class="table table-striped table-hover">
                 <thead>
@@ -29,11 +41,9 @@
                         <th>Nombre</th>
                         <th>Fecha</th>
                         <th>Entidad</th>
-                        <th>Tiempo estandar</th>
-                        <th>factor ritmo</th>
-                        <th>escala suplementos</th>
-                        <th>estado</th>
-                        <th>Descargar</th>
+                        <th>Registros</th>
+                        <th>Estado</th>
+                        <th>Opciones</th>
                         
                     </tr>
                 </thead>
@@ -42,11 +52,9 @@
                     <tr>
                         <td> {{operario.id}} </td>
                         <td> {{operario.nombre}}</td>
-                        <td> {{operario.fecha}}</td>
+                        <td> <time datetime="{{operario.fecha}}">{{operario.fecha|date:"d/m/Y" }} </time></td>
                         <td> {{operario.entidad}}</td>
-                        <td> {{operario.tiempoEstandar}}</td>
-                        <td> {{operario.factorRitmo}}</td>
-                        <td> {{operario.escalaSuplementos}}</td>
+                        <td> <a href="{% url 'cronometro:historial' operario.id %}" class="btn btn-info">Consultar</a></td>
                         <td> 
                             <a href="{% url  'cronometro:deshabilitarOperario' operario.id %}" {% if operario.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
                         </td>
@@ -66,7 +74,7 @@
         <div class="row">
             <div class="col-lg-12 text-center">
                 <div class="pagination-wrap mb-100">
-                    <ul>
+                    <ul  class="pagination">
                         <li><a href="?page=1">&laquo;</a></li>
                         <li><a {% if operarios.has_previous %} href="?page={{ operarios.previous_page_number }}" {% endif %}>Anterior</a></li>
 

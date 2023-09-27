@@ -1,0 +1,81 @@
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if request.session.logueoUsuario %}
+
+
+
+<div class="listar- mt-50 mb-150 pl-5 pr-5" id="respuesta">
+    <div class="contenedor">
+        <div class="form-title">
+            <h2>Máquinas registradas</h2>
+            
+        </div>
+        <div class="table-responsive">
+            <table id="lista" class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                        
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for maquina in maquinas %}
+                    <tr>
+                        <td> {{maquina.id}} </td>
+                        <td> {{maquina.nombre}}</td>
+                        <td> {{maquina.descripcion}}</td>
+                        
+                        <td> 
+                            <a href="{% url  'cronometro:deshabilitarMaquina' maquina.id %}" {% if maquina.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
+                            <a href="{% url 'cronometro:actualizarMaquina' maquina.id %}" class="btn btn-info">Editar</a>
+                            
+                        </td>
+                        
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="row">
+            <div class="col-lg-12 text-center">
+                <div class="pagination-wrap mb-100">
+                    <ul  class="pagination">
+                        <li><a href="?page=1">&laquo;</a></li>
+                        <li><a {% if maquinas.has_previous %} href="?page={{ maquinas.previous_page_number }}" {% endif %}>Anterior</a></li>
+
+                        {% for i in "x"|rjust:maquinas.paginator.num_pages|make_list %}
+                        <li><a {% if forloop.counter == maquinas.number %} class="active" {% endif %} href="?page={{ forloop.counter }}"> {{ forloop.counter }} </a></li>
+                        {% endfor %}
+
+                        <li><a {% if maquinas.has_next %} href="?page={{maquinas.next_page_number }}" {% endif %}>Siguiente</a></li>
+                        <li><a {% if maquinas.has_next %} href="?page={{maquinas.paginator.num_pages }}" {% endif %}>&raquo;</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+No hay datos.
+Inicie sesion.
+{% endif %}
+
+{% endblock contenedor %}

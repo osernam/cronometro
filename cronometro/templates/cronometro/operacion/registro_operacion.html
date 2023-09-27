@@ -1,0 +1,59 @@
+
+
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Operación{% endblock titulo %}
+
+{% block encabezado %}Bienvenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+        {% endfor %}
+{% endif %}
+
+{% if request.session.logueoUsuario %}
+
+
+<!-- contact form -->
+<br>
+<div class="contact-from-section mb-150">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mb-5 mb-lg-0">
+                <div class="form-title">
+                    <h2>Registrar nueva operación</h2>
+                    
+                </div>
+                
+                <div>
+                    <form action="{% url 'cronometro:guardarOperacion' %}" class="needs-validation" method="post">
+                        {% csrf_token %}
+                        <p>
+                            <p>Nombre</p>
+                            <input type="text" placeholder="Nombre" name="nombre" class="formulario" required>
+                        </p>
+                        <p>
+                            <p>Descripción</p>
+                            <input type="text" name="descripcion" class="formulario" required>
+                        </p>
+                        
+                        <br>
+                        <div class="form-btns">
+                            <button type="submit">Crear </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endif %}
+
+{% endblock contenedor %}  

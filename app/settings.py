@@ -8,6 +8,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
+https://www. youtube.com/watch?v=e6PkGDH4wWA
 """
 
 from pathlib import Path
@@ -127,3 +128,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 MEDIA_ROOT = BASE_DIR / 'uploads'
 MEDIA_URL = 'uploads/'
 STATIC_ROOT = 'static/'
+
+#correos
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'osernam@gmail.com'
+EMAIL_HOST_PASSWORD = 'tcvu nnkx xvwx tfko'
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'osernam@gmail.com'
