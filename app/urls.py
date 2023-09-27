@@ -16,8 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from cronometro.views import homeView
 
 urlpatterns = [
+    path('', homeView, name='home'),  # Ruta raíz que llama a la función homeView
     path('admin/', admin.site.urls),
     path('cronometro/', include('cronometro.urls')),
 ]

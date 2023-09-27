@@ -4,7 +4,7 @@ from .views import *
 app_name = "cronometro"
 
 urlpatterns = [
-    path('cronometro/', homeView, name='home'),
+    path('', homeView, name='home'),
     path('login/', login, name = 'login'),
     path('logout/', logout, name = 'logout'),
     
