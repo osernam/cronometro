@@ -70,12 +70,12 @@ def selecOperario (request):
         operaciones = Operacion.objects.filter(estado=True)
         
         #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
-        #return render(request, 'cronometro\operario\selec_operario.html', {
+        #return render(request, 'cronometro/operario/selec_operario.html', {
         #   'datos_json': datos_json,
         #  'operarios' : operarios
         #})
             
-        return render(request,'cronometro\operario\selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
+        return render(request,'cronometro/operario/selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
     else:
         messages.warning(request, "Inicie sesión primero")
         return redirect('cronometro:home')
@@ -157,7 +157,7 @@ def guardarUsuario(request):
             )
             usuario.full_clean()
             usuario.save()
-            messages.success(request, f"Operari@ ha sido creado con éxito")
+            messages.success(request, f"El usuario  ha sido creado con éxito")
         
         else:
             messages.warning(request, "Usted no ha enviado datos")
@@ -408,7 +408,7 @@ def cronometroView(request):
     operarios = Operario.objects.all()
     maquina = Maquina.objects.all()
     operacion = Operacion.objects.all()
-    return render(request,'cronometro\cronometro.html', {'operarios' : operarios , 'maquina' : maquina, 'operacion' : operacion})
+    return render(request,'cronometro/cronometro.html', {'operarios' : operarios , 'maquina' : maquina, 'operacion' : operacion})
 
 def tiempo_parcial(request):
     """
@@ -668,7 +668,7 @@ def guardarTiempoParcial(request):
             opOpera.save()
             print("guardado")
             messages.success(request, f"Datos seleccionados con éxito")
-            return render(request,'cronometro\cronometro.html',{'operario' : operario , 'operacion' : operacion, 'maquina' : maquina , 'opOpera' : opOpera})
+            return render(request,'cronometro/cronometro.html',{'operario' : operario , 'operacion' : operacion, 'maquina' : maquina , 'opOpera' : opOpera})
         except Exception as e:
             messages.warning(request, f"Error: {e} vacio")
             print( f"Error: {e}")
