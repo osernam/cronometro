@@ -612,7 +612,7 @@ def deshabilitarOperario(request, id):
                 operario.estado = True
             
             operario.save()
-            messages.success(request, f"Proveedor ({operario.nombre}) deshabilitado exitosamente")
+            messages.success(request, f"Cambio de estado para ({operario.nombre}) exitoso")
         else:
             messages.warning(request, "Inicie sesión primero")
             return redirect('cronometro:home')
