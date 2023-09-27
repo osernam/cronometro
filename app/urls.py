@@ -19,7 +19,7 @@ from django.urls import path, include
 from cronometro import views
 
 urlpatterns = [
-    path('', views.homeView, name='home'),  # Ruta raíz que llama a la función homeView
+    path('/', views.homeView, name='home'),  # Ruta raíz que llama a la función homeView
     path('admin/', admin.site.urls),
     path('cronometro/', include('cronometro.urls')),
 ]
