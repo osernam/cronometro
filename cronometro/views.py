@@ -47,7 +47,7 @@ def homeView(request):
     Devoluciones:
         HttpResponse: la respuesta HTML representada.
     """
-    return render(request,'cronometro\index.html')
+    return render(request,'cronometro/index.html')
 
 def homeView2(request):
     return render(request,'cronometro/base/base2.html')
