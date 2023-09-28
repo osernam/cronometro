@@ -53,10 +53,7 @@ def homeView2(request):
     return render(request,'cronometro/base/base2.html')
 
 def selecOperario (request):
-    if request.session.get('logueoUsuario'):
-        
-            
-        """
+    """
         Representa la plantilla 'selec_operario.html' con la solicitud dada.
 
         Parámetros:
@@ -65,6 +62,10 @@ def selecOperario (request):
         Devoluciones:
             HttpResponse: el objeto de respuesta HTTP.
         """
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        
+        
         operarios = Operario.objects.filter(estado=True)
         maquinas = Maquina.objects.filter(estado=True)
         operaciones = Operacion.objects.filter(estado=True)
@@ -77,7 +78,7 @@ def selecOperario (request):
             
         return render(request,'cronometro/operario/selec_operario.html', {'operarios' : operarios , 'maquinas' : maquinas , 'operaciones' : operaciones})
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def login (request):
@@ -153,6 +154,7 @@ def guardarUsuario(request):
                 clave = contexto.hash(request.POST['clave']) ,
                 password= contexto.hash(request.POST['clave']),
                 username= request.POST['email'],
+                estado=False
                 
             )
             usuario.full_clean()
@@ -298,7 +300,7 @@ def actualizarUsuario(request, id):
         De lo contrario, redirige a la página de lista de usuarios con un mensaje de advertencia.
     """
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         if login:
             usuario = Usuario.objects.get(id = id)
             return render(request, 'cronometro/usuario/edicion_usuario.html', {'usuario': usuario})
@@ -306,7 +308,7 @@ def actualizarUsuario(request, id):
             messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
             return redirect('cronometro:listarUsuarios')
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activar su cuenta")
         return redirect('cronometro:home')
 
 def edicionUsuario(request):
@@ -405,11 +407,15 @@ def cronometroView(request):
     return: 
         La plantilla HTML renderizada.
     """
-    operarios = Operario.objects.all()
-    maquina = Maquina.objects.all()
-    operacion = Operacion.objects.all()
-    return render(request,'cronometro/cronometro.html', {'operarios' : operarios , 'maquina' : maquina, 'operacion' : operacion})
-
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        operarios = Operario.objects.all()
+        maquina = Maquina.objects.all()
+        operacion = Operacion.objects.all()
+        return render(request,'cronometro/cronometro.html', {'operarios' : operarios , 'maquina' : maquina, 'operacion' : operacion})
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
 def tiempo_parcial(request):
     """
     Esta función maneja la solicitud 'tiempo_parcial'.
@@ -454,8 +460,12 @@ def crearOperario(request):
     :return: un objeto de respuesta HTML que representa la plantilla form_operario.html
     :rtype: HttpRespuesta
     """
-    return render((request), 'cronometro/operario/form_operario.html')
-
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        return render((request), 'cronometro/operario/form_operario.html')
+    else:
+        messages.warning(request, "Inicie sesión o solicite activar su cuenta")
+        return redirect('cronometro:home')
 
 def guardarOperario (request):
     """
@@ -516,14 +526,14 @@ def listarOperarios(request):
 
      """
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         operarios = Operario.objects.order_by('-estado')
         paginator = Paginator(operarios, 10)
         page_number = request.GET.get('page')
         operarios = paginator.get_page(page_number)
         return render(request, 'cronometro/operario/listado_operarios.html', {'operarios' : operarios})
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def actualizarOperario(request, id):
@@ -540,7 +550,7 @@ def actualizarOperario(request, id):
 
      """
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         if login:
             operario = Operario.objects.get(id = id)
             return render(request, 'cronometro/operario/edicion_operario.html', {'operario': operario})
@@ -548,7 +558,7 @@ def actualizarOperario(request, id):
             messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
             return redirect('cronometro:listarOperarios')
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def edicionOperario(request):
@@ -565,7 +575,7 @@ def edicionOperario(request):
     """
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             if login:
                 if request.method == "POST":
                     operario = Operario.objects.get(id = request.POST['id'])
@@ -582,7 +592,7 @@ def edicionOperario(request):
                 messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
                 return redirect('cronometro:listarOperarios')
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:home')
     except Exception as e:
         messages.error(request, f"Error: {e}")
@@ -604,7 +614,7 @@ def deshabilitarOperario(request, id):
     
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             operario = Operario.objects.get(id = id)
             if operario.estado == True:
                 operario.estado = False
@@ -614,7 +624,7 @@ def deshabilitarOperario(request, id):
             operario.save()
             messages.success(request, f"Cambio de estado para ({operario.nombre}) exitoso")
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:home')
     except Exception as e:
         messages.error(request, f"Error: {e}")
@@ -623,23 +633,33 @@ def deshabilitarOperario(request, id):
 
 def historial(request, id): 
     
-    historial = OperacionOperario.objects.filter(idOperario = id)
-    operarios = Operario.objects.all()
-    
-    paginator = Paginator(historial, 10)
-    page_number = request.GET.get('page')
-    historial = paginator.get_page(page_number)
-    return render(request, 'cronometro/operario/historico.html', {'historial' : historial})
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        historial = OperacionOperario.objects.filter(idOperario = id)
+        operarios = Operario.objects.all()
+        
+        paginator = Paginator(historial, 10)
+        page_number = request.GET.get('page')
+        historial = paginator.get_page(page_number)
+        return render(request, 'cronometro/operario/historico.html', {'historial' : historial})
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
 
 def eliminarHistoria(request, id):
-    try:
-        historial = OperacionOperario.objects.get(id = id)
-        historial.delete()
-        messages.success(request, f"Registro eliminado exitosamente")
-        return redirect('cronometro:historial', id = historial.idOperario.id)
-    except Exception as e:
-        messages.error(request, f"Error: {e}")
-        return redirect('cronometro:historial', id = historial.idOperario.id)
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        try:
+            historial = OperacionOperario.objects.get(id = id)
+            historial.delete()
+            messages.success(request, f"Registro eliminado exitosamente")
+            return redirect('cronometro:historial', id = historial.idOperario.id)
+        except Exception as e:
+            messages.error(request, f"Error: {e}")
+            return redirect('cronometro:historial', id = historial.idOperario.id)
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
 def guardarTiempoParcial(request):
     
     if request.method == "POST":
@@ -679,8 +699,13 @@ def guardarTiempoParcial(request):
 
 # Maquina
 def crearMaquina(request):
-    
-    return render((request), 'cronometro/maquina/registro_maquina.html')
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        
+        return render((request), 'cronometro/maquina/registro_maquina.html')
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
 
 def guardarMaquina(request):
     try: 
@@ -707,20 +732,20 @@ def guardarMaquina(request):
 def listarMaquinas(request):
     
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         maquinas= Maquina.objects.order_by('-estado')
         paginator = Paginator(maquinas, 10)
         page_number = request.GET.get('page')
         maquinas = paginator.get_page(page_number)
         return render(request, 'cronometro/maquina/listado_maquinas.html', {'maquinas' : maquinas})
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def deshabilitarMaquina(request, id):
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             maquina = Maquina.objects.get(id = id)
             if maquina.estado == True:
                 maquina.estado = False
@@ -730,14 +755,14 @@ def deshabilitarMaquina(request, id):
             maquina.save()
             messages.success(request, f"Estado Maquina ({maquina.nombre}) cambiado exitosamente")
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:home')
     except Exception as e:
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarMaquinas')
 def actualizarMaquina(request, id):
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         if login:
             maquina = Maquina.objects.get(id = id)
             return render(request, 'cronometro/maquina/edicion_maquina.html', {'maquina': maquina})
@@ -745,13 +770,13 @@ def actualizarMaquina(request, id):
             messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
             return redirect('cronometro:listarMaquinas')
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def editarMaquina(request):
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             if login:
                 if request.method == "POST":
                     maquina = Maquina.objects.get(id = request.POST['id'])
@@ -768,7 +793,7 @@ def editarMaquina(request):
                 messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
                 return redirect('cronometro:listarMaquinas')
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:home')
     except Exception as e:
         messages.error(request, f"Error: {e}")
@@ -776,8 +801,12 @@ def editarMaquina(request):
 
 # Operación
 def crearOperacion(request):
-    
-    return render((request), 'cronometro/operacion/registro_operacion.html')
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        return render((request), 'cronometro/operacion/registro_operacion.html')
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
 
 def guardarOperacion(request):
     try: 
@@ -804,20 +833,20 @@ def guardarOperacion(request):
 def listarOperaciones(request):
     
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         operaciones= Operacion.objects.order_by('-estado')
         paginator = Paginator(operaciones, 10)
         page_number = request.GET.get('page')
         operaciones = paginator.get_page(page_number)
         return render(request, 'cronometro/operacion/listado_operaciones.html', {'operaciones' : operaciones})
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def deshabilitarOperacion(request, id):
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             operacion = Operacion.objects.get(id = id)
             if operacion.estado == True:
                 operacion.estado = False
@@ -827,14 +856,14 @@ def deshabilitarOperacion(request, id):
             operacion.save()
             messages.success(request, f"Estado de operacion ({operacion.nombre}) cambiado exitosamente")
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:home')
     except Exception as e:
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarOperaciones')
 def actualizarOperacion(request, id):
     login = request.session.get('logueoUsuario', False)
-    if login:
+    if Usuario.objects.get(id = login[0]).estado == True:
         if login:
             operacion = Operacion.objects.get(id = id)
             return render(request, 'cronometro/operacion/edicion_operacion.html', {'operacion': operacion})
@@ -842,13 +871,13 @@ def actualizarOperacion(request, id):
             messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
             return redirect('cronometro:listarOperaciones')
     else:
-        messages.warning(request, "Inicie sesión primero")
+        messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
 def editarOperacion(request):
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             if login:
                 if request.method == "POST":
                     operacion = Operacion.objects.get(id = request.POST['id'])
@@ -865,7 +894,7 @@ def editarOperacion(request):
                 messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
                 return redirect('cronometro:listarOperaciones')
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:home')
     except Exception as e:
         messages.error(request, f"Error: {e}")
@@ -957,59 +986,65 @@ def generarInforme(request, id):
     Devoluciones:
     - respuesta: un objeto de respuesta HTTP que contiene el informe de Excel generado como un archivo descargable.
     """
-    operario= Operario.objects.get(id = id)
-    historico = OperacionOperario.objects.filter(idOperario = id)
-    # Crear un libro de Excel
-    libro = Workbook()
-    hoja = libro.active
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+            
+        operario= Operario.objects.get(id = id)
+        historico = OperacionOperario.objects.filter(idOperario = id)
+        # Crear un libro de Excel
+        libro = Workbook()
+        hoja = libro.active
 
-    # Agregar encabezados
-    hoja['A1'] = 'Fecha'
-    hoja['B1'] = 'Nombre'
-    hoja['C1'] = 'Entidad'
-    hoja['D1'] = 'Email'
-    hoja['E1'] = 'Operación' 
-    hoja['F1'] = 'Desc operación'
-    hoja['G1'] = 'Maquina'
-    hoja['H1'] = 'Desc Maquina' 
-    hoja['I1'] = 'Suplementos'
-    hoja['J1'] = 'Ritmo'
-    hoja['K1'] = 'T estandar'
-    hoja['L1'] = 'Uni/hora'
-    
-    # Agregar datos
-    
-    for i, registro in enumerate( historico, start=2):
-        hoja[f'A{i}'] = registro.fechas.astimezone(pytz.UTC).replace(tzinfo=None)
-        hoja[f'B{i}'] = registro.idOperario.nombre
-        hoja[f'C{i}'] = registro.idOperario.entidad
-        hoja[f'D{i}'] = registro.idOperario.email
-        hoja[f'E{i}'] = registro.idOperacion.nombre
-        hoja[f'F{i}'] = registro.idOperacion.descripcion
-        hoja[f'G{i}'] = registro.idMaquinas.nombre
-        hoja[f'H{i}'] = registro.idMaquinas.descripcion
-        hoja[f'I{i}'] = registro.escalaSuplementos
-        hoja[f'J{i}'] = registro.factorRitmo
-        hoja[f'K{i}'] = registro.tiempoEstandar
-        hoja[f'L{i}'] = registro.uniHoras
-    
+        # Agregar encabezados
+        hoja['A1'] = 'Fecha'
+        hoja['B1'] = 'Nombre'
+        hoja['C1'] = 'Entidad'
+        hoja['D1'] = 'Email'
+        hoja['E1'] = 'Operación' 
+        hoja['F1'] = 'Desc operación'
+        hoja['G1'] = 'Maquina'
+        hoja['H1'] = 'Desc Maquina' 
+        hoja['I1'] = 'Suplementos'
+        hoja['J1'] = 'Ritmo'
+        hoja['K1'] = 'T estandar'
+        hoja['L1'] = 'Uni/hora'
+        
+        # Agregar datos
+        
+        for i, registro in enumerate( historico, start=2):
+            hoja[f'A{i}'] = registro.fechas.astimezone(pytz.UTC).replace(tzinfo=None)
+            hoja[f'B{i}'] = registro.idOperario.nombre
+            hoja[f'C{i}'] = registro.idOperario.entidad
+            hoja[f'D{i}'] = registro.idOperario.email
+            hoja[f'E{i}'] = registro.idOperacion.nombre
+            hoja[f'F{i}'] = registro.idOperacion.descripcion
+            hoja[f'G{i}'] = registro.idMaquinas.nombre
+            hoja[f'H{i}'] = registro.idMaquinas.descripcion
+            hoja[f'I{i}'] = registro.escalaSuplementos
+            hoja[f'J{i}'] = registro.factorRitmo
+            hoja[f'K{i}'] = registro.tiempoEstandar
+            hoja[f'L{i}'] = registro.uniHoras
+        
 
-    # Definir nombre del archivo
-    nombre_archivo = 'informe+' + (operario.nombre) + '.xlsx'
+        # Definir nombre del archivo
+        nombre_archivo = 'informe+' + (operario.nombre) + '.xlsx'
 
-    # Crear la respuesta HTTP con el archivo adjunto
-    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-    response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
+        # Crear la respuesta HTTP con el archivo adjunto
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = f'attachment; filename="{nombre_archivo}"'
 
-    # Guardar el libro de Excel en la respuesta HTTP
-    libro.save(response)
+        # Guardar el libro de Excel en la respuesta HTTP
+        libro.save(response)
 
-    return response
+        return response
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
 
 def buscarOperario(request):
     try:
         login = request.session.get('logueoUsuario', False)
-        if login:
+        if Usuario.objects.get(id = login[0]).estado == True:
             
             if request.method == "POST":
                 resultado = request.POST["buscar"]
@@ -1024,7 +1059,7 @@ def buscarOperario(request):
                 messages.error(request, "No envió datos")
                 return redirect('cronometro:listarOperarios')
         else:
-            messages.warning(request, "Inicie sesión primero")
+            messages.warning(request, "Inicie sesión o solicite activación")
             return redirect('cronometro:listarOperarios')
     except Exception as e:
         messages.error(request, f"Error: {e}")
