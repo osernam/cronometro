@@ -191,9 +191,12 @@ def correoRecuperacion(request):
                 token_generator = PasswordResetTokenGenerator()
                 token = token_generator.make_token(usuario)
                 # Almacena el token asociado con el usuario
+                from django.contrib.sites.shortcuts import get_current_site
 
                 request.session["usuarioR"] = [usuario.id]
-                mensaje = f'Haz clic en el siguiente enlace para restablecer tu contraseña: http://127.0.0.1:8000/cronometro/recuperar/?token={token}'
+                domain = get_current_site(request).domain
+                mensaje = f'Haz clic en el siguiente enlace para restablecer tu contraseña: http://{domain}/cronometro/recuperar/?token={token}'
+                #mensaje = f'Haz clic en el siguiente enlace para restablecer tu contraseña: http://127.0.0.1:8000/cronometro/recuperar/?token={token}'
                 
                 send_mail('Recuperación de contraseña', 
                           mensaje, 

@@ -11,7 +11,7 @@ urlpatterns = [
     #recuperacion
     path('inicio_recuperar/', inicioRecuperacion, name = 'inicioRecuperacion'),
     path('correo/', correoRecuperacion, name = 'correoRecuperacion'),
-    path('recuperar/', recuperar, name = 'recuperar'),
+    path('cronometro/recuperar/', recuperar, name = 'recuperar'),
     path('restablecer_contrasena/<int:id>', formRestablecerContrasena, name = 'formRestablecerContrasena'),
     
     #Usuario
