@@ -27,11 +27,11 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # SECURITY WARNING: don't run with debug turned on in production!
-if RENDER_EXTERNAL_HOSTNAME:
-    DEBUG = False #'RENDER' not in os.environ
-else:
-    DEBUG =True
-
+#if RENDER_EXTERNAL_HOSTNAME:
+    #DEBUG = False #'RENDER' not in os.environ
+#else:
+   # DEBUG =True
+DEBUG =True
 ALLOWED_HOSTS = []
 
 
