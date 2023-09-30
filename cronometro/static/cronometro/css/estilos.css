@@ -41,6 +41,14 @@
   padding: 0 10px;
 }
 
+.carousel-item{
+  width: 100%;
+}
+.carousel-item img{
+  width: 100%;
+  height: auto;
+}
+
 /* Regla para pantallas de más de 480px */
 @media screen and (min-width: 481px) {
   .secciones { border-radius: 10px ; flex: 1; border: 2px solid rgba(70, 18, 166, 0.26); }
