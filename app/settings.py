@@ -88,15 +88,27 @@ WSGI_APPLICATION = 'app.wsgi.application'
  #      'NAME': BASE_DIR / 'db.sqlite3',
  #   }
 #}
+if RENDER_EXTERNAL_HOSTNAME:
+    DATABASES = {
+        
+    'default': dj_database_url.config(
+        default='postgresql://postgres:postgres@localhost/postgres',
+        #default='postgres://cronte_user:49KmpG3oDq3I7mdaimXVENysTMZL4tLD@dpg-cka4ou6v3ddc73asrnog-a.oregon-postgres.render.com/cronte',
+        conn_max_age=600
+    )
+    }
+else:
+    DATABASES = {
 
-DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
-        default='postgresql://postgres:postgres@localhost/postgres',
+        #default='postgresql://postgres:postgres@localhost/postgres',
+        default='sqlite:///db.sqlite3',
+        #default='postgres://cronte_user:49KmpG3oDq3I7mdaimXVENysTMZL4tLD@dpg-cka4ou6v3ddc73asrnog-a.oregon-postgres.render.com/cronte',
         conn_max_age=600)
-    
-    
-}
+
+
+    }
 
 
 # Password validation

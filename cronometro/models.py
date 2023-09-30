@@ -12,7 +12,7 @@ class Usuario(AbstractUser):
     roles_CHOISES = (('A', 'Administrador'), ('U', 'Usuario'))
     rol = models.CharField(max_length=20, choices=roles_CHOISES, default='U')
     fecha_nacimiento = models.DateField(default=date.today)
-    estado = models.BooleanField(default=True)
+    estado = models.BooleanField(default=False)
     
      # Agregue related_name para resolver el conflicto
     groups = models.ManyToManyField(
@@ -39,12 +39,12 @@ class Operario(models.Model):
     
 
 class Maquina(models.Model):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, unique = True)
     descripcion = models.CharField(max_length=50)
     estado = models.BooleanField(default=True)    
 
 class Operacion (models.Model):
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, unique = True)
     descripcion = models.CharField(max_length=50)
     estado = models.BooleanField(default=True)
     
