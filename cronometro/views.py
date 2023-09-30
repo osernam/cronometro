@@ -525,14 +525,18 @@ def listarOperarios(request):
         La respuesta HTTP que contiene la plantilla representada o una respuesta de redireccionamiento.
 
      """
-    login = request.session.get('logueoUsuario', False)
-    if Usuario.objects.get(id = login[0]).estado == True:
-        operarios = Operario.objects.order_by('-estado')
-        paginator = Paginator(operarios, 10)
-        page_number = request.GET.get('page')
-        operarios = paginator.get_page(page_number)
-        return render(request, 'cronometro/operario/listado_operarios.html', {'operarios' : operarios})
-    else:
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if Usuario.objects.get(id = login[0]).estado == True:
+            operarios = Operario.objects.order_by('-estado')
+            paginator = Paginator(operarios, 10)
+            page_number = request.GET.get('page')
+            operarios = paginator.get_page(page_number)
+            return render(request, 'cronometro/operario/listado_operarios.html', {'operarios' : operarios})
+        else:
+            messages.warning(request, "Inicie sesión o solicite activación")
+            return redirect('cronometro:home')
+    except Exception as e:
         messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
