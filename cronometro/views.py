@@ -956,7 +956,7 @@ def guardarTiempoEstandar(request, id):
                         print(tNormal)
                         tEstandar = tNormal+(tNormal*escala)
                         print(tEstandar)
-                        opOpera.tiempoEstandar =  tEstandar
+                        opOpera.tiempoEstandar = round(tEstandar, 2) 
                         opOpera.uniHoras = 60/tEstandar*0.8
                         print("")
                         opOpera.save()

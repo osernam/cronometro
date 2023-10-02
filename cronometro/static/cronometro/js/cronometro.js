@@ -145,7 +145,7 @@ function parciales(){
 
     
     var tNor = document.getElementById('tiempoNor');
-    var tEst = document.getElementById('tiempoEst');
+    //var tEst = document.getElementById('tiempoEst');
     var divTiempos = document.getElementById('tiemposCronometro');
     var cajaObs = document.getElementById('cajaTiempoObservado');
     var proNuevo= document.getElementsByName('cajaTiemposParciales');
@@ -204,11 +204,11 @@ function parciales(){
     
     cajaObs.value= tObs.toFixed(3);
 
-    tEst.innerHTML = "<span class='mr-2'>"+
+    /* tEst.innerHTML = "<span class='mr-2'>"+
                         "<i class='fas fa-circle text-success'></i>Te "+ tiempoEstandar.toFixed(3)+
                         "<div  class=''></div>"+
                     "</span>";
-    
+    */
 
     tNor.innerHTML= 
                     "<span class='mr-2'>"+
