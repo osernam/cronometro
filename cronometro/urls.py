@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from .views import *
 
 app_name = "cronometro"
@@ -21,6 +21,7 @@ urlpatterns = [
     path('edit_usuario/<int:id>', actualizarUsuario, name='actualizarUsuario'),
     path('edicion_usuario/>', edicionUsuario, name='edicionUsuario'),
     path('estado_usuario/<int:id>', deshabilitarUsuario, name='deshabilitarUsuario'),
+    
     
     #Cronometro
     path('cronometro/', cronometroView, name= 'cronometro'),
@@ -59,5 +60,7 @@ urlpatterns = [
     #informe
     path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),
     path('buscar_operario/', buscarOperario, name='buscarOperario'),
+    
+    re_path(r'^.*/$', redireccionar_a_inicio),
     
 ]

@@ -197,6 +197,7 @@ function parciales(){
         var prom = acumulador/proNuevo.length
         tiempoNormal = prom*factorRitmo/100
         tiempoEstandar = tiempoNormal + (tiempoNormal*escalaSuplementos)
+        tiempoEstandar = Math.round(tiempoEstandar);
         
     }
     

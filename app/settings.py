@@ -48,8 +48,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'cronometro',
+    'cronometro.apps.CronometroConfig',
 ]
+# Añade esta línea para importar las señales
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -104,15 +106,11 @@ if RENDER_EXTERNAL_HOSTNAME:
 else:
     DATABASES = {
 
-    'default': dj_database_url.config(
-        # Feel free to alter this value to suit your needs.
-        #default='postgresql://postgres:postgres@localhost/postgres',
-        default='sqlite:///db.sqlite3',
-        #default='postgres://cronte_user:49KmpG3oDq3I7mdaimXVENysTMZL4tLD@dpg-cka4ou6v3ddc73asrnog-a.oregon-postgres.render.com/cronte',
-        conn_max_age=600)
-
-
-    }
+    'default': {
+      'ENGINE': 'django.db.backends.sqlite3',
+      'NAME': BASE_DIR / 'db.sqlite3',
+  }
+}
 
 
 # Password validation
@@ -179,3 +177,6 @@ EMAIL_HOST_USER = 'adm95193241@gmail.com'
 EMAIL_HOST_PASSWORD = 'fxpq lktm kawj bzbu'
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'adm95193241@gmail.com'
+
+
+IMPORT_SIGNALS = ['cronometro.signals']

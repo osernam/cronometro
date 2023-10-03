@@ -289,6 +289,7 @@ def listarUsuarios(request):
     else:
         messages.warning(request, "Inicie sesión primero")
         return redirect('cronometro:home')
+    
 
 def actualizarUsuario(request, id):
     """
@@ -332,10 +333,15 @@ def edicionUsuario(request):
                     usuario = Usuario.objects.get(id = request.POST['id'])
                     
                     usuario.nombre = request.POST['nombre']
-                    usuario.apellido = request.POST['apellido']
-                    usuario.rol = request.POST['rol']
-                    usuario.estado = request.POST['estado']
+                    usuario.apellido = request.POST['apellido']                    
                     
+                    if usuario.email == "adm95193241@gmail.com":
+                        usuario.rol = "A"
+                        usuario.estado = True
+                    else:
+                        usuario.rol = request.POST['rol']
+                        usuario.estado = request.POST['estado']
+                        
                     usuario.save()
                     messages.success(request, f"Usuario ({usuario.nombre})  editado exitosamente")
                     return redirect('cronometro:home')
@@ -372,12 +378,20 @@ def deshabilitarUsuario(request, id):
         if login:
             usuario = Usuario.objects.get(id = id)
             if usuario.estado == True:
-                usuario.estado = False
+                if usuario.email == "adm95193241@gmail.com":
+                    usuario.estado = True
+                else:
+                    usuario.estado = False
             else:
                 usuario.estado = True
             
+            
+            
             usuario.save()
+            
             messages.success(request, f"Proveedor ({usuario.nombre}) modificado exitosamente")
+            
+            return redirect('cronometro:listarUsuarios')
         else:
             messages.warning(request, "Inicie sesión primero")
             return redirect('cronometro:home')
@@ -955,8 +969,9 @@ def guardarTiempoEstandar(request, id):
                         tNormal= observado* ritmo/100
                         print(tNormal)
                         tEstandar = tNormal+(tNormal*escala)
+                        tEstandar = round(tEstandar, 2)
                         print(tEstandar)
-                        opOpera.tiempoEstandar = round(tEstandar, 2) 
+                        opOpera.tiempoEstandar = tEstandar
                         opOpera.uniHoras = 60/tEstandar*0.8
                         print("")
                         opOpera.save()
@@ -1072,3 +1087,7 @@ def buscarOperario(request):
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarOperarios')
 
+
+
+def redireccionar_a_inicio(request):
+    return redirect('cronometro:home')
