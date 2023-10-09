@@ -1,0 +1,54 @@
+{% extends 'cronometro/base/base.html' %}
+{% load static %}
+
+{% block titulo %}Inicio{% endblock titulo %}
+
+{% block encabezado %}Bienbenido{% endblock encabezado %}
+{% block subencabezado %}Index{% endblock subencabezado %}
+
+{% block contenedor %}
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
+{% endif %}
+
+{% if request.session.logueoUsuario %}
+{% if request.session.logueoUsuario.4 == 'Usuario' %}
+
+{% else %}
+{% endif %}
+{% endif %}
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicadores -->
+    <ol class="carousel-indicators">
+      <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+      <li data-target="#myCarousel" data-slide-to="1"></li>
+      <li data-target="#myCarousel" data-slide-to="2"></li>
+    </ol>
+
+    <!-- Slides -->
+    <div class="carousel-inner">
+      <div class="carousel-item active">
+        <img src=" {% static 'cronometro/img/tomandoTiempos.jpeg' %}" alt="Imagen 1">
+      
+    </div>
+	
+    <!-- Controles -->
+    <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+      <span class="sr-only">Anterior</span>
+    </a>
+    <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+      <span class="sr-only">Siguiente</span>
+    </a>
+  </div>
+
+  
+
+
+
+{% endblock contenedor %}  
