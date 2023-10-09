@@ -656,6 +656,7 @@ def historial(request, id):
     
     login = request.session.get('logueoUsuario', False)
     if Usuario.objects.get(id = login[0]).estado == True:
+        OperacionOperario.objects.filter(idOperario=id, tiempoEstandar=0).delete()
         historial = OperacionOperario.objects.filter(idOperario = id)
         operarios = Operario.objects.all()
         
@@ -976,7 +977,8 @@ def guardarTiempoEstandar(request, id):
                         print("")
                         opOpera.save()
                     except Exception as e:
-                        print("Error en la operación matemática:", str(e))
+                        messages.error(request, f"No ha enviado datos válidos")
+                        
                         
                     
                     

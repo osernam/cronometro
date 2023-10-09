@@ -172,7 +172,7 @@ function parciales(){
 
             
                             
-                '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1">'+
+                '<div class="text-xs font-weight-bold text-primary text-uppercase mb-1 ">'+
                     'T '+(i+1)+'  '+ 
                     '<input type="text" name="cajaTiemposParciales" style="border: none;" style="height: 50px;" value="'+tiempoParcial[i].toFixed(2) +'" readonly ="" >'+
 
@@ -224,26 +224,6 @@ function parciales(){
 
 
 
-
-// Enviar variables a Django
-/*var tiempoPar = {name: "John", age: 30, city: "New York"};
-function enviarVariables() {
-    
-    $.ajax({
-        method: "POST",
-        url: "cronometro/tiempo-parcial/",
-        data: {tiempoParcial: JSON.stringify(tiempoParcial)},
-        beforeSend: function(xhr) {
-            xhr.setRequestHeader('X-CSRFToken', getCookie('csrftoken'));
-        },
-        success: function(response) {
-            console.log('Enviado correcto!');
-        },
-        error: function(response) {
-            console.log('Error enviando datos!');
-        }
-    });
-}*/
 
 
 
@@ -299,6 +279,8 @@ function iniciar() {
 
     document.getElementById('iniciarBoton').removeEventListener('click', iniciar);
     document.getElementById('pararBoton').addEventListener('click', detener);
+
+    
 }
 
 function detener() {
@@ -313,7 +295,9 @@ function detener() {
 }
 
 
-
+$(document).ready(function() {
+    $('.messages').delay(10000).fadeOut('slow'); // Oculta el mensaje después de 3 segundos
+});
 
 $( document ).ready(function() {
     
@@ -325,6 +309,7 @@ $( document ).ready(function() {
     //document.getElementById('pararBoton').addEventListener('click', detener);
     document.getElementById('tiemposParciales').addEventListener('click', parciales);
 
+    
 
   });
 

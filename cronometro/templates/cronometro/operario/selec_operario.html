@@ -11,9 +11,9 @@
 {% block contenedor %}
 
 {% if messages %}
-        {% for message in messages %}
-            <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
-        {% endfor %}
+    {% for message in messages %}
+        <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger messages{% endif %}" role="alert">{{ message }}</div>
+    {% endfor %}
 {% endif %}
 
 {% if request.session.logueoUsuario %}
@@ -58,14 +58,14 @@
                         <label for="escalaSuplementos">Escala de suplementos</label>
                         <select name= "escalaSuplementos" class="form-control" id="escalaSuplementos" size="5" required>
                             
-                            <option value="0.02" selected>2%</option>
-                            <option value="0.04">4%</option>
-                            <option value="0.06">6%</option>
-                            <option value="0.08">8%</option>
-                            <option value="0.10">10%</option>
-                            <option value="0.12">12%</option>
+                            <option value="0.11" selected>11%</option>
                             <option value="0.14">14%</option>
                             <option value="0.16">16%</option>
+                            <option value="0.18">18%</option>
+                            <option value="0.20">20%</option>
+                            <option value="0.22">22%</option>
+                            <option value="0.24">24%</option>
+                            <option value="0.26">26%</option>
                         </select>
                     </a>   
                     <a>

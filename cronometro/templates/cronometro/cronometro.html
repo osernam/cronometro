@@ -17,15 +17,19 @@
                    <div> 
                         {% if messages %}
                             {% for message in messages %}
-                                <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger{% endif %}" role="alert">{{ message }}</div>
+                                <div class="alert alert-{% if message.tags != 'error' %}{{ message.tags }}{% elif message.tags == 'error' %}danger messages{% endif %}" role="alert">{{ message }}</div>
                             {% endfor %}
                         {% endif %}
+
+                        
 
                         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#modalOperarios">
                             <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                             Parametros
                         </a>                        
                     
+
+                        
                    </div>
                    
 
@@ -67,10 +71,24 @@
                                                     <div class="columnaG">
                                                         <div class="columna">
                                                             <label for="factoRitmo">Ritmo (BSI) </label>
-                                                            <input name="factoRitmo" id="factoRitmo" value= "{{opOpera.factorRitmo}}" readonly="">
+                                                            <select name="factoRitmo" id="factoRitmo"  readonly="" required>
+                                                                <option  value= "50"{% if opOpera.factorRitmo == 50 %} selected{% endif %}  >50</option> 
+                                                                <option  value= "75" {% if opOpera.factorRitmo == 75 %} selected{% endif %} >75</option>
+                                                                <option  value= "100"   {% if opOpera.factorRitmo == 100 %} selected{% endif %}>100</option>
+                                                                <option  value= "125" {% if opOpera.factorRitmo == 125 %} selected{% endif %} >125</option>
+                                                                <option  value= "150" {% if opOpera.factorRitmo == 150 %} selected{% endif %}>150</option>
+                                                            </select>
                                                             <label for="escalaSuplemento"> Suplementos</label>
-                                                            <input name= "escalaSuplemento" id="escalaSuplemento" value="{{opOpera.escalaSuplementos}}" readonly="">
-                                                            
+                                                            <select name= "escalaSuplemento" id="escalaSuplemento" value="{{opOpera.escalaSuplementos}}" readonly="">
+                                                                <option value="0.11"{% if opOpera.escalaSuplementos == 0.11 %} selected{% endif %}>11%</option>
+                                                                <option value="0.14" {% if opOpera.escalaSuplementos == 0.14 %} selected{% endif %}>14%</option>
+                                                                <option value="0.16" {% if opOpera.escalaSuplementos == 0.16 %} selected{% endif %}>16%</option>
+                                                                <option value="0.18" {% if opOpera.escalaSuplementos == 0.18 %} selected{% endif %}>18%</option>
+                                                                <option value="0.20" {% if opOpera.escalaSuplementos == 0.20 %} selected{% endif %}>20%</option>
+                                                                <option value="0.22" {% if opOpera.escalaSuplementos == 0.22 %} selected{% endif %}>22%</option>
+                                                                <option value="0.24" {% if opOpera.escalaSuplementos == 0.24 %} selected{% endif %}>24%</option>
+                                                                <option value="0.26" {% if opOpera.escalaSuplementos == 0.26 %} selected{% endif %}>26%</option>
+                                                            </select>
                                                         </div>
 
                                                         <div class="columna">
@@ -208,17 +226,11 @@
                                         </div>
                                         <!-- Card Body -->
                                         <div class="card-body">
-                                            <div class="chart-pie pt-4 pb-2"  id= "tiemposCronometro">
-                                                <!-- Aqui apareceran los tiempos -->
-                                                
-
-                                            </div>
                                             <div id= "contenidoTes" class="mt-4 text-center small" >
-                                                <div id ="tiempoNor" class= "column" >
-                                                    <span class="mr-2">
+                                                <div id ="tiempoNor"  >
+                                                    
                                                         <i class="fas fa-circle text-primary"></i> Tiempo Normal
-                                                        <div  class=""></div>
-                                                    </span>
+                                                                                                  
                                                 </div>
                                                 <div id="tiempoEst" class= "column"  >
                                                     
@@ -226,6 +238,12 @@
                                                 </div>
                                                 
                                             </div>
+                                            <div class="contTiempos"  id= "tiemposCronometro">
+                                                <!-- Aqui apareceran los tiempos -->
+                                                
+
+                                            </div>
+                                            
                                         </div>
                                     </div>
                                 </div>
