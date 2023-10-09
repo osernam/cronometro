@@ -73,10 +73,21 @@
                                                             <label for="factoRitmo">Ritmo (BSI) </label>
                                                             <select name="factoRitmo" id="factoRitmo"  readonly="" required>
                                                                 <option  value= "50"{% if opOpera.factorRitmo == 50 %} selected{% endif %}  >50</option> 
+                                                                <option  value= "55" {% if opOpera.factorRitmo == 55 %} selected{% endif %} >55</option>
+                                                                <option  value= "60" {% if opOpera.factorRitmo == 60 %} selected{% endif %} >60</option>
+                                                                <option  value= "65"   {% if opOpera.factorRitmo == 65 %} selected{% endif %}>65</option>
+                                                                <option  value= "70" {% if opOpera.factorRitmo == 70 %} selected{% endif %} >70</option>
                                                                 <option  value= "75" {% if opOpera.factorRitmo == 75 %} selected{% endif %} >75</option>
-                                                                <option  value= "100"   {% if opOpera.factorRitmo == 100 %} selected{% endif %}>100</option>
+                                                                <option  value= "80" {% if opOpera.factorRitmo == 80 %} selected{% endif %} >80</option>
+                                                                <option  value= "85" {% if opOpera.factorRitmo == 85 %} selected{% endif %} >85</option>
+                                                                <option  value= "90" {% if opOpera.factorRitmo == 90 %} selected{% endif %} >90</option>
+                                                                <option  value= "95" {% if opOpera.factorRitmo == 95 %} selected{% endif %} >95</option>
+                                                                <option  value= "100" {% if opOpera.factorRitmo == 100 %} selected{% endif %} >100</option>
+                                                                <option  value= "105" {% if opOpera.factorRitmo == 105 %} selected{% endif %} >105</option>
+                                                                <option  value= "110" {% if opOpera.factorRitmo == 110 %} selected{% endif %} >110</option>     
+                                                                <option  value= "115" {% if opOpera.factorRitmo == 115 %} selected{% endif %} >115</option>
+                                                                <option  value= "120" {% if opOpera.factorRitmo == 120 %} selected{% endif %} >120</option>
                                                                 <option  value= "125" {% if opOpera.factorRitmo == 125 %} selected{% endif %} >125</option>
-                                                                <option  value= "150" {% if opOpera.factorRitmo == 150 %} selected{% endif %}>150</option>
                                                             </select>
                                                             <label for="escalaSuplemento"> Suplementos</label>
                                                             <select name= "escalaSuplemento" id="escalaSuplemento" value="{{opOpera.escalaSuplementos}}" readonly="">

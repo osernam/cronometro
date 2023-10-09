@@ -32,6 +32,7 @@ RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 #else:
    # DEBUG =True
 DEBUG =True
+
 ALLOWED_HOSTS = []
 
 
