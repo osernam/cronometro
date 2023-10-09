@@ -960,24 +960,28 @@ def guardarTiempoEstandar(request, id):
                         escala = float(escalaSuplementos)
                         ritmo = float(factorRitmo)
                         observado = float(tObservado)
-                        print("")
+                        print("observado")
                         print(observado)
                         
                         opOpera.factorRitmo = ritmo        
                         opOpera.escalaSuplementos = escala
+                        print("escala")
                         print(escala)
+                        print("ritmo")
                         print(ritmo)
                         tNormal= observado* ritmo/100
                         print(tNormal)
                         tEstandar = tNormal+(tNormal*escala)
                         tEstandar = round(tEstandar, 2)
+                        print("TE")
                         print(tEstandar)
                         opOpera.tiempoEstandar = tEstandar
                         opOpera.uniHoras = 60/tEstandar*0.8
                         print("")
                         opOpera.save()
                     except Exception as e:
-                        messages.error(request, f"No ha enviado datos válidos")
+                           
+                        messages.error(request, f"No ha enviado datos válidos" )
                         
                         
                     
