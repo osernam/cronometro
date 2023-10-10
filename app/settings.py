@@ -13,7 +13,10 @@ https://www. youtube.com/watch?v=e6PkGDH4wWA
 
 from pathlib import Path
 import os
-import dj_database_url
+#import dj_database_url
+
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -23,14 +26,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
+SECRET_KEY = os.environ.get('SECRET_KEY', default='AbuenOwVlsQYjaWpkxSC')
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 # SECURITY WARNING: don't run with debug turned on in production!
-#if RENDER_EXTERNAL_HOSTNAME:
-    #DEBUG = False #'RENDER' not in os.environ
-#else:
-   # DEBUG =True
+
 DEBUG =True
 
 ALLOWED_HOSTS = []
@@ -95,22 +95,15 @@ WSGI_APPLICATION = 'app.wsgi.application'
  #      'NAME': BASE_DIR / 'db.sqlite3',
  #   }
 #}
-if RENDER_EXTERNAL_HOSTNAME:
-    DATABASES = {
-        
-    'default': dj_database_url.config(
-        default='postgresql://postgres:postgres@localhost/postgres',
-        #default='postgres://cronte_user:49KmpG3oDq3I7mdaimXVENysTMZL4tLD@dpg-cka4ou6v3ddc73asrnog-a.oregon-postgres.render.com/cronte',
-        conn_max_age=600
-    )
-    }
-else:
-    DATABASES = {
-
+DATABASES = {
     'default': {
-      'ENGINE': 'django.db.backends.sqlite3',
-      'NAME': BASE_DIR / 'db.sqlite3',
-  }
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cronte_bd',
+        'USER': 'root',
+        'PASSWORD': 'NWz5fLE7.o6B8Z[9',
+        'HOST': 'localhost',
+        'PORT': '3306',
+    }
 }
 
 
