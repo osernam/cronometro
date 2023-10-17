@@ -425,6 +425,38 @@
    'C:\\Proyectos Django\\Practicas '
    'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\__init__.py',
    'PYMODULE'),
+  ('cronometro.admin',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\admin.py',
+   'PYMODULE'),
+  ('cronometro.apps',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\apps.py',
+   'PYMODULE'),
+  ('cronometro.migrations',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\migrations\\__init__.py',
+   'PYMODULE'),
+  ('cronometro.migrations.0001_initial',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\migrations\\0001_initial.py',
+   'PYMODULE'),
+  ('cronometro.migrations.0002_usuario_last_login',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\migrations\\0002_usuario_last_login.py',
+   'PYMODULE'),
+  ('cronometro.migrations.0003_alter_usuario_options_alter_usuario_managers_and_more',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\migrations\\0003_alter_usuario_options_alter_usuario_managers_and_more.py',
+   'PYMODULE'),
+  ('cronometro.migrations.0004_operacionoperario_unihoras',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\migrations\\0004_operacionoperario_unihoras.py',
+   'PYMODULE'),
+  ('cronometro.migrations.0005_alter_maquina_nombre_alter_operacion_nombre_and_more',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\migrations\\0005_alter_maquina_nombre_alter_operacion_nombre_and_more.py',
+   'PYMODULE'),
   ('cronometro.models',
    'C:\\Proyectos Django\\Practicas '
    'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\models.py',
@@ -432,6 +464,14 @@
   ('cronometro.signals',
    'C:\\Proyectos Django\\Practicas '
    'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\signals.py',
+   'PYMODULE'),
+  ('cronometro.tests',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\tests.py',
+   'PYMODULE'),
+  ('cronometro.urls',
+   'C:\\Proyectos Django\\Practicas '
+   'ADSI\\Cronometro\\Cronte\\Proyecto_cronometro\\cronometro\\urls.py',
    'PYMODULE'),
   ('cronometro.views',
    'C:\\Proyectos Django\\Practicas '

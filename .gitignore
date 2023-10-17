@@ -2,3 +2,7 @@
 db.sqlite3
 venv
 __pycache_
+cronte
+manage.spec
+build
+
