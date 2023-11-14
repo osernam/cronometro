@@ -19,7 +19,7 @@ urlpatterns = [
     path('save/', guardarUsuario, name = 'guardarUsuario'),
     path('list_usuario/', listarUsuarios, name='listarUsuarios'),
     path('edit_usuario/<int:id>', actualizarUsuario, name='actualizarUsuario'),
-    path('edicion_usuario/>', edicionUsuario, name='edicionUsuario'),
+    path('edicion_usuario/', edicionUsuario, name='edicionUsuario'),
     path('estado_usuario/<int:id>', deshabilitarUsuario, name='deshabilitarUsuario'),
     
     
@@ -46,7 +46,7 @@ urlpatterns = [
     path('list_maquina/', listarMaquinas, name='listarMaquinas'),
     path('estado_maquina/<int:id>', deshabilitarMaquina, name='deshabilitarMaquina'),
     path('edit_maquina/<int:id>', actualizarMaquina, name='actualizarMaquina'),
-    path('edicion_maquina/>', editarMaquina, name='editarMaquina'),
+    path('edicion_maquina/<int:id>', editarMaquina, name='editarMaquina'),
     
     #Operacion
     path('operacion/', crearOperacion, name='crearOperacion'),
@@ -56,6 +56,13 @@ urlpatterns = [
     path('edit_operacion/<int:id>', actualizarOperacion, name='actualizarOperacion'),
     path('edicion_operacion/>', editarOperacion, name='editarOperacion'),
     
+    #Empresa
+    path('crear_empresa/', crearEmpresa, name='crearEmpresa'),
+    path('guardar_empresa/', guardarEmpresa, name='guardarEmpresa'),
+    path('listar_empresa/', listarEmpresa, name='listarEmpresa'),
+    path('actualizar_empresa/<int:id>', actualizarEmpresa, name='actualizarEmpresa'),
+    path('guardar_ac_empresa/<int:id>', guardarAcEmpresa, name='guardarAcEmpresa'),
+    path('estado_empresa/<int:id>', estadoEmpresa, name='estadoEmpresa'),
     
     #informe
     path('cronometro/generar_informe_operario/<int:id>', generarInforme, name='generarInforme'),

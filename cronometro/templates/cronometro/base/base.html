@@ -74,6 +74,9 @@
             {% endif %}
             <!-- Divider -->
             <hr class="sidebar-divider">
+            
+            {% if request.session.logueoUsuario %}
+
 
             <!-- Heading -->
             <div class="sidebar-heading">
@@ -104,7 +107,7 @@
             <!-- Nav Item - utilidades Collapse Menu -->
             <li class="nav-item">
 
-                {% if request.session.logueoUsuario %}
+                
 
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                     aria-expanded="true" aria-controls="collapseUtilities">
@@ -134,7 +137,34 @@
             <!-- Divider -->
             <hr class="sidebar-divider">
 
+            
          
+            {% if request.session.logueoUsuario.4 == 'Administrador' %}
+             <!-- Empresas -->
+             <div class="sidebar-heading">
+                Empresas
+            </div>
+
+            <!-- Nav Item - Pages Collapse Menu -->
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsePages"
+                    aria-expanded="true" aria-controls="collapsePages">
+                    <i class="fas fa-fw fa-folder"></i>
+                    <span>Empresas</span>
+                </a>
+                <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        
+                        <h6 class="collapse-header">Opciones:</h6>
+                        <a class="collapse-item" href="{% url 'cronometro:crearEmpresa' %}">Registro Empresa</a>
+                        
+                        <a class="collapse-item" href="{% url 'cronometro:listarEmpresa' %}">Listar Empresas</a>
+
+
+                    </div>
+                </div>
+            </li>
+            {% endif %}
 
             <!-- Nav Item - Tables -->
             
@@ -170,15 +200,23 @@
                     </button>
 
                     <!-- Topbar Search -->
-                    
+                    <span class="nav-item ">
+                        {% if request.session.logueoUsuario %}
+                            <h3> {{request.session.logueoUsuario.6}}</h3>
+                        {% endif %}
+                        
+                    </span>
+
 
                     <!-- Topbar Navbar -->
                     <ul class="navbar-nav ml-auto">
 
-                        
-                        
+
+
+                            
 
                         <div class="topbar-divider d-none d-sm-block"></div>
+                        
 
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow show">                      
@@ -187,34 +225,45 @@
 
                             <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Sesión</span>
-                                <img src="{% static 'cronometro/img/usuario.png' %} "  alt="imagen de usuario">
                                 
+                                {% if request.session.logueoUsuario %}
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">{{request.session.logueoUsuario.1}}</span>
+                                
+                                    <img src="{% static 'cronometro/img/trabajando.png' %} "  width="40" height="40" alt="imagen de usuario">
+                                {%else%}
+                                    <span class="mr-2 d-none d-lg-inline text-gray-600 small">Sesión</span>
+                                
+                                    <img src="{% static 'cronometro/img/desconocido.png' %} "  width="40" height="40" alt="imagen de usuario">
+                                {%endif%}
                             </a>
                             <!-- Dropdown - User Information -->
                                 <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                     aria-labelledby="userDropdown">
                                     {% if request.session.logueoUsuario %}
                                     <a class="dropdown-item" href="{% url 'cronometro:actualizarUsuario' request.session.logueoUsuario.0 %}">
-                                        <i class="fas fa-user fa-sm fa-fw mr-2 text-gray-40"></i>
+                                        <img src="{% static 'cronometro/img/tarjeta.png' %} "  width="30" height="30" alt="imagen de usuario">
+
                                         Perfil
                                     </a>
                                     {%endif%}
                                     {% if request.session.logueoUsuario %}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="{% url 'cronometro:logout' %}">
-                                        <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-40"></i>
+                                        <img src="{% static 'cronometro/img/cerrar-sesion.png' %} "  width="30" height="30" alt="imagen de usuario">
+
                                         Salir
+                                        
                                     </a>
                                     {%else%}
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
-                                        <i class="fas fa-sign-in-alt fa-sm fa-fw mr-2 text-gray-40"></i>
+                                        <img src="{% static 'cronometro/img/datos-del-usuario.png' %} "  width="30" height="30" alt="imagen de usuario">
+
                                         Iniciar
                                     </a>
                                     {%endif%}
                                 </div>
-                        </li> 
+                            </li> 
                         </li>
 
                     </ul>
@@ -257,7 +306,7 @@
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Inicio de sesion</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Inicio de sesión</h5>
                     <button class="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
@@ -283,8 +332,15 @@
                 </div>
                 <div class="modal-footer">
                     <div class="registrarse-link">
-						<p>¿Aún no tienes cuenta? <a href="{% url 'cronometro:registro' %}">Registrate aquí</a></p>
-                        <p>¿Olvidaste tu contraseña? <a href="{% url 'cronometro:inicioRecuperacion' %}">Recuperala aquí</a></p>
+						<div class="text-center">
+                            <p>¿Aún no tienes cuenta? <a href="{% url 'cronometro:registro' %}">Registrate aquí <img src="{% static 'cronometro/img/registrarse.png' %} "  width="30" height="30" ></a></p>
+                            
+                        </div>
+                        <div class="text-center">
+                            <p>¿Olvidaste tu contraseña? <a href="{% url 'cronometro:inicioRecuperacion' %}">Recuperala aquí <img src="{% static 'cronometro/img/contrasena.png' %} "  width="30" height="30" ></a></p>
+                            
+                        </div>
+                    
                     </div>
                 </div>
             </div>

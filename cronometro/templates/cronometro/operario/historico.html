@@ -41,9 +41,9 @@
                         <th>Factor de ritmo</th>                        
                         <th>Tiempo estandar</th>
                         <th>Uni/hora (EFIC PR 80%)</th>
-                        {%if request.session.logueoUsuario.4 == 'Administrador' %}
+                        
                         <th>Eliminar</th>
-                        {%endif%}
+                        
                     
                     </tr>
                 </thead>
@@ -58,9 +58,9 @@
                         <td> {{registro.factorRitmo}}</td>
                         <td> {{registro.tiempoEstandar}}</td>
                         <td> {{ registro.uniHoras }} </td>
-                        {%if request.session.logueoUsuario.4 == 'Administrador' %}
+                        
                         <td> <a href="{% url 'cronometro:eliminarHistoria' registro.id %}" class="btn btn-danger">Eliminar</a></td>
-                        {%endif%}
+                        
                        
                     </tr>
                     {% endfor %}

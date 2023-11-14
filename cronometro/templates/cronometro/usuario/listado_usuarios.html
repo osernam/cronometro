@@ -34,6 +34,7 @@
                         <th>Apellidos</th>
                         <th>Email</th>
                         <th>Rol</th>
+                        <th>Empresa</th>
                         <th>Estado</th>
                         <th>Opciones</th>
                         
@@ -47,6 +48,7 @@
                         <td> {{usuario.apellido}}</td>
                         <td> {{usuario.email}}</td>
                         <td> {{usuario.rol}}</td>
+                        <td> {{usuario.idEmpresa.nombre}} </td>
                         <td> 
                             <a href="{% url  'cronometro:deshabilitarUsuario' usuario.id %}" {% if usuario.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
                         </td>

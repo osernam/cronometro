@@ -53,7 +53,7 @@
                         <td> {{operario.id}} </td>
                         <td> {{operario.nombre}}</td>
                         <td> <time datetime="{{operario.fecha}}">{{operario.fecha|date:"d/m/Y" }} </time></td>
-                        <td> {{operario.entidad}}</td>
+                        <td> {{operario.idEmpresa.nombre}}</td>
                         <td> <a href="{% url 'cronometro:historial' operario.id %}" class="btn btn-info">Consultar</a></td>
                         <td> 
                             <a href="{% url  'cronometro:deshabilitarOperario' operario.id %}" {% if operario.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
@@ -92,8 +92,9 @@
 </div>
 {% else %}
 No hay datos.
-Inicie sesion.
+
 {% endif %}
+
 {% endif %}
 
 {% endblock contenedor %}

@@ -4,7 +4,14 @@ from email.policy import default
 from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
+
+class Empresa(models.Model):
+    nombre = models.CharField(max_length=50)
+    estado = models.BooleanField(default=True)
+    nit = models.DecimalField(max_digits=10, decimal_places=0)
+    
 class Usuario(AbstractUser):
+    idEmpresa = models.ForeignKey(Empresa, on_delete=models.DO_NOTHING, null=True)
     nombre = models.CharField(max_length=50)
     apellido = models.CharField(max_length=50)
     email = models.EmailField(max_length=100, unique = True)
@@ -26,8 +33,9 @@ class Usuario(AbstractUser):
         return f"{self.nombre}"
     
 class Operario(models.Model):
+    idEmpresa= models.ForeignKey(Empresa, on_delete=models.DO_NOTHING, null=True)
     nombre = models.CharField(max_length=50)
-    entidad = models.CharField(max_length=50)
+   
     email = models.EmailField(max_length=100, unique = True)
     #tiemposMiliseg = models.BinaryField(blank=True, null=True)
     #tiemposNormales =models.BinaryField(blank=True, null=True) 
@@ -38,18 +46,22 @@ class Operario(models.Model):
         return f"{self.nombre}"
     
 
+    
 class Maquina(models.Model):
-    nombre = models.CharField(max_length=50, unique = True)
+    idEmpresa = models.ForeignKey(Empresa, on_delete=models.DO_NOTHING, null=True)
+    nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=50)
     estado = models.BooleanField(default=True)    
 
 class Operacion (models.Model):
-    nombre = models.CharField(max_length=50, unique = True)
+    idEmpresa = models.ForeignKey(Empresa, on_delete=models.DO_NOTHING, null=True)
+    nombre = models.CharField(max_length=50)
     descripcion = models.CharField(max_length=50)
     estado = models.BooleanField(default=True)
     
 class OperacionOperario(models.Model):
-    idOperario = models.ForeignKey(Operario, on_delete=models.DO_NOTHING)
+    
+    idOperario = models.ForeignKey(Operario, on_delete=models.DO_NOTHING, null=True)
     idOperacion = models.ForeignKey(Operacion, on_delete=models.DO_NOTHING)
     idMaquinas = models.ForeignKey(Maquina, on_delete=models.DO_NOTHING)
     fechas = models.DateTimeField(auto_now_add=True, blank=True)

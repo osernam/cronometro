@@ -26,25 +26,45 @@
                 <h2>Edición de usuario</h2>
                 
             </div>
-            <form action="{% url 'cronometro:edicionUsuario' %}" class="needs-validation" novalidate="" method="post">
+            <form action="{% url 'cronometro:edicionUsuario' %}" class="needs-validation " novalidate="" method="post">
                 {% csrf_token %}
                 <input value="{{usuario.id}}" readonly name="id" type="hidden" required>
-                <div class="row">
-                    <div class="col-6">
+                <div class="form-row">
+                    <div class="form-group col-md-6">
                         <p>Correo</p>
                         <input value="{{usuario.email}}" name="email" type="email" placeholder="" readonly>
                     </div>
-                    <div class="col-6">
+                    <div class="form-group col-md-6">
                         <p>Nombres</p>
                         <input value="{{usuario.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
                     </div>
-                    <div class="col-6">
+                </div>
+                <div class="form-row">
+                    <div class="form-group col-md-6">
                         <p>Apellidos</p>
                         <input value="{{usuario.apellido}}" name="apellido" type="text" placeholder="Apellidos" required>
                     </div>
+                    <div class="form-group col-md-6 " style="text-align: center;" >
+                        {% if request.session.logueoUsuario.3 == 'adm95193241@gmail.com' %}
+                                    
+                            <p style="margin-left: auto; margin-right: auto;">
+                                <label for="idEmpresa">Empresa:</label>
+                                <select id="idEmpresa" name="idEmpresa" class="form-control center" style="width: 200px;" required >
+                                    
+                                    {% for empresa in empresas %}
+                                        <option value="{{empresa.id}}" {% if empresa.id == usuario.idEmpresa.id %} selected {% endif %}>{{empresa.nombre}}</option>                            
+                                    {% endfor %}
+                                </select>
+                            </p>
+                            {% else %}
+                            <p>Empresa</p>
+                                <input value="{{usuario.idEmpresa.nombre}}" name="empresa" type="text" readonly >
+                            
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="row">
-                    <div class="col-6 ">
+                <div class="form-row">
+                    <div class="form-group col-md-6 ">
                         <br>
                         
                         <div class="d-flex justify-content-center">
@@ -64,36 +84,39 @@
                             {%endif%}
                         </div>
                     </div>
-                    <div class="col-6">
+                    <div class="form-group col-md-4">
                         <br>
                         <p>Fecha de nacimiento</p>
                         <input value="{{usuario.fecha_nacimiento|date:'Y-m-d'}}" name="fecha_nacimiento" type="date" required>
                     </div>
-                </div>
-                <div class="row">
-                    <div class="col-6">
-                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
-                        <br>
-                        <label for="habilitadoUsuarios">Habilitado</label>
-                        <br>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="estado" {% if usuario.estado %} checked {% endif %} value="True" readonly>Sí
-                            </label>
+                
+                    <div class="form-group col-md-2">
+                        <div class="form-group col-md-6">
+                            {% if request.session.logueoUsuario.4 == 'Administrador' %}
+                            <br>
+                            <label for="habilitadoUsuarios">Habilitado</label>
+                            <br>
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="estado" {% if usuario.estado %} checked {% endif %} value="True" readonly>Sí
+                                </label>
+                            </div>
+                            <div class="form-check-inline">
+                                <label class="form-check-label">
+                                    <input type="radio" class="form-check-input" name="estado" {% if not usuario.estado %} checked {% endif %}value="False" readonly>No
+                                </label>
+                            </div>
+                            {%else%}
+                                <div class= "form-group col-md-4">
+                                    <span> Estado </span>
+                                    <input type="text" {% if usuario.estado == True %} value="Activo" placeholder="Habilitado" {% else %} value="Deshabilitado" placeholder="Deshabilitado" {% endif %} name="estado"  type="text" readonly>
+                                </div>
+                            {%endif%}
+
+                            
+
+
                         </div>
-                        <div class="form-check-inline">
-                            <label class="form-check-label">
-                                <input type="radio" class="form-check-input" name="estado" {% if not usuario.estado %} checked {% endif %}value="False" readonly>No
-                            </label>
-                        </div>
-                        {%else%}
-                            <span> Estado </span>
-                            <input type="text" {% if usuario.estado == True %} value="True" placeholder="Habilitado" {% else %} value="False" placeholder="Deshabilitado" {% endif %} name="estado"  type="text" readonly>
-                        {%endif%}
-
-                        
-
-
                     </div>
                 </div>
                 <br/>

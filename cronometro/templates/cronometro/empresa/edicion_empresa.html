@@ -1,7 +1,7 @@
 {% extends 'cronometro/base/base.html' %}
 {% load static %}
 
-{% block titulo %}Inicio{% endblock titulo %}
+{% block titulo %}Ed Empresa{% endblock titulo %}
 
 {% block encabezado %}Bienbenido{% endblock encabezado %}
 {% block subencabezado %}Index{% endblock subencabezado %}
@@ -14,44 +14,43 @@
     {% endfor %}
 {% endif %}
 
-{% if request.session.logueoUsuario %}
+{% if request.session.logueoUsuario.4 == 'Administrador' %}
 
 
 <br>
 <div class="contact-from-section mb-150">
     <div class="container">
         <div class="form-title">
-            <h2>Edición de operario</h2>
+            <h2>Edición de empresa</h2>
             
         </div>
         <div class="formulario">
-            <form action="{% url 'cronometro:edicionOperario' %}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
-                <input value="{{operario.id}}" readonly name="id" type="hidden" required>
+            <form action="{% url 'cronometro:guardarAcEmpresa' empresa.id%}" class="needs-validation" novalidate="" method="post">{% csrf_token %}
+                <input value="{{empresa.id}}" readonly name="id" type="hidden" required>
                 <div class="col">
-                    <p>Nombres  </p>
-                    <input value="{{operario.nombre}}" name="nombre" type="text" placeholder="Nombres" required>
+                    <p>Nombre  </p>
+                    <input value="{{empresa.nombre}}" name="nombre" type="text" placeholder="Nombre o razon social" required>
                     
                 </div>
                 <div class="col">
-                    <br>
-                
-                <p>Entidad</p>
-                <input value="{{operario.idEmpresa.nombre}}" name="idEmpresa" type="text" placeholder="Apellidos" required>
-                
+                    <p>Nit  </p>
+                    <input value="{{empresa.nit}}" name="nit" type="text" placeholder="Nit" required>
+                    
                 </div>
+                
 
                 <div class="col">
                     <br>
-                    <label for="habilitadoOperario">Estado</label>
+                    <label for="habilitadoEmpresa">Estado</label>
                     <br>
                     <div class="form-check-inline">
                         <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="estado" {% if operario.estado %} checked {% endif %} value="True">Sí
+                            <input type="radio" class="form-check-input" name="estado" {% if empresa.estado %} checked {% endif %} value="True">Habilitado
                         </label>
                       </div>
                       <div class="form-check-inline">
                         <label class="form-check-label">
-                            <input type="radio" class="form-check-input" name="estado" {% if not operario.estado %} checked {% endif %}value="False">No
+                            <input type="radio" class="form-check-input" name="estado" {% if not empresa.estado %} checked {% endif %}value="False">Deshabilitado
                         </label>
                     </div>
                 </div>

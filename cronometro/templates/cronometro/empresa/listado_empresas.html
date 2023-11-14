@@ -14,14 +14,14 @@
     {% endfor %}
 {% endif %}
 
-{% if request.session.logueoUsuario %}
-{}
+
+{% if request.session.logueoUsuario.4 == 'Administrador' %}
 
 
 <div class="listar- mt-50 mb-150 pl-5 pr-5" id="respuesta">
     <div class="contenedor">
         <div class="form-title">
-            <h2>Máquinas registradas</h2>
+            <h2>Empresas registradas</h2>
             
         </div>
         <div class="table-responsive">
@@ -29,29 +29,23 @@
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Nit</th>
                         <th>Nombre</th>
-                        <th>Descripción</th>
-                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
-                        <th>Empresa</th>
-                        {% endif %}
                         <th>Acciones</th>
                         
                         
                     </tr>
                 </thead>
                 <tbody>
-                    {% for maquina in maquinas %}
+                    {% for empresa in empresas %}
                     <tr>
-                        <td> {{maquina.id}} </td>
-                        <td> {{maquina.nombre}}</td>
-                        <td> {{maquina.descripcion}}</td>
-                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
-                        <td> {{maquina.idEmpresa.nombre}} </td>
-                        {% endif %}
+                        <td> {{empresa.id}} </td>
+                        <td> {{empresa.nit}}</td>
+                        <td> {{empresa.nombre}}</td>
                         
                         <td> 
-                            <a href="{% url  'cronometro:deshabilitarMaquina' maquina.id %}" {% if maquina.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
-                            <a href="{% url 'cronometro:actualizarMaquina' maquina.id %}" class="btn btn-info">Editar</a>
+                            <a href="{% url  'cronometro:estadoEmpresa' empresa.id %}" {% if empresa.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
+                            <a href="{% url 'cronometro:actualizarEmpresa' empresa.id %}" class="btn btn-info">Editar</a>
                             
                         </td>
                         
@@ -65,14 +59,14 @@
                 <div class="pagination-wrap mb-100">
                     <ul  class="pagination">
                         <li><a href="?page=1">&laquo;</a></li>
-                        <li><a {% if maquinas.has_previous %} href="?page={{ maquinas.previous_page_number }}" {% endif %}>Anterior</a></li>
+                        <li><a {% if empresas.has_previous %} href="?page={{ empresas.previous_page_number }}" {% endif %}>Anterior</a></li>
 
-                        {% for i in "x"|rjust:maquinas.paginator.num_pages|make_list %}
-                        <li><a {% if forloop.counter == maquinas.number %} class="active" {% endif %} href="?page={{ forloop.counter }}"> {{ forloop.counter }} </a></li>
+                        {% for i in "x"|rjust:empresas.paginator.num_pages|make_list %}
+                        <li><a {% if forloop.counter == empresas.number %} class="active" {% endif %} href="?page={{ forloop.counter }}"> {{ forloop.counter }} </a></li>
                         {% endfor %}
 
-                        <li><a {% if maquinas.has_next %} href="?page={{maquinas.next_page_number }}" {% endif %}>Siguiente</a></li>
-                        <li><a {% if maquinas.has_next %} href="?page={{maquinas.paginator.num_pages }}" {% endif %}>&raquo;</a></li>
+                        <li><a {% if empresas.has_next %} href="?page={{empresas.next_page_number }}" {% endif %}>Siguiente</a></li>
+                        <li><a {% if empresas.has_next %} href="?page={{empresas.paginator.num_pages }}" {% endif %}>&raquo;</a></li>
                     </ul>
                 </div>
             </div>

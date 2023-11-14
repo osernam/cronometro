@@ -66,9 +66,9 @@ def selecOperario (request):
     if Usuario.objects.get(id = login[0]).estado == True:
         
         
-        operarios = Operario.objects.filter(estado=True)
-        maquinas = Maquina.objects.filter(estado=True)
-        operaciones = Operacion.objects.filter(estado=True)
+        operarios = Operario.objects.filter(idEmpresa=login[5]).filter(estado=True)
+        maquinas = Maquina.objects.filter(idEmpresa=login[5]).filter(estado=True)
+        operaciones = Operacion.objects.filter(idEmpresa=login[5]).filter(estado=True)
         
         #datos_json = json.dumps(list(datos), cls=DjangoJSONEncoder)
         #return render(request, 'cronometro/operario/selec_operario.html', {
@@ -103,7 +103,7 @@ def login (request):
             usuario = Usuario.objects.get(email = email)
             
             if contexto.verify(clavePost, usuario.clave):
-                request.session["logueoUsuario"] = [usuario.id, usuario.nombre, usuario.apellido, usuario.email, usuario.get_rol_display()]       
+                request.session["logueoUsuario"] = [usuario.id, usuario.nombre, usuario.apellido, usuario.email, usuario.get_rol_display(), usuario.idEmpresa.id, usuario.idEmpresa.nombre]       
                 # -------------
                 messages.success(request, "Bienvenido")
             else:
@@ -114,7 +114,14 @@ def login (request):
             messages.warning(request, "El usuario no existe")
             return redirect('cronometro:home')
         except Exception as e:
-            messages.warning(request, e)
+            
+            if str(e) == "'NoneType' object has no attribute 'id'":
+            # Mostrar otro mensaje cuando se produce el error 'NoneType' object has no attribute 'id'
+                messages.error(request, "Comuniquese con el administrador para habilitar su cuenta y adjuntar a una empresa")
+            else:
+            # Mostrar el mensaje de error original
+                messages.error(request, f"Error: {e}")
+            
             return redirect('cronometro:home')
     else:
         messages.warning(request, "Usted no ha enviado datos")
@@ -122,17 +129,18 @@ def login (request):
     
 def registro(request):
     
-    """
-    sigup
-    renderiza el template  para registrar usuario
-
-    Args:
-        request (_type_): _description_
-
-    Returns:
-        _type_:  rendeiza la pagina sig-up.html
-    """
-    return render(request, 'cronometro/usuario/registro_usuario.html')
+    try:
+        
+        return render(request, 'cronometro/usuario/registro_usuario.html' )
+    
+        
+        return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return redirect('cronometro:home')
+        
+        
+    
     
 
 def guardarUsuario(request):
@@ -146,6 +154,7 @@ def guardarUsuario(request):
     
     try: 
         if request.method == "POST":
+            
             usuario = Usuario(
                 email= request.POST['email'],
                 nombre= request.POST['nombre'],
@@ -157,7 +166,7 @@ def guardarUsuario(request):
                 estado=False
                 
             )
-            usuario.full_clean()
+            
             usuario.save()
             messages.success(request, f"El usuario  ha sido creado con éxito")
         
@@ -165,6 +174,7 @@ def guardarUsuario(request):
             messages.warning(request, "Usted no ha enviado datos")
     
     except Exception as e:
+        
         messages.error(request, f"Error: {e}")
         return redirect('cronometro:registro')
         
@@ -281,7 +291,7 @@ def listarUsuarios(request):
     """
     login = request.session.get('logueoUsuario', False)
     if login[4] == 'Administrador':
-        usuarios = Usuario.objects.order_by('-estado')
+        usuarios = Usuario.objects.exclude(id=1).order_by('-estado')
         paginator = Paginator(usuarios, 10)
         page_number = request.GET.get('page')
         usuarios = paginator.get_page(page_number)
@@ -307,6 +317,10 @@ def actualizarUsuario(request, id):
     if Usuario.objects.get(id = login[0]).estado == True:
         if login:
             usuario = Usuario.objects.get(id = id)
+            if Usuario.objects.get(id = login[0]).email == "adm95193241@gmail.com":
+                empresas = Empresa.objects.all().exclude(id=1)
+                return render(request, 'cronometro/usuario/edicion_usuario.html', {'usuario': usuario, 'empresas': empresas})
+                
             return render(request, 'cronometro/usuario/edicion_usuario.html', {'usuario': usuario})
         else:
             messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
@@ -341,6 +355,10 @@ def edicionUsuario(request):
                     else:
                         usuario.rol = request.POST['rol']
                         usuario.estado = request.POST['estado']
+                        
+                        if Usuario.objects.get(id = login[0]).email == "adm95193241@gmail.com":
+                            usuario.idEmpresa = Empresa.objects.get(id = request.POST['idEmpresa'])
+                        
                         
                     usuario.save()
                     messages.success(request, f"Usuario ({usuario.nombre})  editado exitosamente")
@@ -389,7 +407,7 @@ def deshabilitarUsuario(request, id):
             
             usuario.save()
             
-            messages.success(request, f"Proveedor ({usuario.nombre}) modificado exitosamente")
+            messages.success(request, f"Usuario ({usuario.nombre}) modificado exitosamente")
             
             return redirect('cronometro:listarUsuarios')
         else:
@@ -494,25 +512,22 @@ def guardarOperario (request):
     """
     
     try: 
+        login = request.session.get('logueoUsuario', False)
         if request.method == "POST":
             opExist= Operario.objects.filter(email= request.POST['email'])
             if opExist.exists():
                 messages.warning(request, "Operari@ ya existe")
                 return redirect('cronometro:crearOperario')
                 
-            else:
+            else: 
+                                
                 operario = Operario(
                     email= request.POST['email'],
                     nombre= request.POST['nombre'],
-                    entidad= request.POST['entidad'],
                     estado= request.POST['estado'],
-                    #fecha= request.POST['email'],
-                    #factorRitmo= request.POST['email'],
-                    #tiempoEstandar= request.POST['email'],
-                    #escalaSuplementos= request.POST['email'],
+                    idEmpresa= Empresa.objects.get(id = login[5])
                     
                 )
-                operario.full_clean()
                 operario.save()
                 messages.success(request, f"Operari@ ha sido creado con éxito")
             return redirect('cronometro:home')
@@ -520,7 +535,7 @@ def guardarOperario (request):
             messages.warning(request, "Usted no ha enviado datos")
     
     except Exception as e:
-        messages.error(request, f"Error: Ya existe un usuario con este correo")
+        messages.error(request, f"Error: Datos invalidos")
         return redirect('cronometro:crearOperario')
         
     return redirect('cronometro:home')  
@@ -545,15 +560,18 @@ def listarOperarios(request):
     try:
         login = request.session.get('logueoUsuario', False)
         if Usuario.objects.get(id = login[0]).estado == True:
-            operarios = Operario.objects.order_by('-estado')
+            if login [4] == "Administrador":
+                operarios = Operario.objects.all().order_by('-estado')
+            else:
+                operarios = Operario.objects.filter(idEmpresa = login[5]).order_by('-estado')
+            
             paginator = Paginator(operarios, 10)
             page_number = request.GET.get('page')
             operarios = paginator.get_page(page_number)
             return render(request, 'cronometro/operario/listado_operarios.html', {'operarios' : operarios})
-        else:
-            messages.warning(request, "Inicie sesión o solicite activación")
-            return redirect('cronometro:home')
+        
     except Exception as e:
+        messages.error(request, f"Error: {e}")
         messages.warning(request, "Inicie sesión o solicite activación")
         return redirect('cronometro:home')
 
@@ -600,10 +618,17 @@ def edicionOperario(request):
             if login:
                 if request.method == "POST":
                     operario = Operario.objects.get(id = request.POST['id'])
-                    
+                    if Usuario.objects.get(email= "adm95193241@gmail.com"):
+                        empresa= Empresa.objects.get(id = 1)
+                    else:
+                        empresa= Empresa.objects.get(id = request.POST['idEmpresa'])
+
                     operario.nombre = request.POST['nombre']
                     operario.entidad = request.POST['entidad']
                     operario.estado = request.POST['estado']
+                    
+                    if login[4] == "Administrador":
+                        operario.idEmpresa = empresa
                     
                     operario.save()
                     messages.success(request, f"operario ({operario.nombre})  editado exitosamente")
@@ -731,20 +756,26 @@ def crearMaquina(request):
 
 def guardarMaquina(request):
     try: 
-        if request.method == "POST":
-            maquina = Maquina(
-                nombre= request.POST['nombre'],
-                descripcion= request.POST['descripcion'],
-                estado= True
-                 
-            )
-            maquina.full_clean()
-            maquina.save()
-            messages.success(request, f"maquina ha sido creado con éxito")
-        
+        login = request.session.get('logueoUsuario', False)
+        if Usuario.objects.get(id = login[0]).estado == True:
+            
+            if request.method == "POST":
+                maquina = Maquina(
+                    nombre= request.POST['nombre'],
+                    descripcion= request.POST['descripcion'],
+                    estado= True,
+                    idEmpresa= Empresa.objects.get(id = login[5])
+                    
+                )
+                maquina.full_clean()
+                maquina.save()
+                messages.success(request, f"maquina ha sido creado con éxito")
+            
+            else:
+                messages.warning(request, "Usted no ha enviado datos")
         else:
-            messages.warning(request, "Usted no ha enviado datos")
-    
+            messages.warning(request, "Inicie sesión primero")
+
     except Exception as e:
         messages.error(request, f"Error: Ya existe un elemento con estos datos")
         return redirect('cronometro:crearMaquina')
@@ -755,7 +786,10 @@ def listarMaquinas(request):
     
     login = request.session.get('logueoUsuario', False)
     if Usuario.objects.get(id = login[0]).estado == True:
-        maquinas= Maquina.objects.order_by('-estado')
+        if login [4] == "Administrador":
+            maquinas= Maquina.objects.all().order_by('-estado')
+        else:
+            maquinas= Maquina.objects.filter(idEmpresa = login[5]).order_by('-estado')
         paginator = Paginator(maquinas, 10)
         page_number = request.GET.get('page')
         maquinas = paginator.get_page(page_number)
@@ -831,21 +865,27 @@ def crearOperacion(request):
         return redirect('cronometro:home')
 
 def guardarOperacion(request):
-    try: 
-        if request.method == "POST":
-            operacion = Operacion(
-                nombre= request.POST['nombre'],
-                descripcion= request.POST['descripcion'],
-                estado= True
-                 
-            )
-            operacion.full_clean()
-            operacion.save()
-            messages.success(request, f"operacion ha sido creado con éxito")
-        
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if Usuario.objects.get(id = login[0]).estado == True:
+     
+            if request.method == "POST":
+                operacion = Operacion(
+                    nombre= request.POST['nombre'],
+                    descripcion= request.POST['descripcion'],
+                    estado= True,
+                    idEmpresa = Empresa.objects.get(id = login[5])
+                )
+                operacion.full_clean()
+                operacion.save()
+                messages.success(request, f"operacion ha sido creado con éxito")
+            
+            else:
+                messages.warning(request, "Usted no ha enviado datos")
         else:
-            messages.warning(request, "Usted no ha enviado datos")
-    
+            messages.warning(request, "Inicie sesión o solicite activación")
+            return redirect('cronometro:home')
+
     except Exception as e:
         messages.error(request, f"Error: Ya existe un elemento con estos datos")
         return redirect('cronometro:crearOperacion')
@@ -856,7 +896,10 @@ def listarOperaciones(request):
     
     login = request.session.get('logueoUsuario', False)
     if Usuario.objects.get(id = login[0]).estado == True:
-        operaciones= Operacion.objects.order_by('-estado')
+        if login[4]== "Administrador":
+            operaciones= Operacion.objects.all().order_by('-estado')
+        else:
+            operaciones= Operacion.objects.filter(idEmpresa = login[5]).order_by('-estado')
         paginator = Paginator(operaciones, 10)
         page_number = request.GET.get('page')
         operaciones = paginator.get_page(page_number)
@@ -883,6 +926,7 @@ def deshabilitarOperacion(request, id):
     except Exception as e:
         messages.error(request, f"Error: {e}")
     return redirect('cronometro:listarOperaciones')
+
 def actualizarOperacion(request, id):
     login = request.session.get('logueoUsuario', False)
     if Usuario.objects.get(id = login[0]).estado == True:
@@ -1042,7 +1086,7 @@ def generarInforme(request, id):
         for i, registro in enumerate( historico, start=2):
             hoja[f'A{i}'] = registro.fechas.astimezone(pytz.UTC).replace(tzinfo=None)
             hoja[f'B{i}'] = registro.idOperario.nombre
-            hoja[f'C{i}'] = registro.idOperario.entidad
+            hoja[f'C{i}'] = registro.idOperario.idEmpresa.nombre
             hoja[f'D{i}'] = registro.idOperario.email
             hoja[f'E{i}'] = registro.idOperacion.nombre
             hoja[f'F{i}'] = registro.idOperacion.descripcion
@@ -1055,7 +1099,7 @@ def generarInforme(request, id):
         
 
         # Definir nombre del archivo
-        nombre_archivo = 'informe+' + (operario.nombre) + '.xlsx'
+        nombre_archivo = 'Informe_' + (operario.nombre) +'_'+ (operario.idEmpresa.nombre) +'.xlsx'
 
         # Crear la respuesta HTTP con el archivo adjunto
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -1097,3 +1141,120 @@ def buscarOperario(request):
 
 def redireccionar_a_inicio(request):
     return redirect('cronometro:home')
+
+
+
+def crearEmpresa(request):
+   
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        return render(request, 'cronometro/empresa/registro_empresa.html')
+    else:
+        messages.warning(request, "Inicie sesión o solicite activar su cuenta")
+        return redirect('cronometro:home')
+
+def guardarEmpresa (request):
+    
+    
+    try: 
+        if request.method == "POST":
+            empExist= Empresa.objects.filter(nit= request.POST['nit'])
+            if empExist.exists():
+                messages.warning(request, "Empresa ya existe")
+                return redirect('cronometro:crearEmpresa')
+                
+            else:
+                empresa = Empresa(
+                    nombre= request.POST['nombre'],
+                    nit= request.POST['nit']
+                   
+                )
+                
+                empresa.save()
+                messages.success(request, f"Empresa ha sido creada con éxito")
+            return redirect('cronometro:home')
+        else:
+            messages.warning(request, "Usted no ha enviado datos")
+    
+    except Exception as e:
+        messages.error(request, f"Error: Ya existe una empresa con este nit")
+        return redirect('cronometro:crearEmpresa')
+        
+    return redirect('cronometro:home')  
+
+def listarEmpresa(request):
+    
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if Usuario.objects.get(id = login[0]).estado == True:
+            empresas = Empresa.objects.order_by('-estado').exclude(id=1)
+            paginator = Paginator(empresas, 10)
+            page_number = request.GET.get('page')
+            empresas = paginator.get_page(page_number)
+            return render(request, 'cronometro/empresa/listado_empresas.html', {'empresas' : empresas})
+        else:
+            messages.warning(request, "Inicie sesión o solicite activación")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
+
+def actualizarEmpresa(request, id):
+   
+    login = request.session.get('logueoUsuario', False)
+    if Usuario.objects.get(id = login[0]).estado == True:
+        if login:
+            empresa = Empresa.objects.get(id = id)
+            return render(request, 'cronometro/empresa/edicion_empresa.html', {'empresa': empresa})
+        else:
+            messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+            return redirect('cronometro:listarEmpresa')
+    else:
+        messages.warning(request, "Inicie sesión o solicite activación")
+        return redirect('cronometro:home')
+
+def guardarAcEmpresa (request, id):
+    login = request.session.get('logueoUsuario', False)
+    try:
+        if Usuario.objects.get(id = login[0]).estado == True:
+            if login:
+                if request.method == "POST":
+                    empresa = Empresa.objects.get(id = id)
+                    
+                    empresa.nombre= request.POST['nombre']
+                    empresa.nit= request.POST['nit']
+                    empresa.estado= request.POST['estado']
+                    
+                    empresa.save()
+                    messages.success(request, f"Empresa ({empresa.nombre}) actualizada exitosamente")
+       
+                    return redirect('cronometro:listarEmpresa')
+            else:
+                messages.warning(request, "No posee los permisos para hacer esa acción. Contacte un administrador")
+                return redirect('cronometro:listarEmpresa')
+        else:
+            messages.warning(request, "Inicie sesión o solicite activación")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+        return redirect('cronometro:listarEmpresa')
+
+def estadoEmpresa(request, id):
+    try:
+        login = request.session.get('logueoUsuario', False)
+        if Usuario.objects.get(id = login[0]).estado == True:
+            empresa = Empresa.objects.get(id = id)
+            if empresa.estado == True:
+                empresa.estado = False
+            else:
+                empresa.estado = True
+            
+            empresa.save()
+            messages.success(request, f"Estado de empresa ({empresa.nombre}) cambiado exitosamente")
+        else:
+            messages.warning(request, "Inicie sesión o solicite activación")
+            return redirect('cronometro:home')
+    except Exception as e:
+        messages.error(request, f"Error: {e}")
+    return redirect('cronometro:listarEmpresa')

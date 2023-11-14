@@ -16,7 +16,7 @@
         {% endfor %}
 {% endif %}
 
-
+{% if request.session.logueoUsuario.4 == 'Administrador' %}
 
 
 <!-- contact form -->
@@ -26,30 +26,25 @@
         <div class="row">
             <div class="col-lg-8 mb-5 mb-lg-0">
                 <div class="form-title">
-                    <h2>¡Registrate y hazte miembro!</h2>
-                    <p>Es rápido y fácil</p>
+                    <h2>Registrar nueva empresa</h2>
+                    
                 </div>
                 
                 <div>
-                    <form action="{% url 'cronometro:guardarUsuario' %}" class="needs-validation" method="post">
+                    <form action="{% url 'cronometro:guardarEmpresa' %}" class="needs-validation" method="post">
                         {% csrf_token %}
                         <p>
-                            <input type="text" placeholder="Nombre" name="nombre" class="formularioDoble" required>
-                            <input type="text" placeholder="Apellidos" name="apellido" class="formularioDoble" required>
-                        </p>
-                        <p>Fecha de nacimiento
-                            <input type="date" name="fecha_nacimiento" class="formularioSolo" required>
+                            <p>Nombre</p>
+                            <input type="text" placeholder="Nombre" name="nombre" class="formulario" required>
                         </p>
                         <p>
-                            <input type="email" placeholder="Correo electrónico" name="email" class="formularioSolo" required>
-                        </p>
-                        <p>
-                            <input type="password" placeholder="Contraseña" name="clave" class="formularioSolo" required>
+                            <p>Nit</p>
+                            <input type="text" name="nit" class="formulario" required>
                         </p>
                         
                         <br>
                         <div class="form-btns">
-                            <button type="submit">Crear cuenta</button>
+                            <button type="submit">Enviar</button>
                         </div>
                     </form>
                 </div>
@@ -59,6 +54,6 @@
 </div>
 
 
-
+{% endif %}
 
 {% endblock contenedor %}  

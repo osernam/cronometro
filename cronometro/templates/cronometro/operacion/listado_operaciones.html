@@ -32,6 +32,9 @@
                         <th>ID</th>
                         <th>Nombre</th>
                         <th>Descripción</th>
+                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
+                        <th>Empresa</th>
+                        {% endif %}
                         <th>Acciones</th>
                         
                         
@@ -43,6 +46,9 @@
                         <td> {{operacion.id}} </td>
                         <td> {{operacion.nombre}}</td>
                         <td> {{operacion.descripcion}}</td>
+                        {% if request.session.logueoUsuario.4 == 'Administrador' %}
+                        <td> {{operacion.idEmpresa.nombre}} </td>
+                        {% endif %}
                         
                         <td> 
                             <a href="{% url  'cronometro:deshabilitarOperacion' operacion.id %}" {% if operacion.estado %}class="btn btn-success"> Habilitado {% else %}class="btn btn-danger"> Deshabilitado {% endif %}</a>
